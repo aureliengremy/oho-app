@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<title>Maquettes OhO</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+/* Jetons « mhosaic — présentations », thème Océan.
+   :root = clair ; prefers-color-scheme sombre suit le système sauf data-theme="light" ;
+   [data-theme] force un thème, y compris sur un cadre de téléphone imbriqué. */
+:root {
+  --font-display: "Source Serif 4 Deck", "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, "Times New Roman", serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+  --t-micro: .78rem; --t-eyebrow: .8rem; --t-small: .94rem; --t-body: 1.125rem; --t-h3: 1.22rem;
+  --t-lede: clamp(1.28rem, 2.6vw, 1.58rem);
+  --t-h2: clamp(1.85rem, 3.9vw, 2.6rem);
+  --t-h1: clamp(2.45rem, 6.6vw, 4rem);
+  --lh-tight: 1.02; --lh-head: 1.3; --lh-lede: 1.42; --lh-body: 1.62;
+  --ls-eyebrow: .16em; --ls-head: -.018em;
+  --w-regular: 400; --w-medium: 500; --w-strong: 600; --w-heavy: 700;
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px; --sp-6: 32px; --sp-7: 48px; --sp-8: 64px;
+  --r-sm: 6px; --r-md: 10px; --r-lg: 13px; --r-pill: 999px;
+  --measure: 72rem;
+  --gutter: clamp(16px, 5vw, 96px);
+
+  color-scheme: light;
+  --bg: #e8eff5; --surface: #ffffff; --surface-2: #f1f6fa; --card: #e9f1f7;
+  --ink: #0a2540; --ink-2: #2b4560; --ink-3: #4d6680; --ink-4: #76899d;
+  --rule: #d5e1eb; --rule-strong: #a7bccd;
+  --accent: #1d6fb8; --accent-ink: #12558f; --accent-tint: #e2eefa;
+  --ok: #1f7350; --ok-tint: #ddefe5; --warn: #8a5600; --warn-tint: #f7ead2; --bad: #b1351f; --bad-tint: #f6e0da;
+  --s1: #1d6fb8; --s2: #c9821b; --s3: #2a9a8a; --s4: #6a5acd;
+  --shadow: 0 1px 2px rgba(10, 37, 64, .05), 0 8px 30px rgba(10, 37, 64, .07);
+  --scrim: rgba(10, 37, 64, .42);
+}
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: #e8eff5; --surface: #ffffff; --surface-2: #f1f6fa; --card: #e9f1f7;
+  --ink: #0a2540; --ink-2: #2b4560; --ink-3: #4d6680; --ink-4: #76899d;
+  --rule: #d5e1eb; --rule-strong: #a7bccd;
+  --accent: #1d6fb8; --accent-ink: #12558f; --accent-tint: #e2eefa;
+  --ok: #1f7350; --ok-tint: #ddefe5; --warn: #8a5600; --warn-tint: #f7ead2; --bad: #b1351f; --bad-tint: #f6e0da;
+  --s1: #1d6fb8; --s2: #c9821b; --s3: #2a9a8a; --s4: #6a5acd;
+  --shadow: 0 1px 2px rgba(10, 37, 64, .05), 0 8px 30px rgba(10, 37, 64, .07);
+  --scrim: rgba(10, 37, 64, .42);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #06121e; --surface: #0b1b2b; --surface-2: #11263b; --card: #163049;
+    --ink: #e6f0f8; --ink-2: #b3c6d8; --ink-3: #8ba3b9; --ink-4: #64809a;
+    --rule: #1e3650; --rule-strong: #36546f;
+    --accent: #58a6e8; --accent-ink: #8cc3f2; --accent-tint: #133352;
+    --ok: #6cc59e; --ok-tint: #123426; --warn: #e2b65f; --warn-tint: #3a3015; --bad: #f0886d; --bad-tint: #3f2019;
+    --s1: #4383dc; --s2: #c98420; --s3: #21a07f; --s4: #8a7ae6;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 34px rgba(0, 0, 0, .34);
+    --scrim: rgba(2, 8, 14, .62);
+  }
+}
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #06121e; --surface: #0b1b2b; --surface-2: #11263b; --card: #163049;
+  --ink: #e6f0f8; --ink-2: #b3c6d8; --ink-3: #8ba3b9; --ink-4: #64809a;
+  --rule: #1e3650; --rule-strong: #36546f;
+  --accent: #58a6e8; --accent-ink: #8cc3f2; --accent-tint: #133352;
+  --ok: #6cc59e; --ok-tint: #123426; --warn: #e2b65f; --warn-tint: #3a3015; --bad: #f0886d; --bad-tint: #3f2019;
+  --s1: #4383dc; --s2: #c98420; --s3: #21a07f; --s4: #8a7ae6;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 34px rgba(0, 0, 0, .34);
+  --scrim: rgba(2, 8, 14, .62);
+}
+
+/* ---------- Page de présentation ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--surface); color: var(--ink-2);
+  font-family: var(--font-sans); font-size: var(--t-body); line-height: var(--lh-body);
+  overflow-x: hidden;
+}
+.page {
+  padding-left: max(var(--gutter), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--gutter), env(safe-area-inset-right, 0px));
+  padding-top: var(--sp-8); padding-bottom: var(--sp-8);
+}
+.eyebrow {
+  font-family: var(--font-mono); font-size: var(--t-eyebrow); letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase; color: var(--accent-ink); font-weight: var(--w-strong); margin: 0 0 var(--sp-3);
+}
+h1, h2, h3 { font-family: var(--font-display); color: var(--ink); font-weight: var(--w-strong); letter-spacing: var(--ls-head); }
+h1 { font-size: var(--t-h1); line-height: var(--lh-tight); margin: 0 0 var(--sp-4); }
+h2 { font-size: var(--t-h2); line-height: var(--lh-head); margin: 0 0 var(--sp-2); }
+.lede { font-size: var(--t-lede); line-height: var(--lh-lede); color: var(--ink-2); max-width: 46rem; margin: 0; }
+.hero { max-width: var(--measure); margin-bottom: var(--sp-7); }
+.encadre {
+  background: var(--surface-2); border-radius: var(--r-lg); padding: var(--sp-4) var(--sp-5);
+  max-width: 54rem; margin-top: var(--sp-5); font-size: 1rem;
+}
+.encadre b { color: var(--ink); }
+.sec { margin-top: var(--sp-8); }
+.sec__intro { max-width: 46rem; margin: 0 0 var(--sp-6); font-size: 1.06rem; }
+.grille {
+  display: grid; gap: var(--sp-7) var(--sp-6);
+  grid-template-columns: repeat(auto-fill, minmax(min(390px, 100%), 390px));
+  justify-content: start; align-items: start;
+}
+.fig { margin: 0; min-width: 0; }
+.fig__cap { margin-top: var(--sp-4); max-width: 390px; }
+.fig__no {
+  font-family: var(--font-mono); font-size: var(--t-micro); letter-spacing: .1em; text-transform: uppercase;
+  color: var(--accent-ink); font-weight: var(--w-strong); display: block; margin-bottom: 2px;
+}
+.fig__txt { font-size: var(--t-small); line-height: 1.5; color: var(--ink-3); margin: 0; }
+.fig__txt b { color: var(--ink-2); font-weight: var(--w-strong); }
+
+.questions { display: grid; gap: var(--sp-4); grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); }
+.q { background: var(--surface-2); border-radius: var(--r-lg); padding: var(--sp-5); }
+.q h3 { font-size: var(--t-h3); margin: var(--sp-2) 0 var(--sp-2); line-height: 1.3; }
+.q p { margin: 0; font-size: 1rem; line-height: 1.55; }
+.q .def { margin-top: var(--sp-3); }
+.q .def b { color: var(--ink); }
+
+/* ---------- Le téléphone ---------- */
+.phone {
+  width: 390px; max-width: 100%; height: 844px;
+  padding: 9px; border-radius: 50px; background: #0c1722;
+  box-shadow: 0 0 0 1px #24384a, var(--shadow), 0 24px 60px rgba(6, 18, 30, .18);
+}
+.scr {
+  position: relative; height: 100%; overflow: hidden; border-radius: 41px;
+  background: var(--surface); color: var(--ink);
+  display: flex; flex-direction: column;
+  font-family: var(--font-sans); font-size: 16px; line-height: 1.4;
+}
+.sb {
+  flex: none; height: 38px; padding: 0 26px 0 30px; display: flex; align-items: center; justify-content: space-between;
+  font-size: 14px; font-weight: var(--w-strong); color: var(--ink); font-variant-numeric: tabular-nums;
+}
+.sb__ic { display: flex; gap: 6px; align-items: center; }
+.sb__ic svg { height: 13px; width: auto; fill: currentColor; }
+.cam { position: absolute; top: 12px; left: 50%; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: #0c1722; }
+.gest { flex: none; height: 22px; display: flex; align-items: center; justify-content: center; background: inherit; }
+.gest::before { content: ""; width: 112px; height: 4px; border-radius: 4px; background: var(--ink); opacity: .55; }
+
+/* Icônes */
+.i { width: 24px; height: 24px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.i--s { width: 20px; height: 20px; }
+.i--xs { width: 16px; height: 16px; }
+
+/* Barre d'app */
+.ab { flex: none; display: flex; align-items: center; gap: 4px; padding: 4px 8px 4px 16px; min-height: 56px; }
+.ab--back { padding-left: 4px; }
+.ab__t { font-family: var(--font-display); font-weight: var(--w-strong); letter-spacing: var(--ls-head); font-size: 28px; line-height: 1.15; color: var(--ink); margin: 0; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ab__t--s { font-size: 21px; }
+.ab__sub { font-family: var(--font-mono); font-size: 12.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); font-weight: var(--w-strong); }
+.ib {
+  width: 44px; height: 44px; flex: none; border-radius: 50%; border: 0; background: transparent; color: var(--ink-2);
+  display: inline-flex; align-items: center; justify-content: center; padding: 0; cursor: pointer;
+}
+.ib--fill { background: var(--surface-2); }
+.lbl { font-family: var(--font-mono); font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); font-weight: var(--w-strong); }
+.lbl--acc { color: var(--accent-ink); }
+
+.body { flex: 1; min-height: 0; overflow: hidden; position: relative; }
+.pad { padding: 0 16px; }
+
+/* Puces de filtre / sélecteur de liste */
+.chips { display: flex; gap: 8px; padding: 4px 16px 10px; overflow: hidden; flex: none; }
+.chip {
+  position: relative; flex: none; height: 36px; padding: 0 14px; border-radius: var(--r-pill);
+  border: 1px solid var(--rule-strong); background: var(--surface); color: var(--ink-2);
+  display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: 15px; white-space: nowrap; cursor: pointer;
+}
+.chip::before { content: ""; position: absolute; inset: -4px 0; }
+.chip .n { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-3); }
+.chip.on { background: var(--accent-ink); border-color: var(--accent-ink); color: var(--surface); font-weight: var(--w-strong); }
+.chip.on .n { color: var(--surface); opacity: .85; }
+
+/* Pastilles */
+.pill {
+  display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-mono); font-size: 12.5px; letter-spacing: .08em;
+  text-transform: uppercase; font-weight: var(--w-strong); padding: 2px 9px; border-radius: var(--r-pill);
+  background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--rule); white-space: nowrap; line-height: 1.45;
+}
+.pill--ok { background: var(--ok-tint); color: var(--ok); border-color: var(--ok); }
+.pill--warn { background: var(--warn-tint); color: var(--warn); border-color: var(--warn); }
+.pill--accent { background: var(--accent-tint); color: var(--accent-ink); border-color: var(--accent-ink); }
+.pill--plein { background: var(--accent-ink); color: var(--surface); border-color: var(--accent-ink); }
+
+/* Boutons (réservés aux maquettes) */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 20px;
+  border-radius: var(--r-pill); border: 1px solid var(--rule-strong); background: var(--surface-2); color: var(--ink);
+  font: inherit; font-size: 16px; font-weight: var(--w-strong); cursor: pointer; text-decoration: none; white-space: nowrap;
+}
+.btn--plein { background: var(--accent-ink); border-color: var(--accent-ink); color: var(--surface); }
+.btn--bloc { width: 100%; }
+.btn--s { min-height: 44px; padding: 0 16px; font-size: 15px; }
+.lien { color: var(--accent-ink); font-weight: var(--w-strong); text-decoration: none; }
+
+/* Avatars : une couleur de série par personne, toujours avec les initiales (AL, AN : les deux prénoms commencent par A) */
+.av {
+  --p: var(--ink-4); width: 26px; height: 26px; flex: none; border-radius: 50%;
+  border: 2px solid var(--p); background: var(--surface); color: var(--ink);
+  display: inline-flex; align-items: center; justify-content: center; font-size: 10.5px; font-weight: var(--w-heavy); line-height: 1; letter-spacing: -.02em;
+}
+.av--a { --p: var(--s1); }
+.av--o { --p: var(--s2); }
+.av--l { width: 40px; height: 40px; font-size: 14px; border-width: 2.5px; }
+.duo-av { display: inline-flex; }
+.duo-av .av + .av { margin-left: -8px; }
+
+/* Lignes de liste */
+.rayon { padding: 14px 16px 4px; }
+.it {
+  display: grid; grid-template-columns: 48px 1fr auto; align-items: center; min-height: 52px; padding: 0 14px 0 2px; column-gap: 4px;
+}
+.chk {
+  width: 48px; height: 48px; border: 0; background: transparent; padding: 0; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; color: var(--surface);
+}
+.chk::before {
+  content: ""; width: 22px; height: 22px; border-radius: 7px; border: 2px solid var(--rule-strong); background: var(--surface);
+  display: block;
+}
+.chk svg { position: absolute; width: 16px; height: 16px; opacity: 0; }
+.chk { position: relative; }
+.it.done .chk::before { background: var(--accent-ink); border-color: var(--accent-ink); }
+.it.done .chk svg { opacity: 1; }
+.it.done .it__l { color: var(--ink-3); text-decoration: line-through; text-decoration-color: var(--ink-4); }
+.it__l { font-size: 16.5px; color: var(--ink); line-height: 1.3; }
+.it__n { font-size: 14px; color: var(--ink-3); margin-top: 1px; }
+.it__r { display: flex; align-items: center; gap: 10px; }
+.qte { font-family: var(--font-mono); font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.att { font-family: var(--font-mono); font-size: 12.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--warn); font-weight: var(--w-strong); }
+
+/* Panier replié + ajout rapide */
+.panier {
+  flex: none; display: flex; align-items: center; gap: 8px; padding: 6px 8px 6px 16px; background: var(--surface-2);
+  min-height: 56px;
+}
+.panier__t { flex: 1; font-size: 15px; color: var(--ink-2); display: flex; align-items: center; gap: 8px; }
+.panier__t b { color: var(--ink); }
+.ajout { flex: none; padding: 8px 12px 10px; display: flex; gap: 8px; align-items: center; background: var(--surface); }
+.champ {
+  flex: 1; min-width: 0; height: 48px; border-radius: var(--r-pill); background: var(--surface-2); border: 1px solid var(--rule);
+  display: flex; align-items: center; gap: 10px; padding: 0 16px; color: var(--ink-3); font-size: 16px;
+}
+.champ--focus { border: 2px solid var(--accent-ink); background: var(--surface); color: var(--ink); padding-left: 15px; }
+.caret { display: inline-block; width: 2px; height: 20px; background: var(--accent-ink); margin-left: 1px; vertical-align: -4px; }
+.ajout .ib--go { background: var(--accent-ink); color: var(--surface); width: 48px; height: 48px; }
+
+/* Barre d'onglets */
+.tabs { flex: none; display: grid; grid-template-columns: repeat(5, 1fr); background: var(--surface-2); padding: 8px 4px 2px; }
+.tab { display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 56px; color: var(--ink-3); font-size: 12.5px; text-align: center; line-height: 1.15; }
+.tab__ic { width: 56px; height: 30px; border-radius: var(--r-pill); display: flex; align-items: center; justify-content: center; }
+.tab.on { color: var(--accent-ink); font-weight: var(--w-strong); }
+.tab.on .tab__ic { background: var(--accent-tint); }
+.tabs + .gest { background: var(--surface-2); }
+
+/* Cartes d'app */
+.card { background: var(--surface-2); border-radius: 18px; padding: 16px; }
+.card + .card { margin-top: 12px; }
+.row { display: flex; align-items: center; gap: 12px; }
+.grow { flex: 1; min-width: 0; }
+.t-serif { font-family: var(--font-display); font-weight: var(--w-strong); letter-spacing: var(--ls-head); color: var(--ink); }
+.muted { color: var(--ink-3); font-size: 14px; }
+.small { font-size: 14px; }
+.ink { color: var(--ink); }
+.mt4 { margin-top: 4px; } .mt8 { margin-top: 8px; } .mt12 { margin-top: 12px; } .mt16 { margin-top: 16px; } .mt20 { margin-top: 20px; } .mt24 { margin-top: 24px; }
+
+.jauge { height: 6px; border-radius: var(--r-pill); background: var(--rule); overflow: hidden; }
+.jauge > i { display: block; height: 100%; background: var(--accent-ink); border-radius: var(--r-pill); }
+
+.tools { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.tool { background: var(--surface-2); border-radius: 18px; padding: 14px 12px 12px; min-height: 104px; display: flex; flex-direction: column; justify-content: space-between; color: var(--ink); }
+.tool__ic { width: 40px; height: 40px; border-radius: 12px; background: var(--accent-tint); color: var(--accent-ink); display: flex; align-items: center; justify-content: center; }
+.tool__n { font-weight: var(--w-strong); font-size: 15px; }
+.tool__m { font-size: 13px; color: var(--ink-3); font-family: var(--font-mono); }
+
+.feed { list-style: none; margin: 0; padding: 0; }
+.feed li { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; }
+.feed .txt { font-size: 15px; color: var(--ink-2); line-height: 1.4; }
+.feed .txt b { color: var(--ink); font-weight: var(--w-strong); }
+.when { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-3); white-space: nowrap; }
+
+.sync { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 12.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ok); font-weight: var(--w-strong); }
+
+.banner { flex: none; display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: var(--warn-tint); color: var(--warn); font-size: 14.5px; font-weight: var(--w-strong); }
+.banner span { flex: 1; }
+
+/* Clavier simulé */
+.kb { flex: none; background: var(--card); padding: 6px 4px 4px; }
+.kb__sug { display: grid; grid-template-columns: 1fr 1fr 1fr; text-align: center; font-size: 15px; color: var(--ink-2); padding: 4px 0 8px; }
+.kb__r { display: flex; gap: 5px; justify-content: center; margin-bottom: 9px; padding: 0 2px; }
+.kb__r span {
+  flex: 1; max-width: 34px; height: 42px; border-radius: 6px; background: var(--surface); color: var(--ink);
+  display: flex; align-items: center; justify-content: center; font-size: 19px; box-shadow: 0 1px 0 var(--rule-strong);
+}
+.kb__r span.w { max-width: none; flex: 1.6; font-size: 13px; background: var(--surface-2); }
+.kb__r span.sp { max-width: none; flex: 5; font-size: 13px; color: var(--ink-3); }
+.kb__r span.go { max-width: none; flex: 1.6; background: var(--accent-ink); color: var(--surface); font-size: 13px; }
+
+/* Suggestions d'auto-complétion */
+.sugg { flex: none; background: var(--surface); box-shadow: 0 -10px 28px rgba(6, 18, 30, .12); border-radius: 20px 20px 0 0; padding: 8px 0 0; }
+.sugg__h { padding: 6px 16px 4px; display: flex; justify-content: space-between; align-items: baseline; }
+.sg { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 16px; }
+.sg__l { flex: 1; font-size: 16.5px; color: var(--ink); }
+.sg__l mark { background: none; color: var(--accent-ink); font-weight: var(--w-heavy); }
+.sg__m { font-size: 13.5px; color: var(--ink-3); }
+.sg__plus { width: 32px; height: 32px; border-radius: 50%; background: var(--accent-tint); color: var(--accent-ink); display: flex; align-items: center; justify-content: center; }
+
+/* Réordonner */
+.drag { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 8px 0 16px; background: var(--surface); }
+.drag__n { font-family: var(--font-mono); font-size: 13px; color: var(--accent-ink); width: 22px; font-weight: var(--w-strong); font-variant-numeric: tabular-nums; }
+.drag__l { flex: 1; font-size: 16.5px; color: var(--ink); }
+.drag__c { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-3); }
+.drag .grip { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--ink-3); }
+.drag.lift { position: relative; z-index: 2; margin: 0 8px; border-radius: 14px; box-shadow: 0 12px 30px rgba(6, 18, 30, .22), 0 0 0 2px var(--accent-ink); transform: rotate(-1deg); }
+.drag.ghost { background: var(--accent-tint); margin: 0 8px; border-radius: 14px; min-height: 56px; }
+
+/* Voyages */
+.trip { display: flex; gap: 14px; align-items: center; padding: 12px 16px; min-height: 76px; }
+.trip__cv { width: 52px; height: 52px; border-radius: 14px; background: var(--card); display: flex; align-items: center; justify-content: center; font-size: 26px; flex: none; }
+.trip__t { font-size: 17px; font-weight: var(--w-strong); color: var(--ink); }
+.trip__d { font-size: 14px; color: var(--ink-3); margin-top: 2px; }
+.trip__s { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.hd-trip { padding: 4px 16px 14px; }
+.hd-trip .t-serif { font-size: 30px; line-height: 1.1; }
+.seg { display: flex; padding: 0 16px; gap: 18px; box-shadow: inset 0 -1px 0 var(--rule); flex: none; }
+.seg button {
+  font: inherit; font-size: 15.5px; background: none; border: 0; color: var(--ink-3); padding: 12px 0 11px; min-height: 46px;
+  border-bottom: 3px solid transparent; cursor: pointer; display: inline-flex; gap: 6px; align-items: center;
+}
+.seg button .n { font-family: var(--font-mono); font-size: 12.5px; }
+.seg button.on { color: var(--accent-ink); border-bottom-color: var(--accent-ink); font-weight: var(--w-strong); }
+.pane { display: none; }
+.pane.on { display: block; }
+.bk { background: var(--surface-2); border-radius: 18px; padding: 14px 16px; margin: 0 16px 12px; }
+.bk__h { display: flex; align-items: center; gap: 10px; }
+.bk__ic { width: 36px; height: 36px; border-radius: 10px; background: var(--accent-tint); color: var(--accent-ink); display: flex; align-items: center; justify-content: center; flex: none; }
+.bk__t { font-size: 16.5px; font-weight: var(--w-strong); color: var(--ink); line-height: 1.25; }
+.bk__m { font-size: 14px; color: var(--ink-3); }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin-top: 10px; font-size: 14.5px; }
+.kv dt { font-family: var(--font-mono); font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); padding-top: 2px; }
+.kv dd { margin: 0; color: var(--ink); font-variant-numeric: tabular-nums; }
+.pj { margin-top: 12px; display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 12px; background: var(--surface); color: var(--accent-ink); font-size: 14.5px; font-weight: var(--w-strong); }
+.pj .muted { font-weight: 400; margin-left: auto; font-family: var(--font-mono); font-size: 12.5px; }
+.fab {
+  position: absolute; right: 16px; bottom: 16px; height: 56px; padding: 0 22px 0 18px; border-radius: 18px; border: 0;
+  background: var(--accent-ink); color: var(--surface); display: inline-flex; align-items: center; gap: 8px; font: inherit; font-weight: var(--w-strong); font-size: 16px;
+  box-shadow: 0 8px 22px rgba(6, 18, 30, .25);
+}
+
+/* À regarder */
+.posters { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 12px; padding: 4px 16px 90px; }
+.poster {
+  --pc: #1f3a5f; position: relative; aspect-ratio: 2 / 3; border-radius: 12px; overflow: hidden; background: var(--pc);
+  display: flex; align-items: flex-end; padding: 10px; color: #f4f8fb;
+}
+.poster::before { content: ""; position: absolute; inset: 0; background:
+  radial-gradient(circle at 70% 28%, rgba(255,255,255,.22) 0 18%, transparent 19%),
+  linear-gradient(180deg, transparent 45%, rgba(4,12,20,.72)); }
+.poster b { position: relative; font-family: var(--font-display); font-size: 17px; line-height: 1.12; font-weight: var(--w-strong); letter-spacing: var(--ls-head); }
+.poster .tag { position: absolute; top: 8px; left: 8px; z-index: 1; font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; background: rgba(4,12,20,.6); color: #fff; padding: 1px 7px; border-radius: 6px; }
+.pc1 { --pc: #1f4e7a; } .pc2 { --pc: #7a3b2e; } .pc3 { --pc: #2f5d50; } .pc4 { --pc: #4b3f72; } .pc5 { --pc: #8a6424; } .pc6 { --pc: #33414f; }
+.pc2::before { background: linear-gradient(115deg, transparent 52%, rgba(255,255,255,.14) 52% 60%, transparent 60%), linear-gradient(180deg, transparent 45%, rgba(4,12,20,.72)); }
+.pc3::before { background: radial-gradient(ellipse at 50% 110%, rgba(255,255,255,.2) 0 40%, transparent 41%), linear-gradient(180deg, transparent 45%, rgba(4,12,20,.72)); }
+.pc4::before { background: repeating-linear-gradient(90deg, rgba(255,255,255,.07) 0 10px, transparent 10px 22px), linear-gradient(180deg, transparent 45%, rgba(4,12,20,.72)); }
+.pc6::before { background: radial-gradient(circle at 30% 35%, rgba(255,255,255,.16) 0 26%, transparent 27%), linear-gradient(180deg, transparent 45%, rgba(4,12,20,.72)); }
+.wm { margin-top: 7px; }
+.wm__t { font-size: 15px; font-weight: var(--w-strong); color: var(--ink); line-height: 1.25; }
+.wm__m { font-size: 13px; color: var(--ink-3); display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+.wm__m .av { width: 20px; height: 20px; font-size: 11.5px; border-width: 1.5px; }
+.ce-soir { margin: 0 16px 10px; padding: 12px 14px; border-radius: 16px; background: var(--accent-tint); color: var(--accent-ink); display: flex; gap: 10px; align-items: center; font-size: 14.5px; }
+.ce-soir b { color: var(--accent-ink); }
+.stars { letter-spacing: 2px; color: var(--ink); font-size: 17px; }
+.stars i { font-style: normal; color: var(--ink-4); }
+.rate { display: flex; align-items: center; gap: 12px; min-height: 46px; }
+.rate .who { flex: 1; font-size: 15.5px; color: var(--ink); }
+.rate .nb { font-family: var(--font-mono); font-size: 13px; color: var(--ink-2); width: 30px; text-align: right; }
+.stepper { display: flex; align-items: center; gap: 0; background: var(--surface); border-radius: var(--r-pill); }
+.stepper .ib { width: 44px; height: 44px; font-size: 22px; color: var(--ink); }
+.stepper .v { min-width: 56px; text-align: center; font-family: var(--font-mono); font-size: 15px; color: var(--ink); font-weight: var(--w-strong); }
+.hero-w { display: flex; gap: 14px; padding: 0 16px 12px; }
+.hero-w .poster { width: 100px; flex: none; }
+
+/* Feuilles / modales */
+.scrim { position: absolute; inset: 0; background: var(--scrim); z-index: 5; }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 6; background: var(--surface); border-radius: 26px 26px 0 0; padding: 10px 0 0; display: flex; flex-direction: column; box-shadow: 0 -12px 40px rgba(0,0,0,.2); }
+.sheet__grab { width: 40px; height: 4px; border-radius: 4px; background: var(--rule-strong); margin: 0 auto 8px; }
+.res { display: flex; gap: 12px; align-items: center; padding: 8px 16px; min-height: 76px; }
+.res .poster { width: 44px; padding: 0; border-radius: 6px; flex: none; }
+.res .poster::before { background: radial-gradient(circle at 70% 28%, rgba(255,255,255,.2) 0 22%, transparent 23%); }
+
+/* Réglages */
+.set-h { padding: 18px 16px 6px; }
+.set { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 6px 16px; }
+.set__l { flex: 1; font-size: 16px; color: var(--ink); }
+.set__l small { display: block; font-size: 13.5px; color: var(--ink-3); }
+.sw { width: 52px; height: 32px; border-radius: var(--r-pill); background: var(--rule-strong); position: relative; flex: none; }
+.sw::after { content: ""; position: absolute; top: 4px; left: 4px; width: 24px; height: 24px; border-radius: 50%; background: var(--surface); transition: left .15s; }
+.sw.on { background: var(--accent-ink); }
+.sw.on::after { left: 24px; }
+.segc { display: grid; grid-template-columns: repeat(3, 1fr); background: var(--surface-2); border-radius: var(--r-pill); padding: 4px; margin: 4px 16px 6px; }
+.segc span { min-height: 40px; display: flex; align-items: center; justify-content: center; font-size: 15px; color: var(--ink-2); border-radius: var(--r-pill); }
+.segc span.on { background: var(--surface); color: var(--ink); font-weight: var(--w-strong); box-shadow: 0 1px 3px rgba(6,18,30,.14); }
+.group { background: var(--surface-2); border-radius: 18px; margin: 0 16px; overflow: hidden; }
+.group .set + .set { box-shadow: inset 0 1px 0 var(--rule); }
+.danger { color: var(--bad); font-weight: var(--w-strong); }
+
+/* Connexion */
+.login { flex: 1; display: flex; flex-direction: column; padding: 0 24px; }
+.mark { font-family: var(--font-display); font-weight: var(--w-strong); font-size: 64px; letter-spacing: -.03em; color: var(--ink); line-height: 1; }
+.mark em { font-style: normal; color: var(--accent); }
+.fld { margin-top: 14px; }
+.fld label { display: block; margin-bottom: 6px; }
+.inp { height: 52px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--rule); display: flex; align-items: center; padding: 0 16px; font-size: 16.5px; color: var(--ink); gap: 10px; }
+.inp--focus { border: 2px solid var(--accent-ink); background: var(--surface); padding-left: 15px; }
+.box { width: 22px; height: 22px; border-radius: 7px; background: var(--accent-ink); color: var(--surface); display: flex; align-items: center; justify-content: center; flex: none; }
+.ou { display: flex; align-items: center; gap: 12px; margin: 18px 0; }
+.ou::before, .ou::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
+
+.empty { padding: 36px 24px 0; text-align: center; }
+.empty .t-serif { font-size: 24px; line-height: 1.2; }
+.empty p { color: var(--ink-3); font-size: 15px; margin: 8px auto 0; max-width: 280px; }
+.qadd { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; }
+
+
+/* Dépenses */
+.xp { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 6px 16px; }
+.xp__ic { width: 36px; height: 36px; border-radius: 10px; background: var(--surface-2); color: var(--ink-2); display: flex; align-items: center; justify-content: center; flex: none; }
+.xp__t { font-size: 16px; color: var(--ink); line-height: 1.25; }
+.xp__m { font-size: 13.5px; color: var(--ink-3); display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+.xp__m .av { width: 20px; height: 20px; font-size: 11.5px; border-width: 1.5px; }
+.xp__a { text-align: right; font-variant-numeric: tabular-nums; }
+.xp__a b { display: block; font-size: 16px; color: var(--ink); font-weight: var(--w-strong); }
+.xp__a span { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-3); }
+.solde { margin: 0 16px 6px; background: var(--surface-2); border-radius: 18px; padding: 14px 16px; }
+.solde .t-serif { font-size: 23px; line-height: 1.2; margin-top: 4px; }
+.montant { font-variant-numeric: tabular-nums; }
+.amt { text-align: center; padding: 6px 16px 10px; }
+.amt__v { font-size: 46px; font-weight: var(--w-strong); color: var(--ink); letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.1; display: inline-flex; align-items: center; gap: 10px; }
+.amt__v .caret { height: 40px; }
+.frow { display: flex; align-items: center; gap: 10px; min-height: 50px; padding: 0 16px; }
+.frow > .lbl { width: 84px; flex: none; }
+.frow + .frow { box-shadow: inset 0 1px 0 var(--rule); }
+.who-t { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px 0 5px; border-radius: var(--r-pill); border: 1px solid var(--rule-strong); font-size: 15px; color: var(--ink-2); position: relative; }
+.who-t::before { content: ""; position: absolute; inset: -4px 0; }
+.who-t.on { border: 2px solid var(--accent-ink); color: var(--ink); font-weight: var(--w-strong); background: var(--accent-tint); padding-left: 4px; }
+.who-t .av { width: 24px; height: 24px; font-size: 11.5px; }
+.segc--s { margin: 0; flex: 1; }
+.segc--s span { min-height: 36px; font-size: 14.5px; }
+.kp { flex: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 8px 8px 4px; background: var(--card); }
+.kp span { height: 46px; border-radius: 8px; background: var(--surface); color: var(--ink); display: flex; align-items: center; justify-content: center; font-size: 22px; font-variant-numeric: tabular-nums; box-shadow: 0 1px 0 var(--rule-strong); }
+.kp span.w { background: var(--surface-2); font-size: 18px; }
+.recu { width: 40px; height: 40px; border-radius: 8px; background: repeating-linear-gradient(180deg, var(--surface) 0 5px, var(--rule) 5px 6px); border: 1px solid var(--rule-strong); flex: none; }
+.bal { padding: 10px 16px 4px; }
+.bal__h { display: flex; align-items: center; gap: 10px; min-height: 40px; }
+.bal__n { flex: 1; font-size: 16px; color: var(--ink); }
+.bal__v { font-family: var(--font-mono); font-size: 14px; color: var(--ink); font-weight: var(--w-strong); font-variant-numeric: tabular-nums; }
+.dv { position: relative; height: 16px; margin: 6px 0 4px; }
+.dv::before { content: ""; position: absolute; left: 50%; top: -4px; bottom: -4px; width: 2px; margin-left: -1px; background: var(--ink-4); }
+.dv i { position: absolute; top: 0; height: 16px; }
+.dv i.g { right: 50%; margin-right: 2px; border-radius: 4px 0 0 4px; }
+.dv i.d { left: 50%; margin-left: 2px; border-radius: 0 4px 4px 0; }
+.c-s1 { background: var(--s1); } .c-s2 { background: var(--s2); } .c-neutre { background: var(--ink-4); }
+.dv__ax { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-3); }
+.rb { margin: 12px 16px 0; background: var(--surface-2); border-radius: 18px; padding: 14px 16px 16px; }
+.rb__who { display: flex; align-items: center; gap: 8px; font-size: 15px; color: var(--ink); }
+.rb__amt { font-family: var(--font-display); font-size: 34px; font-weight: var(--w-strong); color: var(--ink); letter-spacing: var(--ls-head); margin: 4px 0 2px; font-variant-numeric: tabular-nums; }
+.hist { display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 4px 16px; }
+.hist + .hist { box-shadow: inset 0 1px 0 var(--rule); }
+.graphe { padding: 0 16px; }
+.barres { display: grid; gap: 6px; margin-top: 8px; }
+.barre { display: grid; grid-template-columns: 92px 1fr; align-items: center; gap: 10px; min-height: 30px; }
+.barre__l { font-size: 14px; color: var(--ink-2); }
+.barre__b { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.barre__b i { display: block; height: 16px; width: calc(var(--v) * .62%); min-width: 3px; border-radius: 0 4px 4px 0; background: var(--s1); }
+.barre__b span { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.part { display: flex; gap: 2px; height: 16px; margin-top: 10px; }
+.part i { display: block; height: 100%; }
+.part i:first-child { border-radius: 4px 0 0 4px; } .part i:last-child { border-radius: 0 4px 4px 0; }
+.legende { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 8px; font-size: 14px; color: var(--ink-2); }
+.legende span { display: inline-flex; align-items: center; gap: 6px; }
+.legende i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.chiffre b { display: block; font-family: var(--font-display); font-size: 32px; color: var(--ink); font-weight: var(--w-strong); letter-spacing: var(--ls-head); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.note { font-size: 13.5px; color: var(--ink-3); line-height: 1.45; }
+.tools--4 { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.tools--4 .tool { min-height: 0; padding: 12px 4px 10px; align-items: center; text-align: center; gap: 8px; justify-content: flex-start; }
+.tools--4 .tool__n { font-size: 13.5px; line-height: 1.2; }
+.tools--4 .tool__m { font-size: 12.5px; }
+
+/* Petits écrans : le cadre se resserre, rien ne déborde */
+@media (max-width: 440px) {
+  .page { padding-top: var(--sp-6); }
+  .phone { border-radius: 44px; padding: 7px; }
+  .scr { border-radius: 37px; }
+  .grille { gap: var(--sp-6); }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 10.5 12 3.5l8.5 7V20a1 1 0 0 1-1 1H15v-6H9v6H4.5a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h2.2l2.3 10.6a1 1 0 0 0 1 .8h8.6a1 1 0 0 0 1-.8L19.8 8H6.1"/><circle cx="9.5" cy="19.5" r="1.4"/><circle cx="16.5" cy="19.5" r="1.4"/></symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24"><rect x="3.5" y="7.5" width="17" height="12.5" rx="2.5"/><path d="M9 7.5V5.5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5.5v2M3.5 12.5h17"/></symbol>
+  <symbol id="i-tv" viewBox="0 0 24 24"><rect x="3" y="6.5" width="18" height="12.5" rx="2.5"/><path d="M8.5 21.5h7M9 2.5l3 4 3-4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></symbol>
+  <symbol id="i-dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.5"/><circle cx="9" cy="9" r=".9" fill="currentColor"/><circle cx="15" cy="15" r=".9" fill="currentColor"/><circle cx="15" cy="9" r=".9" fill="currentColor"/><circle cx="9" cy="15" r=".9" fill="currentColor"/><circle cx="12" cy="12" r=".9" fill="currentColor"/></symbol>
+  <symbol id="i-grip" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></g></symbol>
+  <symbol id="i-clip" viewBox="0 0 24 24"><path d="M20 11.5l-8 8a5 5 0 0 1-7-7l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4L15 7"/></symbol>
+  <symbol id="i-plane" viewBox="0 0 24 24"><path d="M10.2 13.6 4 16.5v-1.8l6.2-4.6V5a1.8 1.8 0 0 1 3.6 0v5.1l6.2 4.6v1.8l-6.2-2.9v4.6l2 1.6V21L12 20l-3.8 1v-1.2l2-1.6z"/></symbol>
+  <symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 18.5V6M3 14h18v4.5M21 14a3.5 3.5 0 0 0-3.5-3.5H11V14"/><circle cx="7" cy="11" r="1.6"/></symbol>
+  <symbol id="i-train" viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="14" rx="3"/><path d="M6 10.5h12M9.5 21l1.2-4M14.5 21l-1.2-4"/><circle cx="9.5" cy="13.7" r=".6" fill="currentColor"/><circle cx="14.5" cy="13.7" r=".6" fill="currentColor"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6.5h9M18 6.5h2M4 12h3M11 12h9M4 17.5h11M19 17.5h1"/><circle cx="15.5" cy="6.5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17.5" r="2"/></symbol>
+  <symbol id="i-wifioff" viewBox="0 0 24 24"><path d="M3 3l18 18M8.8 16.2a4.6 4.6 0 0 1 6.4 0M5.4 12.8a9.5 9.5 0 0 1 4.2-2.3M18.6 12.8a9.5 9.5 0 0 0-2.2-1.5M2.2 9.2a14 14 0 0 1 3.8-2.5M21.8 9.2A14 14 0 0 0 10.8 5.5"/><circle cx="12" cy="19.6" r=".8" fill="currentColor"/></symbol>
+  <symbol id="i-sync" viewBox="0 0 24 24"><path d="M19.5 12a7.5 7.5 0 0 1-13.4 4.6M4.5 12a7.5 7.5 0 0 1 13.4-4.6M18 3.5v4h-4M6 20.5v-4h4"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><circle cx="12" cy="5.5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="18.5" r="1.7"/></g></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7l8.5 6 8.5-6"/></symbol>
+  <symbol id="i-dl" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 6.5h16M7 12h10M10 17.5h4"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-5.8-6.5-11a6.5 6.5 0 0 1 13 0c0 5.2-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7.5V6a1.5 1.5 0 0 0-1.5-1.5H5.5A2.5 2.5 0 0 0 3 7v10.5A2.5 2.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V16"/><path d="M3 7a2.5 2.5 0 0 0 2.5 2.5h13A1.5 1.5 0 0 1 20 11v5h-4a2.5 2.5 0 0 1 0-5h4"/></symbol>
+  <symbol id="i-fork" viewBox="0 0 24 24"><path d="M6 3v6a2 2 0 0 0 4 0V3M8 11v10M17 21V3c-2.2 1.2-3.5 4-3.5 7.5H17"/></symbol>
+  <symbol id="i-cam" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M8.5 7 10 4.5h4L15.5 7"/><circle cx="12" cy="13.5" r="3.5"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20h16M7 16v-5M12 16V6M17 16v-8"/></symbol>
+  <symbol id="sb-sig" viewBox="0 0 18 13"><rect x="0" y="9" width="3" height="4" rx="1"/><rect x="5" y="6" width="3" height="7" rx="1"/><rect x="10" y="3" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="13" rx="1"/></symbol>
+  <symbol id="sb-wifi" viewBox="0 0 17 13"><path d="M8.5 13 0 3.6A12.6 12.6 0 0 1 8.5 0 12.6 12.6 0 0 1 17 3.6z"/></symbol>
+  <symbol id="sb-bat" viewBox="0 0 26 13"><rect x=".75" y=".75" width="22" height="11.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".5"/><rect x="3" y="3" width="15" height="7" rx="1.5"/><rect x="24" y="4.5" width="2" height="4" rx="1" opacity=".5"/></symbol>
+</svg>
+
+<main class="page">
+  <header class="hero">
+    <p class="eyebrow">Maquettes · version 0 · octobre 2026</p>
+    <h1>OhO, nos outils à deux</h1>
+    <p class="lede">Une app calme qui se tient d’une main dans l’allée de l’épicerie : papier blanc, encre marine, un seul bleu pour ce qu’on touche, et une couleur par personne (océan pour Aurélien, sable pour Auriane) pour savoir d’un coup d’œil qui a fait quoi.</p>
+    <div class="encadre"><b>Navigation.</b> Cinq onglets fixes en bas : l’Accueil et les quatre outils (Courses, Voyages, À regarder, Dépenses). Comme prévu, l’arrivée du quatrième outil a fait passer <b>Activité</b> dans l’accueil, où son fil s’ouvre en entier par « Tout voir ». L’ajout se fait dans chaque outil (champ ou bouton flottant) plutôt que par un « + » global ; les réglages vivent derrière l’avatar de l’accueil ; le bouton Retour d’Android ferme d’abord une feuille ouverte, puis remonte d’un écran.</div>
+  </header>
+
+  <!-- ============ 1. Entrer ============ -->
+  <section class="sec">
+    <p class="eyebrow">Parcours 1</p>
+    <h2>Entrer une fois, puis ne plus y penser</h2>
+    <p class="sec__intro">On se connecte rarement (session de 60 jours) ; l’accueil répond ensuite à trois questions : quoi acheter, quel est le prochain voyage, et qu’a fait l’autre depuis tout à l’heure.</p>
+    <div class="grille">
+
+      <figure class="fig">
+        <div class="phone"><div class="scr">
+          <div class="sb"><span>9:41</span><span class="sb__ic"><svg viewBox="0 0 18 13"><use href="#sb-sig"/></svg><svg viewBox="0 0 17 13"><use href="#sb-wifi"/></svg><svg viewBox="0 0 26 13"><use href="#sb-bat"/></svg></span></div><span class="cam"></span>
+          <div class="login">
+            <div style="margin-top:84px" class="mark">Oh<em>O</em></div>
+            <p class="t-serif" style="font-size:22px;margin:14px 0 0;font-weight:500">Nos outils, à deux.</p>
+            <p class="muted" style="margin:6px 0 0">Courses, voyages, soirées télé et comptes, au même endroit.</p>
+            <div class="fld mt24"><label class="lbl" >Courriel</label><div class="inp">aurelien@exemple.ca</div></div>
+            <div class="fld"><label class="lbl">Mot de passe</label><div class="inp inp--focus"><span style="letter-spacing:3px">••••••••••</span><span class="caret"></span><span class="grow"></span><svg class="i i--s" style="color:var(--ink-3)"><use href="#i-eye"/></svg></div></div>
+            <div class="row mt16" style="min-height:44px"><span class="box"><svg class="i i--xs" style="stroke-width:3"><use href="#i-check"/></svg></span><span class="small ink">Rester connecté sur cet appareil <span class="muted">· 60 jours</span></span></div>
+            <button class="btn btn--plein btn--bloc mt12">Se connecter</button>
+            <div class="ou"><span class="lbl">ou</span></div>
+            <button class="btn btn--bloc"><svg class="i i--s"><use href="#i-mail"/></svg>Recevoir un lien par courriel</button>
+            <p class="muted" style="margin-top:auto;padding-bottom:12px;text-align:center"><svg class="i i--xs" style="vertical-align:-3px"><use href="#i-lock"/></svg> Espace privé · pas d’inscription libre</p>
+          </div>
+          <div class="gest"></div>
+        </div></div>
+        <figcaption class="fig__cap"><span class="fig__no">01 · Connexion</span><p class="fig__txt">Mot de passe d’abord, <b>lien magique</b> en secours ; « rester connecté » est coché par défaut et dit sa durée.</p></figcaption>
+      </figure>
+
+      <figure class="fig" data-twin>
+        <div class="phone" data-theme="light"><div class="scr">
+          <div class="sb"><span>18:42</span><span class="sb__ic"><svg viewBox="0 0 18 13"><use href="#sb-sig"/></svg><svg viewBox="0 0 17 13"><use href="#sb-wifi"/></svg><svg viewBox="0 0 26 13"><use href="#sb-bat"/></svg></span></div><span class="cam"></span>
+          <div class="ab">
+            <div class="grow">
+              <div class="ab__sub">Aurélien &amp; Auriane</div>
+              <h3 class="ab__t">Bonsoir Aurélien</h3>
+            </div>
+            <button class="ib" aria-label="Réglages"><span class="av av--a av--l">AL</span></button>
+          </div>
+          <div class="body pad">
+            <div class="row" style="margin:-2px 0 12px"><span class="sync"><svg class="i i--xs" style="stroke-width:2.4"><use href="#i-check"/></svg>Synchronisé</span><span class="when">· il y a 4 s</span></div>
+            <div class="card">
+              <div class="row"><span class="lbl lbl--acc grow">Liste par défaut</span><span class="lbl">IGA</span></div>
+              <div class="row mt8"><div class="grow"><div class="t-serif" style="font-size:22px">Épicerie</div><div class="muted">12 à acheter · 5 dans le panier</div></div><button class="btn btn--plein btn--s">Ouvrir</button></div>
+            </div>
+            <div class="card">
+              <div class="row"><span class="lbl lbl--acc grow">Prochain voyage</span><span class="pill pill--accent">Planifié</span></div>
+              <div class="row mt8"><div class="trip__cv" style="background:var(--surface)">🇵🇹</div><div class="grow"><div class="t-serif" style="font-size:22px">Lisbonne &amp; Porto</div><div class="muted">6 – 16 nov. · dans 15 jours</div></div></div>
+              <div class="row mt12 small"><span class="grow ink">Checklist de préparation</span><span class="qte">12 / 19</span></div>
+              <div class="jauge mt4"><i style="width:63%"></i></div>
+            </div>
+            <div class="lbl mt20" style="margin-bottom:8px">Outils</div>
+            <div class="tools tools--4">
+              <div class="tool"><span class="tool__ic"><svg class="i"><use href="#i-cart"/></svg></span><div><div class="tool__n">Courses</div><div class="tool__m">3 listes</div></div></div>
+              <div class="tool"><span class="tool__ic"><svg class="i"><use href="#i-bag"/></svg></span><div><div class="tool__n">Voyages</div><div class="tool__m">1 actif</div></div></div>
+              <div class="tool"><span class="tool__ic"><svg class="i"><use href="#i-tv"/></svg></span><div><div class="tool__n">À regarder</div><div class="tool__m">14 à voir</div></div></div>
+              <div class="tool"><span class="tool__ic"><svg class="i"><use href="#i-wallet"/></svg></span><div><div class="tool__n">Dépenses</div><div class="tool__m">2 carnets</div></div></div>
+            </div>
+            <div class="row mt20"><span class="lbl grow">Activité récente</span><a class="lien small">Tout voir</a></div>
+            <ul class="feed">
+              <li><span class="av av--o">AN</span><span class="txt grow"><b>Auriane</b> a coché 3 items dans Épicerie</span><span class="when">2 min</span></li>
+              <li><span class="av av--o">AN</span><span class="txt grow"><b>Auriane</b> a ajouté <b>Épicerie IGA · 87,40 $</b> dans Quotidien</span><span class="when">40 min</span></li>
+              <li><span class="av av--o">AN</span><span class="txt grow"><b>Auriane</b> a ajouté <b>Past Lives</b> à À regarder</span><span class="when">1 h</span></li>
+            </ul>
+          </div>
+          <nav class="tabs">
+            <div class="tab on"><span class="tab__ic"><svg class="i"><use href="#i-home"/></svg></span>Accueil</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-cart"/></svg></span>Courses</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-bag"/></svg></span>Voyages</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-tv"/></svg></span>À regarder</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-wallet"/></svg></span>Dépenses</div>
+          </nav><div class="gest"></div>
+        </div></div>
+        <figcaption class="fig__cap"><span class="fig__no">02 · Accueil · clair</span><p class="fig__txt">La liste par défaut et le prochain voyage en tête, la grille d’outils dessous, le fil d’activité au pied. L’état de synchro est écrit, pas suggéré par un point.</p></figcaption>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- ============ 2. Courses ============ -->
+  <section class="sec">
+    <p class="eyebrow">Parcours 2</p>
+    <h2>Courses : cocher sans regarder, ajouter sans taper</h2>
+    <p class="sec__intro">La liste suit l’ordre des rayons du magasin, ce qu’on coche descend dans le panier, et le champ d’ajout reste collé au-dessus du clavier avec le catalogue de ce qu’on achète déjà.</p>
+    <div class="grille">
+
+      <figure class="fig" data-twin>
+        <div class="phone" data-theme="light"><div class="scr">
+          <div class="sb"><span>10:12</span><span class="sb__ic"><svg viewBox="0 0 18 13"><use href="#sb-sig"/></svg><svg viewBox="0 0 17 13"><use href="#sb-wifi"/></svg><svg viewBox="0 0 26 13"><use href="#sb-bat"/></svg></span></div><span class="cam"></span>
+          <div class="ab">
+            <h3 class="ab__t">Épicerie</h3>
+            <span class="sync" style="margin-right:4px"><svg class="i i--xs" style="stroke-width:2.4"><use href="#i-sync"/></svg>En direct</span>
+            <button class="ib" aria-label="Options de la liste"><svg class="i"><use href="#i-more"/></svg></button>
+          </div>
+          <div class="chips">
+            <button class="chip on">Épicerie <span class="n">12</span></button>
+            <button class="chip">Pharmacie <span class="n">5</span></button>
+            <button class="chip">Costco <span class="n">0</span></button>
+            <button class="chip" aria-label="Nouvelle liste"><svg class="i i--xs"><use href="#i-plus"/></svg></button>
+          </div>
+          <div class="body">
+            <div class="rayon lbl">Fruits &amp; légumes</div>
+            <div class="it"><button class="chk"><svg class="i" style="stroke-width:3"><use href="#i-check"/></svg></button><div><div class="it__l">Avocats</div><div class="it__n">bien mûrs</div></div><div class="it__r"><span class="qte">×3</span><span class="av av--o">AN</span></div></div>
+            <div class="it"><button class="chk"><svg class="i" style="stroke-width:3"><use href="#i-check"/></svg></button><div class="it__l">Coriandre</div><div class="it__r"><span class="av av--a">AL</span></div></div>
+            <div class="it"><button class="chk"><svg class="i" style="stroke-width:3"><use href="#i-check"/></svg></button><div class="it__l">Bananes</div><div class="it__r"><span class="qte">6</span><span class="av av--a">AL</span></div></div>
+            <div class="rayon lbl">Produits laitiers</div>
+            <div class="it"><button class="chk"><svg class="i" style="stroke-width:3"><use href="#i-check"/></svg></button><div><div class="it__l">Lait 2 %</div><div class="it__n">Natrel, 2 L</div></div><div class="it__r"><span class="av av--o">AN</span></div></div>
+            <div class="it"><button class="chk"><svg class="i" style="stroke-width:3"><use href="#i-check"/></svg></button><div class="it__l">Yogourt grec nature</div><div class="it__r"><span class="qte">750 g</span><span class="av av--o">AN</span></div></div>
+            <div class="rayon lbl">Boulangerie</div>
+            <div class="it"><button class="chk"><svg class="i" style="stroke-width:3"><use href="#i-check"/></svg></button><div><div class="it__l">Pain au levain</div><div class="it__n">tranché</div></div><div class="it__r"><span class="av av--a">AL</span></div></div>
+            <div class="rayon lbl">Garde-manger</div>
+            <div class="it"><button class="chk"><svg class="i" style="stroke-width:3"><use href="#i-check"/></svg></button><div class="it__l">Rigatoni</div><div class="it__r"><span class="qte">×2</span><span class="av av--a">AL</span></div></div>
+          </div>
+          <div class="panier">
+            <span class="panier__t"><svg class="i i--s"><use href="#i-up"/></svg><span><b>Dans le panier</b> · 5</span></span>
+            <button class="btn btn--s" style="background:var(--surface)">Vider les cochés</button>
+          </div>
+          <div class="ajout"><div class="champ"><svg class="i i--s"><use href="#i-plus"/></svg>Ajouter : lait, œufs, pain…</div></div>
+          <nav class="tabs">
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-home"/></svg></span>Accueil</div>
+            <div class="tab on"><span class="tab__ic"><svg class="i"><use href="#i-cart"/></svg></span>Courses</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-bag"/></svg></span>Voyages</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-tv"/></svg></span>À regarder</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-wallet"/></svg></span>Dépenses</div>
+          </nav><div class="gest"></div>
+        </div></div>
+        <figcaption class="fig__cap"><span class="fig__no">03 · Courses, la liste · clair</span><p class="fig__txt">Rayons en étiquettes mono, cible de case à cocher de 48 px, <b>initiales cerclées</b> (AL, AN) de qui a ajouté. Touchez une case : l’item se coche (interactif).</p></figcaption>
+      </figure>
+
+      <figure class="fig">
+        <div class="phone"><div class="scr">
+          <div class="sb"><span>10:14</span><span class="sb__ic"><svg viewBox="0 0 18 13"><use href="#sb-sig"/></svg><svg viewBox="0 0 17 13"><use href="#sb-wifi"/></svg><svg viewBox="0 0 26 13"><use href="#sb-bat"/></svg></span></div><span class="cam"></span>
+          <div class="ab">
+            <h3 class="ab__t">Épicerie</h3>
+            <button class="ib"><svg class="i"><use href="#i-more"/></svg></button>
+          </div>
+          <div class="body" style="opacity:.55">
+            <div class="rayon lbl">Fruits &amp; légumes</div>
+            <div class="it"><button class="chk"><svg class="i"><use href="#i-check"/></svg></button><div class="it__l">Avocats</div><div class="it__r"><span class="qte">×3</span><span class="av av--o">AN</span></div></div>
+            <div class="it"><button class="chk"><svg class="i"><use href="#i-check"/></svg></button><div class="it__l">Coriandre</div><div class="it__r"><span class="av av--a">AL</span></div></div>
+          </div>
+          <div class="sugg">
+            <div class="sugg__h"><span class="lbl">Déjà achetés</span><span class="muted">Catalogue · 214</span></div>
+            <div class="sg"><div class="grow"><div class="sg__l"><mark>Fr</mark>aises</div><div class="sg__m">Fruits &amp; légumes · 18 fois</div></div><span class="sg__plus"><svg class="i i--s"><use href="#i-plus"/></svg></span></div>
+            <div class="sg"><div class="grow"><div class="sg__l"><mark>Fr</mark>omage cheddar fort</div><div class="sg__m">Produits laitiers · 11 fois</div></div><span class="sg__plus"><svg class="i i--s"><use href="#i-plus"/></svg></span></div>
+            <div class="sg"><div class="grow"><div class="sg__l"><mark>Fr</mark>amboises</div><div class="sg__m">Fruits &amp; légumes · 6 fois</div></div><span class="sg__plus"><svg class="i i--s"><use href="#i-plus"/></svg></span></div>
+            <div class="sg"><div class="grow"><div class="sg__l">Ajouter « œufs, <mark>fr</mark> »</div><div class="sg__m">2 items · la virgule sépare</div></div><span class="lbl">Entrée</span></div>
+            <div class="ajout"><div class="champ champ--focus">œufs, fr<span class="caret"></span></div><button class="ib ib--go" aria-label="Ajouter"><svg class="i"><use href="#i-check"/></svg></button></div>
+          </div>
+          <div class="kb">
+            <div class="kb__sug"><span>fraises</span><span>fromage</span><span>framboises</span></div>
+            <div class="kb__r"><span>q</span><span>w</span><span>e</span><span>r</span><span>t</span><span>y</span><span>u</span><span>i</span><span>o</span><span>p</span></div>
+            <div class="kb__r"><span>a</span><span>s</span><span>d</span><span>f</span><span>g</span><span>h</span><span>j</span><span>k</span><span>l</span></div>
+            <div class="kb__r"><span class="w">⇧</span><span>z</span><span>x</span><span>c</span><span>v</span><span>b</span><span>n</span><span>m</span><span class="w">⌫</span></div>
+            <div class="kb__r"><span class="w">?123</span><span>,</span><span class="sp">Français</span><span>.</span><span class="go">↵</span></div>
+          </div>
+          <div class="gest" style="background:var(--card)"></div>
+        </div></div>
+        <figcaption class="fig__cap"><span class="fig__no">04 · Ajout rapide, clavier ouvert</span><p class="fig__txt">Le champ monte avec le clavier (<b>resizes-content</b>) ; le catalogue propose le rayon et la fréquence, la virgule ajoute plusieurs items d’un coup.</p></figcaption>
+      </figure>
+
+      <figure class="fig">
+        <div class="phone"><div class="scr">
+          <div class="sb"><span>10:20</span><span class="sb__ic"><svg viewBox="0 0 18 13"><use href="#sb-sig"/></svg><svg viewBox="0 0 17 13"><use href="#sb-wifi"/></svg><svg viewBox="0 0 26 13"><use href="#sb-bat"/></svg></span></div><span class="cam"></span>
+          <div class="ab ab--back">
+            <button class="ib"><svg class="i"><use href="#i-back"/></svg></button>
+            <div class="grow"><div class="ab__sub">Épicerie · IGA</div><h3 class="ab__t ab__t--s">Ordre des rayons</h3></div>
+            <button class="btn btn--s btn--plein" style="margin-right:4px">OK</button>
+          </div>
+          <p class="muted pad" style="margin:4px 0 10px">Glissez dans l’ordre où vous marchez dans le magasin. Les nouveaux items suivent cet ordre.</p>
+          <div class="body">
+            <div class="drag"><span class="drag__n">01</span><span class="drag__l">Fruits &amp; légumes</span><span class="drag__c">3</span><span class="grip"><svg class="i"><use href="#i-grip"/></svg></span></div>
+            <div class="drag"><span class="drag__n">02</span><span class="drag__l">Boulangerie</span><span class="drag__c">1</span><span class="grip"><svg class="i"><use href="#i-grip"/></svg></span></div>
+            <div class="drag lift"><span class="drag__n">03</span><span class="drag__l">Produits laitiers</span><span class="drag__c">2</span><span class="grip" style="color:var(--accent-ink)"><svg class="i"><use href="#i-grip"/></svg></span></div>
+            <div class="drag ghost"></div>
+            <div class="drag"><span class="drag__n">04</span><span class="drag__l">Viandes &amp; poissons</span><span class="drag__c">0</span><span class="grip"><svg class="i"><use href="#i-grip"/></svg></span></div>
+            <div class="drag"><span class="drag__n">05</span><span class="drag__l">Garde-manger</span><span class="drag__c">1</span><span class="grip"><svg class="i"><use href="#i-grip"/></svg></span></div>
+            <div class="drag"><span class="drag__n">06</span><span class="drag__l">Surgelés</span><span class="drag__c">0</span><span class="grip"><svg class="i"><use href="#i-grip"/></svg></span></div>
+            <div class="drag"><span class="drag__n">07</span><span class="drag__l">Ménager</span><span class="drag__c">0</span><span class="grip"><svg class="i"><use href="#i-grip"/></svg></span></div>
+            <div class="drag"><span class="drag__n">08</span><span class="drag__l">Autres</span><span class="drag__c">0</span><span class="grip"><svg class="i"><use href="#i-grip"/></svg></span></div>
+            <div class="pad mt12"><button class="btn btn--bloc"><svg class="i i--s"><use href="#i-plus"/></svg>Nouveau rayon</button></div>
+          </div>
+          <div class="gest"></div>
+        </div></div>
+        <figcaption class="fig__cap"><span class="fig__no">05 · Réordonner les rayons</span><p class="fig__txt">Une poignée à droite, le rayon soulevé porte un contour bleu, l’emplacement visé reste en <b>teinte d’accent</b>. Le compte d’items aide à repérer les rayons vides.</p></figcaption>
+      </figure>
+
+      <figure class="fig">
+        <div class="phone"><div class="scr">
+          <div class="sb"><span>17:03</span><span class="sb__ic"><svg viewBox="0 0 18 13"><use href="#sb-sig"/></svg><svg viewBox="0 0 26 13"><use href="#sb-bat"/></svg></span></div><span class="cam"></span>
+          <div class="ab">
+            <h3 class="ab__t">Pharmacie</h3>
+            <button class="ib"><svg class="i"><use href="#i-more"/></svg></button>
+          </div>
+          <div class="banner"><svg class="i i--s"><use href="#i-wifioff"/></svg><span>Hors ligne · 2 modifications en attente</span></div>
+          <div class="chips mt8">
+            <button class="chip">Épicerie <span class="n">12</span></button>
+            <button class="chip on">Pharmacie <span class="n">5</span></button>
+            <button class="chip">Costco <span class="n">0</span></button>
+          </div>
+          <div class="body">
+            <div class="rayon lbl">Pharmaprix · Soins</div>
+            <div class="it done"><button class="chk"><svg class="i" style="stroke-width:3"><use href="#i-check"/></svg></button><div><div class="it__l">Ibuprofène 200 mg</div><div class="it__n">format 100</div></div><div class="it__r"><span class="att">En attente</span></div></div>
+            <div class="it"><button class="chk"><svg class="i" style="stroke-width:3"><use href="#i-check"/></svg></button><div class="it__l">Pansements assortis</div><div class="it__r"><span class="av av--o">AN</span></div></div>
+            <div class="it"><button class="chk"><svg class="i" style="stroke-width:3"><use href="#i-check"/></svg></button><div class="it__l">Crème solaire FPS 50</div><div class="it__r"><span class="av av--a">AL</span></div></div>
+            <div class="rayon lbl">Hygiène</div>
+            <div class="it"><button class="chk"><svg class="i" style="stroke-width:3"><use href="#i-check"/></svg></button><div><div class="it__l">Brosses à dents souples</div><div class="it__n">ajouté hors ligne</div></div><div class="it__r"><span class="att">En attente</span></div></div>
+            <div class="it"><button class="chk"><svg class="i" style="stroke-width:3"><use href="#i-check"/></svg></button><div class="it__l">Soie dentaire</div><div class="it__r"><span class="av av--o">AN</span></div></div>
+            <p class="muted pad mt16">Dernière synchro à 16 h 51. Les cases cochées hors ligne seront envoyées dès le retour du réseau ; le reste de la liste est l’état connu.</p>
+          </div>
+          <div class="ajout"><div class="champ"><svg class="i i--s"><use href="#i-plus"/></svg>Ajouter un article…</div></div>
+          <nav class="tabs">
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-home"/></svg></span>Accueil</div>
+            <div class="tab on"><span class="tab__ic"><svg class="i"><use href="#i-cart"/></svg></span>Courses</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-bag"/></svg></span>Voyages</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-tv"/></svg></span>À regarder</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-wallet"/></svg></span>Dépenses</div>
+          </nav><div class="gest"></div>
+        </div></div>
+        <figcaption class="fig__cap"><span class="fig__no">06 · Hors ligne</span><p class="fig__txt">Bandeau en paire <b>attention</b> (fond + texte + mot) sous la barre de titre ; chaque écriture en file d’attente porte « en attente » à la place de l’avatar.</p></figcaption>
+      </figure>
+
+      <figure class="fig">
+        <div class="phone"><div class="scr">
+          <div class="sb"><span>11:30</span><span class="sb__ic"><svg viewBox="0 0 18 13"><use href="#sb-sig"/></svg><svg viewBox="0 0 17 13"><use href="#sb-wifi"/></svg><svg viewBox="0 0 26 13"><use href="#sb-bat"/></svg></span></div><span class="cam"></span>
+          <div class="ab">
+            <h3 class="ab__t">Costco</h3>
+            <button class="ib"><svg class="i"><use href="#i-more"/></svg></button>
+          </div>
+          <div class="chips">
+            <button class="chip">Épicerie <span class="n">12</span></button>
+            <button class="chip">Pharmacie <span class="n">5</span></button>
+            <button class="chip on">Costco <span class="n">0</span></button>
+          </div>
+          <div class="body">
+            <div class="empty">
+              <div class="tool__ic" style="margin:0 auto 14px;width:56px;height:56px;border-radius:18px"><svg class="i"><use href="#i-cart"/></svg></div>
+              <div class="t-serif">Rien à acheter chez Costco</div>
+              <p>Dernière visite le 4 octobre avec Auriane. Vos achats habituels ici, en un geste :</p>
+              <div class="qadd">
+                <button class="chip"><svg class="i i--xs"><use href="#i-plus"/></svg>Papier hygiénique</button>
+                <button class="chip"><svg class="i i--xs"><use href="#i-plus"/></svg>Café en grains</button>
+                <button class="chip"><svg class="i i--xs"><use href="#i-plus"/></svg>Huile d’olive</button>
+                <button class="chip"><svg class="i i--xs"><use href="#i-plus"/></svg>Saumon fumé</button>
+              </div>
+            </div>
+          </div>
+          <div class="ajout"><div class="champ"><svg class="i i--s"><use href="#i-plus"/></svg>Ajouter un article…</div></div>
+          <nav class="tabs">
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-home"/></svg></span>Accueil</div>
+            <div class="tab on"><span class="tab__ic"><svg class="i"><use href="#i-cart"/></svg></span>Courses</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-bag"/></svg></span>Voyages</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-tv"/></svg></span>À regarder</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-wallet"/></svg></span>Dépenses</div>
+          </nav><div class="gest"></div>
+        </div></div>
+        <figcaption class="fig__cap"><span class="fig__no">07 · État vide</span><p class="fig__txt">Une liste vide n’est pas une impasse : elle rappelle la dernière visite et propose les <b>achats fréquents</b> de ce magasin, tirés du catalogue.</p></figcaption>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- ============ 3. Voyages ============ -->
+  <section class="sec">
+    <p class="eyebrow">Parcours 3</p>
+    <h2>Voyages : tout ce qu’il faut pour partir, au même endroit</h2>
+    <p class="sec__intro">Chaque voyage passe d’idée à terminé ; sa fiche réunit les idées sur place, la checklist de préparation (la même mécanique que les courses) et les réservations avec leurs pièces jointes.</p>
+    <div class="grille">
+
+      <figure class="fig">
+        <div class="phone"><div class="scr">
+          <div class="sb"><span>20:05</span><span class="sb__ic"><svg viewBox="0 0 18 13"><use href="#sb-sig"/></svg><svg viewBox="0 0 17 13"><use href="#sb-wifi"/></svg><svg viewBox="0 0 26 13"><use href="#sb-bat"/></svg></span></div><span class="cam"></span>
+          <div class="ab"><h3 class="ab__t">Voyages</h3><button class="ib"><svg class="i"><use href="#i-search"/></svg></button></div>
+          <div class="chips">
+            <button class="chip on">Tous <span class="n">6</span></button>
+            <button class="chip">Idée <span class="n">2</span></button>
+            <button class="chip">Planifié <span class="n">2</span></button>
+            <button class="chip">Terminé <span class="n">1</span></button>
+          </div>
+          <div class="body">
+            <div class="rayon lbl">Maintenant</div>
+            <div class="trip"><div class="trip__cv">🌲</div><div class="grow"><div class="trip__t">Chalet à Sutton</div><div class="trip__d">20 – 24 oct. · 4 nuits</div></div><div class="trip__s"><span class="pill pill--plein">En cours</span><span class="when">jusqu’à vendredi</span></div></div>
+            <div class="rayon lbl">À venir</div>
+            <div class="trip"><div class="trip__cv">🇵🇹</div><div class="grow"><div class="trip__t">Lisbonne &amp; Porto</div><div class="trip__d">6 – 16 nov. · 10 nuits</div></div><div class="trip__s"><span class="pill pill--accent">Planifié</span><span class="when">J – 15</span></div></div>
+            <div class="trip"><div class="trip__cv">⛷️</div><div class="grow"><div class="trip__t">Ski au Massif</div><div class="trip__d">13 – 15 févr. · Charlevoix</div></div><div class="trip__s"><span class="pill pill--accent">Planifié</span><span class="when">J – 114</span></div></div>
+            <div class="rayon lbl">Un jour</div>
+            <div class="trip"><div class="trip__cv">🌊</div><div class="grow"><div class="trip__t">Tour de la Gaspésie</div><div class="trip__d">Été 2027 · Percé, Forillon</div></div><div class="trip__s"><span class="pill">Idée</span></div></div>
+            <div class="trip"><div class="trip__cv">🗾</div><div class="grow"><div class="trip__t">Japon au printemps</div><div class="trip__d">Sans dates</div></div><div class="trip__s"><span class="pill">Idée</span></div></div>
+            <div class="rayon lbl">Souvenirs</div>
+            <div class="trip"><div class="trip__cv">🍂</div><div class="grow"><div class="trip__t">Kamouraska</div><div class="trip__d">12 – 14 sept.</div></div><div class="trip__s"><span class="pill pill--ok">Terminé</span></div></div>
+            <button class="fab"><svg class="i"><use href="#i-plus"/></svg>Voyage</button>
+          </div>
+          <nav class="tabs">
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-home"/></svg></span>Accueil</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-cart"/></svg></span>Courses</div>
+            <div class="tab on"><span class="tab__ic"><svg class="i"><use href="#i-bag"/></svg></span>Voyages</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-tv"/></svg></span>À regarder</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-wallet"/></svg></span>Dépenses</div>
+          </nav><div class="gest"></div>
+        </div></div>
+        <figcaption class="fig__cap"><span class="fig__no">08 · Voyages, la liste</span><p class="fig__txt">Groupés par moment plutôt que par statut ; la pastille écrit le statut (idée neutre, planifié en teinte, en cours plein, terminé en paire <b>conforme</b>).</p></figcaption>
+      </figure>
+
+      <figure class="fig" data-twin>
+        <div class="phone" data-theme="light"><div class="scr">
+          <div class="sb"><span>20:07</span><span class="sb__ic"><svg viewBox="0 0 18 13"><use href="#sb-sig"/></svg><svg viewBox="0 0 17 13"><use href="#sb-wifi"/></svg><svg viewBox="0 0 26 13"><use href="#sb-bat"/></svg></span></div><span class="cam"></span>
+          <div class="ab ab--back"><button class="ib"><svg class="i"><use href="#i-back"/></svg></button><span class="grow"></span><button class="ib"><svg class="i"><use href="#i-more"/></svg></button></div>
+          <div class="hd-trip">
+            <div class="row"><span class="pill pill--accent">Planifié</span><span class="when">dans 15 jours</span></div>
+            <div class="t-serif mt8">Lisbonne &amp; Porto</div>
+            <div class="muted mt4">Jeu. 6 – dim. 16 novembre 2026 · 10 nuits</div>
+          </div>
+          <div class="seg" data-tabs>
+            <button data-p="idees">Idées</button>
+            <button data-p="check">Checklist</button>
+            <button data-p="resa" class="on">Réservations</button>
+            <button data-p="dep">Dépenses</button>
+          </div>
+          <div class="body" style="padding-top:14px">
+            <div class="pane" data-pane="idees">
+              <div class="trip" style="min-height:64px"><div class="grow"><div class="trip__t" style="font-size:16px">Pastéis de Belém</div><div class="trip__d">Belém · aller tôt, file courte avant 9 h</div></div><span class="av av--o">AN</span></div>
+              <div class="trip" style="min-height:64px"><div class="grow"><div class="trip__t" style="font-size:16px">Tram 28 jusqu’à Graça</div><div class="trip__d">Alfama · coucher de soleil au miradouro</div></div><span class="av av--a">AL</span></div>
+              <div class="trip" style="min-height:64px"><div class="grow"><div class="trip__t" style="font-size:16px">Journée à Sintra</div><div class="trip__d">Pena et Quinta da Regaleira · billets en ligne</div></div><span class="av av--o">AN</span></div>
+              <div class="trip" style="min-height:64px"><div class="grow"><div class="trip__t" style="font-size:16px">Caves de Porto à Gaia</div><div class="trip__d">Graham’s ou Taylor’s · réserver la visite</div></div><span class="av av--a">AL</span></div>
+              <div class="trip" style="min-height:64px"><div class="grow"><div class="trip__t" style="font-size:16px">Livraria Lello</div><div class="trip__d">Porto · billet daté</div></div><span class="av av--o">AN</span></div>
+            </div>
+            <div class="pane" data-pane="check">
+              <div class="pad" style="margin-bottom:8px"><div class="row small"><span class="grow ink">Prêt à 63 %</span><span class="qte">12 / 19</span></div><div class="jauge mt4"><i style="width:63%"></i></div></div>
+              <div class="rayon lbl">Documents</div>
+              <div class="it done"><button class="chk"><svg class="i" style="stroke-width:3"><use href="#i-check"/></svg></button><div class="it__l">Passeports valides</div><div class="it__r"><span class="av av--a">AL</span></div></div>
+              <div class="it"><button class="chk"><svg class="i" style="stroke-width:3"><use href="#i-check"/></svg></button><div class="it__l">Assurance voyage</div><div class="it__r"><span class="av av--o">AN</span></div></div>
+              <div class="rayon lbl">Valise</div>
+              <div class="it"><button class="chk"><svg class="i" style="stroke-width:3"><use href="#i-check"/></svg></button><div class="it__l">Adaptateur prise européenne</div><div class="it__r"><span class="qte">×2</span></div></div>
+              <div class="it done"><button class="chk"><svg class="i" style="stroke-width:3"><use href="#i-check"/></svg></button><div class="it__l">Imperméable</div><div class="it__r"><span class="av av--o">AN</span></div></div>
+              <div class="it"><button class="chk"><svg class="i" style="stroke-width:3"><use href="#i-check"/></svg></button><div class="it__l">Souliers de marche</div><div class="it__r"><span class="av av--a">AL</span></div></div>
+            </div>
+            <div class="pane on" data-pane="resa">
+              <div class="bk">
+                <div class="bk__h"><span class="bk__ic"><svg class="i i--s"><use href="#i-plane"/></svg></span><div class="grow"><div class="bk__t">Vol YUL → LIS</div><div class="bk__m">Air Transat TS 214</div></div><span class="lbl">Aller</span></div>
+                <dl class="kv"><dt>Départ</dt><dd>jeu. 6 nov. · 21 h 35</dd><dt>Réf.</dt><dd style="font-family:var(--font-mono)">QX7P2M</dd></dl>
+                <div class="pj"><svg class="i i--s"><use href="#i-clip"/></svg>cartes-embarquement.pdf<span class="muted">212 Ko</span></div>
+              </div>
+              <div class="bk">
+                <div class="bk__h"><span class="bk__ic"><svg class="i i--s"><use href="#i-bed"/></svg></span><div class="grow"><div class="bk__t">Appartement à Alfama</div><div class="bk__m">Airbnb · 6 nuits</div></div><span class="qte">1 120 €</span></div>
+                <dl class="kv"><dt>Dates</dt><dd>7 – 12 nov.</dd><dt>Arrivée</dt><dd>dès 14 h · boîte à clés</dd></dl>
+                <div class="pj"><svg class="i i--s"><use href="#i-clip"/></svg>confirmation-alfama.pdf<span class="muted">88 Ko</span></div>
+              </div>
+              <div class="bk">
+                <div class="bk__h"><span class="bk__ic"><svg class="i i--s"><use href="#i-train"/></svg></span><div class="grow"><div class="bk__t">Train Lisbonne → Porto</div><div class="bk__m">CP Alfa Pendular · mer. 12 nov. · 9 h 09</div></div></div>
+              </div>
+            </div>
+<div class="pane" data-pane="dep">
+              <div class="solde" style="margin-top:0">
+                <div class="row"><span class="lbl grow">Carnet lié</span><span class="qte">3 261,36 $</span></div>
+                <div class="t-serif">Tu dois 71,72 $ à Auriane</div>
+                <a class="lien small" style="display:inline-flex;align-items:center;gap:4px;min-height:44px">Ouvrir le carnet <svg class="i i--xs"><use href="#i-right"/></svg></a>
+              </div>
+              <div class="xp"><span class="xp__ic"><svg class="i i--s"><use href="#i-pin"/></svg></span><div class="grow"><div class="xp__t">Billets Sintra</div><div class="xp__m"><span class="av av--a">AL</span>Activités</div></div><div class="xp__a"><b>48,00 €</b><span>72,96 $</span></div></div>
+              <div class="xp"><span class="xp__ic"><svg class="i i--s"><use href="#i-bed"/></svg></span><div class="grow"><div class="xp__t">Appartement Alfama</div><div class="xp__m"><span class="av av--o">AN</span>Logement</div></div><div class="xp__a"><b>1 120,00 €</b><span>1 702,40 $</span></div></div>
+              <div class="xp"><span class="xp__ic"><svg class="i i--s"><use href="#i-plane"/></svg></span><div class="grow"><div class="xp__t">Vols YUL ⇄ LIS</div><div class="xp__m"><span class="av av--a">AL</span>Transport</div></div><div class="xp__a"><b>1 486,00 $</b><span>2 billets</span></div></div>
+            </div>
+            <button class="fab"><svg class="i"><use href="#i-plus"/></svg>Ajouter</button>
+          </div>
+          <div class="gest"></div>
+        </div></div>
+        <figcaption class="fig__cap"><span class="fig__no">09 · Fiche voyage · clair</span><p class="fig__txt">En-tête serif, quatre onglets soulignés, dont <b>Dépenses</b> qui résume le carnet lié. Réservations en cartes d’aplat avec <b>pièce jointe</b> (URL signée). Les onglets fonctionnent : touchez Idées, Checklist ou Dépenses.</p></figcaption>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- ============ 4. À regarder ============ -->
+  <section class="sec">
+    <p class="eyebrow">Parcours 4</p>
+    <h2>À regarder : décider en moins d’une minute</h2>
+    <p class="sec__intro">Le filtre « Ce soir » réduit la liste à ce qui tient dans la soirée et sur nos plateformes ; si on hésite encore, le tirage au sort tranche.</p>
+    <div class="grille">
+
+      <figure class="fig">
+        <div class="phone"><div class="scr">
+          <div class="sb"><span>20:31</span><span class="sb__ic"><svg viewBox="0 0 18 13"><use href="#sb-sig"/></svg><svg viewBox="0 0 17 13"><use href="#sb-wifi"/></svg><svg viewBox="0 0 26 13"><use href="#sb-bat"/></svg></span></div><span class="cam"></span>
+          <div class="ab"><h3 class="ab__t">À regarder</h3><button class="ib"><svg class="i"><use href="#i-search"/></svg></button><button class="ib"><svg class="i"><use href="#i-plus"/></svg></button></div>
+          <div class="chips">
+            <button class="chip on">À voir <span class="n">14</span></button>
+            <button class="chip">En cours <span class="n">3</span></button>
+            <button class="chip">Vu <span class="n">27</span></button>
+          </div>
+          <div class="ce-soir"><svg class="i i--s"><use href="#i-filter"/></svg><span class="grow"><b>Ce soir</b> · ≤ 2 h · 3 plateformes</span><span class="qte" style="color:var(--accent-ink)">5 titres</span></div>
+          <div class="body">
+            <div class="posters">
+              <div><div class="poster pc1"><span class="tag">Film</span><b>Past Lives</b></div><div class="wm"><div class="wm__t">Past Lives</div><div class="wm__m"><span class="av av--o">AN</span>106 min · Prime</div></div></div>
+              <div><div class="poster pc2"><span class="tag">Film</span><b>Le règne animal</b></div><div class="wm"><div class="wm__t">Le règne animal</div><div class="wm__m"><span class="av av--a">AL</span>128 min · Crave</div></div></div>
+              <div><div class="poster pc3"><span class="tag">Série</span><b>The Bear</b></div><div class="wm"><div class="wm__t">The Bear</div><div class="wm__m"><span class="av av--a">AL</span>30 min · Disney+</div></div></div>
+              <div><div class="poster pc4"><span class="tag">Film</span><b>Perfect Days</b></div><div class="wm"><div class="wm__t">Perfect Days</div><div class="wm__m"><span class="av av--o">AN</span>124 min · Crave</div></div></div>
+            </div>
+            <button class="fab"><svg class="i"><use href="#i-dice"/></svg>Tirer au sort</button>
+          </div>
+          <nav class="tabs">
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-home"/></svg></span>Accueil</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-cart"/></svg></span>Courses</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-bag"/></svg></span>Voyages</div>
+            <div class="tab on"><span class="tab__ic"><svg class="i"><use href="#i-tv"/></svg></span>À regarder</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-wallet"/></svg></span>Dépenses</div>
+          </nav><div class="gest"></div>
+        </div></div>
+        <figcaption class="fig__cap"><span class="fig__no">10 · À regarder, filtre « Ce soir »</span><p class="fig__txt">Affiches en grille de deux, durée et plateforme sous le titre. Le filtre actif s’écrit en clair dans une bande d’accent, avec son nombre de résultats.</p></figcaption>
+      </figure>
+
+      <figure class="fig" data-twin>
+        <div class="phone" data-theme="light"><div class="scr">
+          <div class="sb"><span>21:58</span><span class="sb__ic"><svg viewBox="0 0 18 13"><use href="#sb-sig"/></svg><svg viewBox="0 0 17 13"><use href="#sb-wifi"/></svg><svg viewBox="0 0 26 13"><use href="#sb-bat"/></svg></span></div><span class="cam"></span>
+          <div class="ab ab--back"><button class="ib"><svg class="i"><use href="#i-back"/></svg></button><span class="grow"></span><button class="ib"><svg class="i"><use href="#i-more"/></svg></button></div>
+          <div class="body">
+            <div class="hero-w">
+              <div class="poster pc6"><b>Severance</b></div>
+              <div class="grow">
+                <span class="pill pill--accent">En cours</span>
+                <div class="t-serif mt8" style="font-size:26px;line-height:1.1">Severance</div>
+                <div class="muted mt4">Série · 2022 · 2 saisons<br>Apple TV+ · ≈ 50 min</div>
+                <div class="wm__m mt8"><span class="av av--a">AL</span>Proposé par Aurélien</div>
+              </div>
+            </div>
+            <div class="pad">
+              <div class="lbl" style="margin-bottom:4px">Synopsis · TMDB</div>
+              <p class="small" style="margin:0;color:var(--ink-2);line-height:1.5">Mark dirige une équipe de bureau dont les employés ont subi une procédure de « dissociation » : leurs souvenirs du travail et de la vie privée sont séparés chirurgicalement.</p>
+              
+              <div class="card mt12" style="padding:12px 16px">
+                <div class="row"><span class="lbl grow">Où on en est</span><span class="muted">vu hier</span></div>
+                <div class="row mt8"><span class="grow ink">Saison</span><div class="stepper"><button class="ib">−</button><span class="v">2</span><button class="ib">+</button></div></div>
+                <div class="row mt4"><span class="grow ink">Épisode <span class="muted">sur 10</span></span><div class="stepper"><button class="ib">−</button><span class="v">6</span><button class="ib">+</button></div></div>
+              </div>
+              <div class="lbl mt16">Nos notes</div>
+              <div class="rate"><span class="av av--a">AL</span><span class="who">Aurélien</span><span class="stars">★★★★★</span><span class="nb">5/5</span></div>
+              <div class="rate"><span class="av av--o">AN</span><span class="who">Auriane</span><span class="stars">★★★★<i>★</i></span><span class="nb">4/5</span></div>
+              <p class="muted" style="margin:2px 0 0 38px">« Lent au début, puis impossible d’arrêter. » — Auriane</p>
+            </div>
+          </div>
+          <div class="ajout"><button class="btn btn--bloc">Marquer vu</button><button class="btn btn--plein btn--bloc">Épisode suivant</button></div>
+          <div class="gest"></div>
+        </div></div>
+        <figcaption class="fig__cap"><span class="fig__no">11 · Fiche série · clair</span><p class="fig__txt">Synopsis TMDB sourcé, suivi saison/épisode par pas de 44 px, et les deux notes face à face : l’étoile se double toujours du chiffre.</p></figcaption>
+      </figure>
+
+      <figure class="fig">
+        <div class="phone"><div class="scr">
+          <div class="sb"><span>20:33</span><span class="sb__ic"><svg viewBox="0 0 18 13"><use href="#sb-sig"/></svg><svg viewBox="0 0 17 13"><use href="#sb-wifi"/></svg><svg viewBox="0 0 26 13"><use href="#sb-bat"/></svg></span></div><span class="cam"></span>
+          <div class="ab"><h3 class="ab__t">À regarder</h3></div>
+          <div class="body">
+            <div class="posters" style="padding-top:60px">
+              <div class="poster pc1"><b>Past Lives</b></div><div class="poster pc2"><b>Le règne animal</b></div>
+              <div class="poster pc3"><b>The Bear</b></div><div class="poster pc4"><b>Perfect Days</b></div>
+            </div>
+          </div>
+          <div class="scrim"></div>
+          <div class="sheet" style="padding-bottom:0">
+            <div class="sheet__grab"></div>
+            <div style="text-align:center;padding:4px 24px 0">
+              <div class="lbl">Tirage parmi 5 titres · ce soir</div>
+              <div class="t-serif" style="font-size:22px;margin-top:6px;font-weight:500">Ce soir, ce sera…</div>
+              <div class="poster pc1" style="width:168px;margin:16px auto 0;padding:14px"><b style="font-size:22px">Past Lives</b></div>
+              <div class="t-serif mt16" style="font-size:28px">Past Lives</div>
+              <div class="muted mt4">Film · 2023 · 106 min · Prime Video</div>
+              <div class="wm__m" style="justify-content:center;margin-top:8px"><span class="av av--o">AN</span>Proposé par Auriane il y a 3 semaines</div>
+            </div>
+            <div style="padding:20px 16px 0;display:grid;gap:10px">
+              <button class="btn btn--plein btn--bloc"><svg class="i i--s"><use href="#i-play"/></svg>On regarde ça</button>
+              <button class="btn btn--bloc"><svg class="i i--s"><use href="#i-dice"/></svg>Relancer · 2 restants</button>
+            </div>
+            <div class="gest" style="margin-top:12px"></div>
+          </div>
+        </div></div>
+        <figcaption class="fig__cap"><span class="fig__no">12 · Tirage au sort</span><p class="fig__txt">Une feuille plein écran, une seule réponse, et deux relances pour garder le jeu honnête. « On regarde ça » passe le film en cours.</p></figcaption>
+      </figure>
+
+      <figure class="fig">
+        <div class="phone"><div class="scr">
+          <div class="sb"><span>13:05</span><span class="sb__ic"><svg viewBox="0 0 18 13"><use href="#sb-sig"/></svg><svg viewBox="0 0 17 13"><use href="#sb-wifi"/></svg><svg viewBox="0 0 26 13"><use href="#sb-bat"/></svg></span></div><span class="cam"></span>
+          <div class="ab"><h3 class="ab__t">À regarder</h3></div>
+          <div class="body"></div>
+          <div class="scrim"></div>
+          <div class="sheet" style="top:150px">
+            <div class="sheet__grab"></div>
+            <div class="row" style="padding:0 8px 0 16px"><span class="t-serif grow" style="font-size:21px">Ajouter un titre</span><button class="ib"><svg class="i"><use href="#i-x"/></svg></button></div>
+            <div class="ajout" style="padding-top:4px"><div class="champ champ--focus"><svg class="i i--s" style="color:var(--ink-3)"><use href="#i-search"/></svg>anatomie<span class="caret"></span></div></div>
+            <div class="row pad" style="padding-top:4px;padding-bottom:4px"><span class="lbl grow">Résultats TMDB</span><span class="muted">4</span></div>
+            <div class="res"><div class="poster pc2"></div><div class="grow"><div class="wm__t">Anatomie d’une chute</div><div class="muted">Film · 2023 · 151 min</div></div><button class="btn btn--s btn--plein">Ajouter</button></div>
+            <div class="res"><div class="poster pc6"></div><div class="grow"><div class="wm__t">Grey’s Anatomy</div><div class="muted">Série · 2005 · 21 saisons</div></div><button class="btn btn--s">Ajouter</button></div>
+            <div class="res"><div class="poster pc5"></div><div class="grow"><div class="wm__t">Anatomie d’un meurtre</div><div class="muted">Film · 1959 · 160 min</div></div><span class="pill pill--ok">Dans la liste</span></div>
+            <div class="res"><div class="poster pc3"></div><div class="grow"><div class="wm__t">Anatomie d’un scandale</div><div class="muted">Série · 2022 · 1 saison</div></div><button class="btn btn--s">Ajouter</button></div>
+            <div class="row pad" style="padding-top:12px"><span class="muted grow">Pas trouvé ? Ajoutez « anatomie » sans fiche.</span></div>
+            <div class="row pad" style="padding-top:6px;padding-bottom:10px;margin-bottom:auto"><span class="pill pill--accent">À voir</span><span class="muted">statut à l’ajout · proposé par Aurélien</span></div>
+            <div class="gest"></div>
+          </div>
+        </div></div>
+        <figcaption class="fig__cap"><span class="fig__no">13 · Ajout par recherche TMDB</span><p class="fig__txt">Feuille montante : recherche passée par une fonction serveur (clé jamais dans le front), un titre déjà présent le dit en paire <b>conforme</b>. Retour Android ferme la feuille.</p></figcaption>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- ============ 5. Dépenses ============ -->
+  <section class="sec">
+    <p class="eyebrow">Parcours 5</p>
+    <h2>Dépenses : savoir à tout moment qui doit quoi</h2>
+    <p class="sec__intro">Un carnet par voyage (lié à sa fiche) et un carnet Quotidien ; chaque dépense dit qui a payé et comment elle se partage, et le solde se lit en une phrase. Les écrans montrent le carnet de Lisbonne en plein voyage, le 9 novembre.</p>
+    <div class="grille">
+
+      <figure class="fig" data-twin>
+        <div class="phone" data-theme="light"><div class="scr">
+          <div class="sb"><span>21:14</span><span class="sb__ic"><svg viewBox="0 0 18 13"><use href="#sb-sig"/></svg><svg viewBox="0 0 17 13"><use href="#sb-wifi"/></svg><svg viewBox="0 0 26 13"><use href="#sb-bat"/></svg></span></div><span class="cam"></span>
+          <div class="ab"><h3 class="ab__t">Dépenses</h3><button class="ib" aria-label="Statistiques"><svg class="i"><use href="#i-chart"/></svg></button><button class="ib"><svg class="i"><use href="#i-more"/></svg></button></div>
+          <div class="chips">
+            <button class="chip on">Lisbonne &amp; Porto</button>
+            <button class="chip">Quotidien</button>
+            <button class="chip" aria-label="Nouveau carnet"><svg class="i i--xs"><use href="#i-plus"/></svg></button>
+          </div>
+          <div class="solde">
+            <div class="row"><span class="lbl grow">Solde · en $ CA</span><span class="pill pill--warn">À rembourser</span></div>
+            <div class="row" style="gap:4px"><div class="t-serif grow">Tu dois 129,20 $ à Auriane</div><svg class="i" style="color:var(--ink-3)"><use href="#i-right"/></svg></div>
+            <div class="muted mt4">Total 3 412,80 $ · ta part 1 706,40 $</div>
+          </div>
+          <div class="body">
+            <div class="rayon row"><span class="lbl grow">Dim. 9 nov.</span><span class="qte">130,11 $</span></div>
+            <div class="xp"><span class="xp__ic"><svg class="i i--s"><use href="#i-fork"/></svg></span><div class="grow"><div class="xp__t">Dîner au Time Out</div><div class="xp__m"><span class="av av--o">AN</span>Auriane · Restos</div></div><div class="xp__a"><b>64,00 €</b><span>97,28 $</span></div></div>
+            <div class="xp"><span class="xp__ic"><svg class="i i--s"><use href="#i-train"/></svg></span><div class="grow"><div class="xp__t">Tram 28, carnets</div><div class="xp__m"><span class="av av--a">AL</span>Aurélien · Transport</div></div><div class="xp__a"><b>12,00 €</b><span>18,24 $</span></div></div>
+            <div class="xp"><span class="xp__ic"><svg class="i i--s"><use href="#i-fork"/></svg></span><div class="grow"><div class="xp__t">Pastéis de Belém</div><div class="xp__m"><span class="av av--o">AN</span>Auriane · Restos</div></div><div class="xp__a"><b>9,60 €</b><span>14,59 $</span></div></div>
+            <div class="rayon row"><span class="lbl grow">Sam. 8 nov.</span><span class="qte">21,33 $</span></div>
+            <div class="xp"><span class="xp__ic"><svg class="i i--s"><use href="#i-cart"/></svg></span><div class="grow"><div class="xp__t">Pingo Doce</div><div class="xp__m"><span class="av av--o">AN</span>Auriane · Courses</div></div><div class="xp__a"><b>14,03 €</b><span>21,33 $</span></div></div>
+            <div class="rayon row"><span class="lbl grow">Avant le départ</span><span class="qte">3 261,36 $</span></div>
+            <div class="xp"><span class="xp__ic"><svg class="i i--s"><use href="#i-bed"/></svg></span><div class="grow"><div class="xp__t">Appartement Alfama</div><div class="xp__m"><span class="av av--o">AN</span>Auriane · Logement</div></div><div class="xp__a"><b>1 120,00 €</b><span>1 702,40 $</span></div></div>
+            <button class="fab"><svg class="i"><use href="#i-plus"/></svg>Dépense</button>
+          </div>
+          <nav class="tabs">
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-home"/></svg></span>Accueil</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-cart"/></svg></span>Courses</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-bag"/></svg></span>Voyages</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-tv"/></svg></span>À regarder</div>
+            <div class="tab on"><span class="tab__ic"><svg class="i"><use href="#i-wallet"/></svg></span>Dépenses</div>
+          </nav><div class="gest"></div>
+        </div></div>
+        <figcaption class="fig__cap"><span class="fig__no">14 · Carnet de voyage · clair</span><p class="fig__txt">Le solde s’écrit en phrase (toucher ouvre « Qui doit quoi »), doublé d’une pastille <b>à rembourser</b>. Dépenses par jour avec le total du jour ; le montant en euros, puis sa conversion en dollars en mono.</p></figcaption>
+      </figure>
+
+      <figure class="fig">
+        <div class="phone"><div class="scr">
+          <div class="sb"><span>21:12</span><span class="sb__ic"><svg viewBox="0 0 18 13"><use href="#sb-sig"/></svg><svg viewBox="0 0 17 13"><use href="#sb-wifi"/></svg><svg viewBox="0 0 26 13"><use href="#sb-bat"/></svg></span></div><span class="cam"></span>
+          <div class="ab" style="padding-left:4px"><button class="ib" aria-label="Fermer"><svg class="i"><use href="#i-x"/></svg></button><h3 class="ab__t ab__t--s">Nouvelle dépense</h3><button class="btn btn--s btn--plein" style="margin-right:4px">Enregistrer</button></div>
+          <div class="body">
+            <div class="amt">
+              <div class="amt__v"><button class="chip" style="font-weight:600">EUR <svg class="i i--xs"><use href="#i-down"/></svg></button>64,00 €<span class="caret"></span></div>
+              <div class="muted mt4">≈ <b class="ink montant">97,28 $ CA</b> · 1 € = 1,52 $ au 9 nov.</div>
+            </div>
+            <div class="frow"><span class="lbl">Quoi</span><span class="ink grow">Dîner au Time Out</span></div>
+            <div class="frow"><span class="lbl">Payé par</span><span class="who-t on"><span class="av av--o">AN</span>Auriane</span><span class="who-t"><span class="av av--a">AL</span>Aurélien</span></div>
+            <div class="frow"><span class="lbl">Partage</span><div class="segc segc--s"><span class="on">Égal</span><span>Montants</span><span>Parts</span></div></div>
+            <div class="frow" style="box-shadow:none;min-height:36px;padding-left:110px;gap:14px"><span class="xp__m"><span class="av av--a">AL</span><span class="montant ink">32,00 €</span></span><span class="xp__m"><span class="av av--o">AN</span><span class="montant ink">32,00 €</span></span></div>
+            <div class="frow"><span class="lbl">Catégorie</span><div class="row" style="gap:6px;overflow:hidden"><button class="chip on">Restos</button><button class="chip">Courses</button><button class="chip">Transport</button></div></div>
+            <div class="frow"><span class="lbl">Reçu</span><span class="recu"></span><span class="small ink grow">recu-timeout.jpg</span><button class="ib" aria-label="Reprendre la photo"><svg class="i"><use href="#i-cam"/></svg></button></div>
+          </div>
+          <div class="kp">
+            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span class="w">,</span><span>0</span><span class="w">⌫</span>
+          </div>
+          <div class="gest" style="background:var(--card)"></div>
+        </div></div>
+        <figcaption class="fig__cap"><span class="fig__no">15 · Ajouter une dépense</span><p class="fig__txt">Pavé numérique dès l’ouverture, devise au bout du pouce, <b>conversion en dollars</b> au taux du jour figé à la saisie. Partage égal par défaut ; « Montants » et « Parts » ouvrent un champ par personne.</p></figcaption>
+      </figure>
+
+      <figure class="fig">
+        <div class="phone"><div class="scr">
+          <div class="sb"><span>21:16</span><span class="sb__ic"><svg viewBox="0 0 18 13"><use href="#sb-sig"/></svg><svg viewBox="0 0 17 13"><use href="#sb-wifi"/></svg><svg viewBox="0 0 26 13"><use href="#sb-bat"/></svg></span></div><span class="cam"></span>
+          <div class="ab ab--back"><button class="ib"><svg class="i"><use href="#i-back"/></svg></button><div class="grow"><div class="ab__sub">Lisbonne &amp; Porto</div><h3 class="ab__t ab__t--s">Qui doit quoi</h3></div></div>
+          <div class="body">
+            <div class="bal">
+              <div class="bal__h"><span class="av av--o">AN</span><span class="bal__n">Auriane</span><span class="pill pill--ok">À recevoir</span><span class="bal__v">+129,20 $</span></div>
+              <div class="dv"><i class="d c-s2" style="width:calc(50% - 2px)"></i></div>
+              <div class="bal__h"><span class="av av--a">AL</span><span class="bal__n">Aurélien</span><span class="pill pill--warn">Doit</span><span class="bal__v">−129,20 $</span></div>
+              <div class="dv"><i class="g c-s1" style="width:calc(50% - 2px)"></i></div>
+              <div class="dv__ax"><span>doit</span><span>0</span><span>à recevoir</span></div>
+              <p class="note" style="margin:8px 0 0">Auriane a payé 1 835,60 $, Aurélien 1 577,20 $ ; la part de chacun est de 1 706,40 $.</p>
+            </div>
+            <div class="rb">
+              <div class="lbl lbl--acc">Remboursement suggéré</div>
+              <div class="rb__who mt8"><span class="av av--a">AL</span>Aurélien<svg class="i i--s" style="color:var(--ink-3)"><use href="#i-arrow"/></svg><span class="av av--o">AN</span>Auriane</div>
+              <div class="rb__amt">129,20 $</div>
+              <div class="muted">Par Interac ou comptant, hors de l’app.</div>
+              <button class="btn btn--plein btn--bloc mt12"><svg class="i i--s"><use href="#i-check"/></svg>Marquer comme remboursé</button>
+            </div>
+            <div class="set-h lbl">Remboursements passés</div>
+            <div class="hist"><span class="av av--a">AL</span><div class="grow"><div class="small ink">Aurélien → Auriane · <b class="montant">64,75 $</b></div><div class="muted">Quotidien · 1<sup>er</sup> oct.</div></div><span class="pill pill--ok">Réglé</span></div>
+            <div class="hist"><span class="av av--o">AN</span><div class="grow"><div class="small ink">Auriane → Aurélien · <b class="montant">118,20 $</b></div><div class="muted">Kamouraska · 16 sept.</div></div><span class="pill pill--ok">Réglé</span></div>
+          </div>
+          <div class="gest"></div>
+        </div></div>
+        <figcaption class="fig__cap"><span class="fig__no">16 · Qui doit quoi</span><p class="fig__txt">Une barre par personne autour du zéro, dans sa couleur, <b>doublée d’un mot</b> (à recevoir, doit) et du montant signé. Un seul virement suggéré ; une fois marqué, il passe dans l’historique.</p></figcaption>
+      </figure>
+
+      <figure class="fig">
+        <div class="phone"><div class="scr">
+          <div class="sb"><span>21:18</span><span class="sb__ic"><svg viewBox="0 0 18 13"><use href="#sb-sig"/></svg><svg viewBox="0 0 17 13"><use href="#sb-wifi"/></svg><svg viewBox="0 0 26 13"><use href="#sb-bat"/></svg></span></div><span class="cam"></span>
+          <div class="ab ab--back"><button class="ib"><svg class="i"><use href="#i-back"/></svg></button><div class="grow"><div class="ab__sub">Lisbonne &amp; Porto</div><h3 class="ab__t ab__t--s">Statistiques</h3></div></div>
+          <div class="body">
+            <div class="row pad" style="gap:24px;padding-top:6px">
+              <div class="chiffre"><b>3 412,80 $</b><span class="lbl">Total</span></div>
+              <div class="chiffre"><b>341 $</b><span class="lbl">Par jour</span></div>
+            </div>
+            <div class="graphe mt24">
+              <div class="small ink" style="font-weight:600">Par catégorie, en $ CA</div>
+              <div class="barres">
+                <div class="barre" title="Logement : 1 702,40 $"><span class="barre__l">Logement</span><span class="barre__b"><i style="--v:100"></i><span>1 702 $</span></span></div>
+                <div class="barre" title="Transport : 1 504,24 $"><span class="barre__l">Transport</span><span class="barre__b"><i style="--v:88.4"></i><span>1 504 $</span></span></div>
+                <div class="barre" title="Restos : 111,87 $"><span class="barre__l">Restos</span><span class="barre__b"><i style="--v:6.6"></i><span>112 $</span></span></div>
+                <div class="barre" title="Activités : 72,96 $"><span class="barre__l">Activités</span><span class="barre__b"><i style="--v:4.3"></i><span>73 $</span></span></div>
+                <div class="barre" title="Courses : 21,33 $"><span class="barre__l">Courses</span><span class="barre__b"><i style="--v:1.3"></i><span>21 $</span></span></div>
+              </div>
+            </div>
+            <div class="graphe mt24">
+              <div class="small ink" style="font-weight:600">Qui a payé, en $ CA</div>
+              <div class="part"><i class="c-s2" style="width:53.8%" title="Auriane : 1 835,60 $"></i><i class="c-s1" style="width:46.2%" title="Aurélien : 1 577,20 $"></i></div>
+              <div class="legende"><span><i class="c-s2"></i>Auriane · 1 835,60 $</span><span><i class="c-s1"></i>Aurélien · 1 577,20 $</span></div>
+              <p class="note mt16">Montants en euros convertis au taux du jour de saisie. Logement et vols ont été payés avant le départ.</p>
+            </div>
+          </div>
+          <nav class="tabs">
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-home"/></svg></span>Accueil</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-cart"/></svg></span>Courses</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-bag"/></svg></span>Voyages</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-tv"/></svg></span>À regarder</div>
+            <div class="tab on"><span class="tab__ic"><svg class="i"><use href="#i-wallet"/></svg></span>Dépenses</div>
+          </nav><div class="gest"></div>
+        </div></div>
+        <figcaption class="fig__cap"><span class="fig__no">17 · Statistiques du carnet</span><p class="fig__txt">Barres horizontales du système, valeur au bout, une seule série en océan ; la répartition des paiements en barre empilée avec sa légende, chaque personne dans sa couleur.</p></figcaption>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- ============ 6. Activité & réglages ============ -->
+  <section class="sec">
+    <p class="eyebrow">Parcours 6</p>
+    <h2>Activité et réglages : savoir qui a fait quoi, régler le reste une fois</h2>
+    <p class="sec__intro">Le journal d’activité est le même que celui qui nourrira les notifications ; les réglages tiennent sur un écran : thème, notifications par outil (Dépenses compris), membres et export.</p>
+    <div class="grille">
+
+      <figure class="fig">
+        <div class="phone"><div class="scr">
+          <div class="sb"><span>18:45</span><span class="sb__ic"><svg viewBox="0 0 18 13"><use href="#sb-sig"/></svg><svg viewBox="0 0 17 13"><use href="#sb-wifi"/></svg><svg viewBox="0 0 26 13"><use href="#sb-bat"/></svg></span></div><span class="cam"></span>
+          <div class="ab ab--back"><button class="ib"><svg class="i"><use href="#i-back"/></svg></button><div class="grow"><div class="ab__sub">Depuis l’accueil</div><h3 class="ab__t ab__t--s">Activité</h3></div></div>
+          <div class="chips">
+            <button class="chip on">Tout</button><button class="chip">Courses</button><button class="chip">Dépenses</button><button class="chip">Voyages</button><button class="chip">À regarder</button>
+          </div>
+          <div class="body pad">
+            <div class="lbl" style="padding:8px 0 2px">Aujourd’hui</div>
+            <ul class="feed">
+              <li><span class="av av--o">AN</span><span class="txt grow"><b>Auriane</b> a coché 3 items dans <b>Épicerie</b><br><span class="muted">Lait 2 %, Avocats, Coriandre</span></span><span class="when">18 h 41</span></li>
+              <li><span class="av av--o">AN</span><span class="txt grow"><b>Auriane</b> a ajouté <b>Épicerie IGA · 87,40 $</b> dans Quotidien</span><span class="when">18 h 05</span></li>
+              <li><span class="av av--a">AL</span><span class="txt grow"><b>Aurélien</b> a ajouté <b>Billets Sintra · 48 €</b> dans Lisbonne &amp; Porto</span><span class="when">17 h 12</span></li>
+              <li><span class="av av--o">AN</span><span class="txt grow"><b>Auriane</b> a ajouté <b>Past Lives</b> à À regarder</span><span class="when">16 h 30</span></li>
+              
+            </ul>
+            <div class="lbl" style="padding:12px 0 2px">Hier</div>
+            <ul class="feed">
+              <li><span class="av av--o">AN</span><span class="txt grow"><b>Auriane</b> a noté <b>Severance</b> S2·É6 <span class="muted">4/5</span></span><span class="when">22 h 58</span></li>
+              <li><span class="av av--a">AL</span><span class="txt grow"><b>Aurélien</b> a marqué <b>64,75 $</b> remboursés à Auriane <span class="muted">· Quotidien</span></span><span class="when">11 h 20</span></li>
+              <li><span class="av av--o">AN</span><span class="txt grow"><b>Auriane</b> a coché <b>Passeports valides</b> dans Lisbonne</span><span class="when">9 h 02</span></li>
+            </ul>
+          </div>
+          <nav class="tabs">
+            <div class="tab on"><span class="tab__ic"><svg class="i"><use href="#i-home"/></svg></span>Accueil</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-cart"/></svg></span>Courses</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-bag"/></svg></span>Voyages</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-tv"/></svg></span>À regarder</div>
+            <div class="tab"><span class="tab__ic"><svg class="i"><use href="#i-wallet"/></svg></span>Dépenses</div>
+          </nav><div class="gest"></div>
+        </div></div>
+        <figcaption class="fig__cap"><span class="fig__no">18 · Activité</span><p class="fig__txt">Ouverte depuis l’accueil (« Tout voir »), regroupée par jour, filtrable par outil ; les actions en rafale se fusionnent (« a coché 3 items ») avec le détail en dessous.</p></figcaption>
+      </figure>
+
+      <figure class="fig">
+        <div class="phone"><div class="scr">
+          <div class="sb"><span>18:47</span><span class="sb__ic"><svg viewBox="0 0 18 13"><use href="#sb-sig"/></svg><svg viewBox="0 0 17 13"><use href="#sb-wifi"/></svg><svg viewBox="0 0 26 13"><use href="#sb-bat"/></svg></span></div><span class="cam"></span>
+          <div class="ab ab--back"><button class="ib"><svg class="i"><use href="#i-back"/></svg></button><h3 class="ab__t ab__t--s">Réglages</h3></div>
+          <div class="body">
+            <div class="set-h lbl" style="padding-top:6px">Thème</div>
+            <div class="segc"><span class="on">Système</span><span>Clair</span><span>Sombre</span></div>
+            <div class="set-h lbl">Notifications</div>
+            <div class="group">
+              <div class="set"><span class="set__l">Courses<small>Regroupées · « Auriane a ajouté 5 items »</small></span><span class="sw on"></span></div>
+              <div class="set"><span class="set__l">Voyages<small>Réservations et checklist</small></span><span class="sw on"></span></div>
+              <div class="set"><span class="set__l">Dépenses<small>Nouvelles dépenses et remboursements</small></span><span class="sw on"></span></div>
+              <div class="set"><span class="set__l">À regarder</span><span class="sw"></span></div>
+            </div>
+            <div class="set-h lbl">Espace · Aurélien &amp; Auriane</div>
+            <div class="group">
+              <div class="set"><span class="av av--a av--l">AL</span><span class="set__l">Aurélien <span class="muted">· vous</span><small>Couleur océan</small></span><span class="pill">Propriétaire</span></div>
+              <div class="set"><span class="av av--o av--l">AN</span><span class="set__l">Auriane<small>Couleur sable</small></span><span class="pill">Membre</span></div>
+            </div>
+            <div class="set-h lbl">Données</div>
+            <div class="group">
+              <div class="set"><svg class="i" style="color:var(--accent-ink)"><use href="#i-dl"/></svg><span class="set__l">Exporter l’espace (JSON)<small>Sauvegarde auto : dim. 19 oct.</small></span><svg class="i i--s" style="color:var(--ink-3)"><use href="#i-right"/></svg></div>
+              <div class="set"><span class="set__l"><span class="danger">Se déconnecter</span><small>Pixel 8 · session jusqu’au 15 déc.</small></span></div>
+            </div>
+          </div>
+          <div class="gest"></div>
+        </div></div>
+        <figcaption class="fig__cap"><span class="fig__no">19 · Réglages</span><p class="fig__txt">Groupes en aplat, interrupteurs de 52 × 32 px. Chaque membre affiche <b>sa couleur nommée</b>, la même que ses initiales partout dans l’app.</p></figcaption>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- ============ À trancher ============ -->
+  <section class="sec">
+    <p class="eyebrow">Décisions de design</p>
+    <h2>Neuf décisions prises, la suite se dessine dessus</h2>
+    <p class="sec__intro">Toutes les propositions par défaut ont été retenues le 22&nbsp;octobre 2026.</p>
+    <div class="questions">
+      <div class="q"><span class="pill pill--ok">Identité · décidé</span><h3>OhO comme nom, et quelle icône ?</h3><p>Le palindrome évoque deux personnes face à face et se lit bien en petit.</p><p class="def"><b>Retenu&nbsp;:</b> garder OhO, mot-symbole en serif avec le second O en bleu océan ; icône maskable « O » blanc sur fond marine.</p></div>
+      <div class="q"><span class="pill pill--ok">Navigation · décidé</span><h3>Et au cinquième outil ?</h3><p>Activité a déjà quitté la barre pour l’accueil ; la barre est pleine avec Accueil et quatre outils.</p><p class="def"><b>Retenu&nbsp;:</b> les quatre outils les plus utilisés restent en onglets (ordre réglable), les suivants vivent dans la grille de l’accueil.</p></div>
+      <div class="q"><span class="pill pill--ok">Personnes · décidé</span><h3>Une couleur par personne ?</h3><p>Océan et sable restent distincts pour les trois formes de daltonisme ; Dépenses s’en sert aussi pour ses barres de solde.</p><p class="def"><b>Retenu&nbsp;:</b> oui, en contour d’avatar et dans les graphiques, toujours avec les initiales (AL, AN) ou le prénom, jamais sur du texte.</p></div>
+      <div class="q"><span class="pill pill--ok">Devise · décidé</span><h3>Quel taux pour les dépenses en euros ?</h3><p>Le taux bouge pendant le voyage ; le recalculer change les soldes après coup.</p><p class="def"><b>Retenu&nbsp;:</b> soldes en $ CA, taux du jour figé à la saisie et modifiable sur la dépense (pour coller au relevé de carte).</p></div>
+      <div class="q"><span class="pill pill--ok">Partage · décidé</span><h3>Moitié-moitié par défaut ?</h3><p>Un partage proportionnel aux revenus est courant dans un couple, mais complique chaque saisie.</p><p class="def"><b>Retenu&nbsp;:</b> égal ; « Montants » et « Parts » au cas par cas, et une répartition par défaut réglable par carnet plus tard.</p></div>
+      <div class="q"><span class="pill pill--ok">Densité · décidé</span><h3>Lignes confortables ou compactes ?</h3><p>À 52 px par item, une liste de 25 articles demande trois écrans.</p><p class="def"><b>Retenu&nbsp;:</b> 52 px partout ; un réglage « compact » à 44 px pour Courses seulement, si l’usage le réclame.</p></div>
+      <div class="q"><span class="pill pill--ok">Dépenses · décidé</span><h3>Un carnet à chaque voyage&#8239;?</h3><p>Tous les voyages n’ont pas de dépenses à partager.</p><p class="def"><b>Décidé le 22&nbsp;oct.&#8239;:</b> pas de création automatique&#8239;; la fiche voyage propose d’ouvrir un carnet.</p></div>
+      <div class="q"><span class="pill pill--ok">Dépenses · décidé</span><h3>Rembourser dans l’app&#8239;?</h3><p>Un lien bancaire ajouterait des comptes, des secrets et un fournisseur.</p><p class="def"><b>Décidé le 22&nbsp;oct.&#8239;:</b> un simple marquage «&nbsp;Remboursé&nbsp;»&#8239;; le virement (Interac, comptant) se fait hors de l’app.</p></div>
+      <div class="q"><span class="pill pill--ok">Dépenses · décidé</span><h3>Modifier la dépense de l’autre&#8239;?</h3><p>Tout est commun dans l’espace, comme pour les autres outils.</p><p class="def"><b>Décidé le 22&nbsp;oct.&#8239;:</b> oui, chacun peut modifier ou supprimer, et l’activité en garde la trace.</p></div>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  // Jumeaux sombres : chaque écran marqué data-twin est dupliqué en data-theme="dark", côte à côte.
+  document.querySelectorAll('[data-twin]').forEach(function (fig) {
+    var c = fig.cloneNode(true);
+    c.removeAttribute('data-twin');
+    c.querySelector('.phone').setAttribute('data-theme', 'dark');
+    var no = c.querySelector('.fig__no');
+    no.textContent = no.textContent.replace('· clair', '· sombre');
+    var t = c.querySelector('.fig__txt');
+    t.textContent = 'Le même écran en océan de nuit : surfaces bleu profond, encre presque blanche, accent et couleurs de personnes éclaircis.';
+    fig.after(c);
+  });
+  document.addEventListener('click', function (e) {
+    var chk = e.target.closest('.chk');
+    if (chk) { chk.closest('.it').classList.toggle('done'); return; }
+    var b = e.target.closest('[data-tabs] button');
+    if (b) {
+      var scr = b.closest('.scr');
+      b.parentNode.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); });
+      scr.querySelectorAll('[data-pane]').forEach(function (p) { p.classList.toggle('on', p.getAttribute('data-pane') === b.getAttribute('data-p')); });
+    }
+  });
+})();
+</script>
+</body>
+</html>

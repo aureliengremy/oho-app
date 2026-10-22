@@ -1,0 +1,2429 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Modèle de données OhO</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Plan du modèle de données de l'app OhO, affiné pour les migrations du lot 2.">
+<style>
+/* mhosaic — présentations · tokens.css (thème Océan, 13.10.2026)
+   Blanc et bleu, aucun ornement. Tous les couples texte/fond tiennent 4,5:1
+   en clair comme en sombre (voir README § Couleurs).
+     :root                              → clair par défaut
+     [data-theme="light|dark"]          → forcé, y compris sur un bloc imbriqué
+     @media (prefers-color-scheme:dark) → suit le système, sauf si "light" est forcé */
+:root {
+  --font-display: "Source Serif 4 Deck", "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, "Times New Roman", serif;
+  --font-sans:    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono:    "SF Mono", ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+  --t-micro: .78rem; --t-eyebrow: .8rem; --t-small: .94rem; --t-body: 1.125rem; --t-h3: 1.22rem;
+  --t-lede: clamp(1.28rem, 2.6vw, 1.58rem);
+  --t-h2:   clamp(1.85rem, 3.9vw, 2.6rem);
+  --t-h1:   clamp(2.45rem, 6.6vw, 4rem);
+  --lh-tight: 1.02; --lh-head: 1.3; --lh-lede: 1.42; --lh-body: 1.62;
+  --ls-eyebrow: .16em; --ls-head: -.018em;
+  --w-regular: 400; --w-medium: 500; --w-strong: 600; --w-heavy: 700;
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px; --sp-6: 32px; --sp-7: 48px; --sp-8: 64px;
+  --r-sm: 6px; --r-md: 10px; --r-lg: 13px; --r-pill: 999px;
+  --measure: 72rem; --width: 100%; --width-figure: 1200px;
+  --gutter: clamp(16px, 5vw, 96px); --slide-w: 1280px; --slide-h: 720px;
+}
+:root, [data-theme="light"] {
+  color-scheme: light;
+  --bg: #e8eff5;
+  --surface: #ffffff;
+  --surface-2: #f1f6fa;
+  --card: #e9f1f7;
+  --ink: #0a2540;
+  --ink-2: #2b4560;
+  --ink-3: #4d6680;
+  --ink-4: #76899d;
+  --rule: #d5e1eb;
+  --rule-strong: #a7bccd;
+  --accent: #1d6fb8;
+  --accent-ink: #12558f;
+  --accent-tint: #e2eefa;
+  --ok: #1f7350;
+  --ok-tint: #ddefe5;
+  --warn: #8a5600;
+  --warn-tint: #f7ead2;
+  --bad: #b1351f;
+  --bad-tint: #f6e0da;
+  --s1: #1d6fb8;
+  --s2: #c9821b;
+  --s3: #2a9a8a;
+  --s4: #6a5acd;
+  --code-bg: #eef4f9;
+  --shadow: 0 1px 2px rgba(10, 37, 64, .05), 0 8px 30px rgba(10, 37, 64, .07);
+  --logo-filter: none;
+}
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #06121e;
+  --surface: #0b1b2b;
+  --surface-2: #11263b;
+  --card: #163049;
+  --ink: #e6f0f8;
+  --ink-2: #b3c6d8;
+  --ink-3: #8ba3b9;
+  --ink-4: #64809a;
+  --rule: #1e3650;
+  --rule-strong: #36546f;
+  --accent: #58a6e8;
+  --accent-ink: #8cc3f2;
+  --accent-tint: #133352;
+  --ok: #6cc59e;
+  --ok-tint: #123426;
+  --warn: #e2b65f;
+  --warn-tint: #3a3015;
+  --bad: #f0886d;
+  --bad-tint: #3f2019;
+  --s1: #4383dc;
+  --s2: #c98420;
+  --s3: #21a07f;
+  --s4: #8a7ae6;
+  --code-bg: #11263b;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 34px rgba(0, 0, 0, .34);
+  --logo-filter: invert(1);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #06121e;
+    --surface: #0b1b2b;
+    --surface-2: #11263b;
+    --card: #163049;
+    --ink: #e6f0f8;
+    --ink-2: #b3c6d8;
+    --ink-3: #8ba3b9;
+    --ink-4: #64809a;
+    --rule: #1e3650;
+    --rule-strong: #36546f;
+    --accent: #58a6e8;
+    --accent-ink: #8cc3f2;
+    --accent-tint: #133352;
+    --ok: #6cc59e;
+    --ok-tint: #123426;
+    --warn: #e2b65f;
+    --warn-tint: #3a3015;
+    --bad: #f0886d;
+    --bad-tint: #3f2019;
+    --s1: #4383dc;
+    --s2: #c98420;
+    --s3: #21a07f;
+    --s4: #8a7ae6;
+    --code-bg: #11263b;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 34px rgba(0, 0, 0, .34);
+    --logo-filter: invert(1);
+  }
+}
+
+/* mhosaic — présentations · feuille des composants, thème Océan (13.10.2026)
+   Aucun ornement : une forme n'existe que si elle porte une donnée ou un état. */
+:root, [data-theme="light"] { color-scheme: light; --logo-filter: none; }
+[data-theme="dark"] { color-scheme: dark; --logo-filter: invert(1); }
+
+/* mhosaic — présentations · base.css
+   Styles de base : n'utilise que les jetons de tokens.css. Aucune dépendance,
+   aucun JavaScript, aucune ressource distante. */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink-2);
+  font-family: var(--font-sans);
+  font-size: var(--t-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Un bloc à thème forcé recalcule la couleur du texte : sinon il hérite de
+   celle déjà calculée sur body dans l'autre thème. */
+[data-theme] { color: var(--ink-2); }
+
+/* Le document occupe toute la fenêtre : la feuille remplit les côtés et <body>
+   prend sa couleur. Seules les diapositives restent posées sur --bg. */
+body:has(> .page) { background: var(--surface); }
+.page {
+  max-width: var(--width);
+  margin: 0 auto;
+  background: var(--surface);
+  padding: var(--sp-5) var(--gutter) var(--sp-7);
+}
+
+/* Le texte courant s'arrête à --measure, à n'importe quelle profondeur ; les
+   tableaux et les grilles prennent toute la largeur sans qu'on ait à le demander. */
+.reading :is(p, h1, h2, h3, ul.list, ol, blockquote, .lede, .chapitre__intro, .note) {
+  max-width: var(--measure);
+}
+.reading :is(.carte, .encadre, .principe, .toc) :is(p, h3, ul.list, ol) {
+  max-width: none;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: var(--w-strong);
+  color: var(--ink);
+  letter-spacing: var(--ls-head);
+  margin: 0 0 var(--sp-3);
+}
+h1 { font-size: var(--t-h1); line-height: var(--lh-tight); }
+h2 { font-size: var(--t-h2); line-height: var(--lh-head); }
+h3 { font-size: var(--t-h3); line-height: var(--lh-head); letter-spacing: 0; }
+h4 {
+  font-family: var(--font-mono);
+  font-size: var(--t-eyebrow);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: var(--w-strong);
+}
+
+p { margin: 0 0 var(--sp-3); }
+b, strong { font-weight: var(--w-strong); color: var(--ink); }
+em { font-style: italic; }
+small, .small { font-size: var(--t-small); color: var(--ink-3); }
+.muted { color: var(--ink-3); }
+.mono { font-family: var(--font-mono); }
+.num  { font-variant-numeric: tabular-nums; }
+
+a {
+  color: var(--accent-ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+}
+a:hover { border-bottom-color: currentColor; }
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
+}
+
+/* Listes : la puce est un point d'accent, jamais un disque de navigateur. */
+ul.list { margin: 0 0 var(--sp-3); padding: 0; list-style: none; }
+ul.list > li {
+  position: relative;
+  padding-left: var(--sp-5);
+  margin-bottom: var(--sp-3);
+  color: var(--ink-2);
+}
+ul.list > li::before {
+  content: "";
+  position: absolute; left: 0; top: .62em;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+code, kbd {
+  font-family: var(--font-mono);
+  font-size: .86em;
+  background: var(--code-bg);
+  border-radius: 5px;
+  padding: 2px 7px;
+  color: var(--ink);
+}
+
+hr { border: none; border-top: 1px solid var(--rule); margin: var(--sp-5) 0; }
+
+img, svg { max-width: 100%; }
+
+::selection { background: var(--accent-tint); color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  body, body:has(> .page) { background: #fff; }
+  .page { max-width: none; padding: 0; background: #fff; }
+  a { border-bottom: none; color: inherit; }
+  .no-print { display: none !important; }
+}
+
+/* mhosaic — présentations · components.css
+   N'utilise que les jetons de tokens.css. Seuls les onglets ajoutent un petit script,
+   et le document se lit encore sans lui. */
+
+/* ============================================================
+   2. Surtitre et filet
+   ============================================================ */
+.eyebrow {
+  display: flex; align-items: center; gap: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: var(--t-eyebrow);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--accent-ink);
+  font-weight: var(--w-strong);
+  margin: 0 0 var(--sp-3);
+}
+
+/* Un filet seul sépare deux blocs sans titre entre eux. Rare : l'espace suffit d'habitude. */
+.regle { height: 1px; background: var(--rule); margin: var(--sp-4) 0 var(--sp-5); }
+
+/* ============================================================
+   3. Couverture et chapitres
+   ============================================================ */
+.hero { padding: clamp(var(--sp-5), 3vw, var(--sp-6)) 0 clamp(var(--sp-5), 5vw, var(--sp-7)); }
+.hero h1 { margin-bottom: var(--sp-2); }
+.lede {
+  font-size: var(--t-lede);
+  line-height: var(--lh-lede);
+  color: var(--ink-2);
+  max-width: var(--measure);
+}
+.lede b { color: var(--ink); font-weight: var(--w-strong); }
+
+.chapitre { padding: clamp(var(--sp-6), 6vw, 68px) 0 0; }
+.chapitre__no {
+  font-family: var(--font-mono);
+  font-size: var(--t-eyebrow);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: var(--sp-2);
+}
+.chapitre__no b { color: var(--accent-ink); }
+.chapitre__intro { font-size: var(--t-h3); color: var(--ink-2); max-width: var(--measure); }
+
+/* ============================================================
+   4. Chiffres-clés
+   ============================================================ */
+.chiffres {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+  gap: var(--sp-5);
+  margin: var(--sp-5) 0;
+}
+.chiffre { min-width: 0; }
+.chiffre .n {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 2.9rem; line-height: 1;
+  font-weight: var(--w-strong);
+  letter-spacing: -.03em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.chiffre .n--accent { color: var(--accent-ink); }
+.chiffre .l {
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  line-height: 1.35;
+  color: var(--ink-3);
+}
+
+/* Bandeau de méta sous un titre : les mêmes chiffres, plus petits. */
+.metastrip {
+  display: flex; flex-wrap: wrap; gap: var(--sp-5) var(--sp-6);
+  padding-top: var(--sp-3);
+}
+.metastrip .chiffre .n { font-size: 1.95rem; color: var(--accent-ink); }
+
+/* ============================================================
+   5. Pastilles, verdicts, indice de confiance
+   ============================================================ */
+.pill {
+  display: inline-flex; align-items: center; gap: var(--sp-1);
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: var(--w-strong);
+  padding: 3px 10px;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  border: 1px solid var(--rule);
+}
+.pill--ok     { background: var(--ok-tint);     color: var(--ok);         border-color: var(--ok); }
+.pill--warn   { background: var(--warn-tint);   color: var(--warn);       border-color: var(--warn); }
+.pill--bad    { background: var(--bad-tint);    color: var(--bad);        border-color: var(--bad); }
+.pill--accent { background: var(--accent-tint); color: var(--accent-ink); border-color: var(--accent-ink); }
+.pill--plein  { background: var(--accent-ink);  color: var(--surface);    border-color: var(--accent-ink); }
+
+/* Un verdict est une pastille qu'on pose en tête d'un paragraphe. */
+.verdict { margin-right: var(--sp-2); vertical-align: 2px; }
+
+/* L'indice de confiance : le degré de certitude s'affiche, il ne se devine pas. */
+.conf {
+  display: inline-flex; align-items: center; gap: var(--sp-1);
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.conf::before {
+  content: ""; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--ok);
+}
+.conf--moyenne::before { background: var(--warn); }
+.conf--faible::before  { background: var(--bad); }
+
+/* ============================================================
+   6. Mesures (variation chiffrée)
+   ============================================================ */
+.mesures { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin: var(--sp-3) 0; }
+.mesure {
+  display: inline-flex; align-items: baseline; gap: var(--sp-1);
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background: var(--surface-2);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-pill);
+  padding: 3px 12px;
+}
+.mesure b {
+  font-family: var(--font-sans);
+  font-size: var(--t-small);
+  text-transform: none; letter-spacing: 0;
+  color: var(--ink);
+  font-weight: var(--w-strong);
+  font-variant-numeric: tabular-nums;
+}
+.mesure::before { font-weight: var(--w-heavy); font-size: 1rem; content: "→"; color: var(--ink-3); }
+.mesure--baisse::before { content: "↓"; color: var(--ok); }
+.mesure--hausse::before { content: "↑"; color: var(--bad); }
+.mesure--stable::before { content: "→"; color: var(--ink-3); }
+
+/* ============================================================
+   7. Cartes
+   ============================================================ */
+.cartes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+  gap: var(--sp-4);
+  margin: var(--sp-5) 0;
+}
+.carte {
+  position: relative;
+  display: flex; flex-direction: column; gap: var(--sp-2);
+  background: var(--surface-2);
+  border-radius: var(--r-lg);
+  padding: var(--sp-4);
+}
+/* Le statut d'une carte est une pastille libellée posée en tête, jamais une barre. */
+.carte > .pill:first-child { align-self: flex-start; }
+.carte h3 { margin: 0; }
+.carte p  { margin: 0; color: var(--ink-2); font-size: var(--t-small); line-height: 1.5; }
+
+/* ============================================================
+   8. Encadrés
+   ============================================================ */
+/* Le relief vient de l'aplat, pas d'une ombre ni d'une bordure d'accent. */
+.encadre {
+  background: var(--surface-2);
+  border: none;
+  border-radius: var(--r-lg);
+  padding: var(--sp-4) var(--sp-5);
+  margin: var(--sp-5) 0;
+  color: var(--ink-2);
+}
+.encadre b { color: var(--ink); }
+.encadre--ok     { background: var(--ok-tint); }
+.encadre--warn   { background: var(--warn-tint); }
+.encadre--bad    { background: var(--bad-tint); }
+.encadre--accent { background: var(--accent-tint); }
+
+/* Le principe : une phrase en serif, sans décor. */
+.principe {
+  margin: var(--sp-5) 0;
+  padding: var(--sp-5);
+  background: var(--surface-2);
+  border-radius: var(--r-lg);
+}
+.principe p {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--t-lede);
+  line-height: var(--lh-lede);
+  color: var(--ink);
+}
+
+/* La note : ce qui se lit après, plus petit, sans filet. */
+.note {
+  font-size: var(--t-small);
+  line-height: 1.5;
+  color: var(--ink-3);
+  margin-top: var(--sp-4);
+}
+.note b { color: var(--ink-2); font-weight: var(--w-strong); }
+
+/* La citation : guillemets français, serif italique. */
+.citation {
+  margin: var(--sp-5) 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--t-h3);
+  line-height: var(--lh-lede);
+  color: var(--ink);
+}
+.citation::before { content: "« "; color: var(--ink-3); font-style: normal; }
+.citation::after  { content: " »"; color: var(--ink-3); font-style: normal; }
+/* L'auteur est sorti du flux : le guillemet fermant suit alors la phrase,
+   au lieu de tomber sous l'auteur. */
+.citation { position: relative; }
+.citation:has(cite) { padding-bottom: calc(var(--sp-2) + var(--t-micro) * 1.4); }
+.citation cite {
+  position: absolute; left: 0; bottom: 0;
+  font: var(--w-regular) var(--t-micro)/1.4 var(--font-mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  font-style: normal;
+  color: var(--ink-3);
+}
+.citation cite::before { content: "— "; }
+
+/* ============================================================
+   9. Tableaux — filets fins, pas de zébrure, chiffres à droite
+   ============================================================ */
+.tablewrap { overflow-x: auto; margin: var(--sp-5) 0; }
+table { width: 100%; border-collapse: collapse; background: transparent; }
+caption {
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  text-align: left;
+  padding-bottom: var(--sp-2);
+}
+th {
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--ink-3);
+  text-align: left;
+  padding: 0 var(--sp-4) var(--sp-2) 0;
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+td {
+  font-size: var(--t-small);
+  line-height: 1.45;
+  color: var(--ink-2);
+  padding: var(--sp-3) var(--sp-4) var(--sp-3) 0;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+th:last-child, td:last-child { padding-right: 0; }
+tr:last-child td { border-bottom: none; }
+td.cle { font-weight: var(--w-strong); color: var(--ink); white-space: nowrap; }
+th.nb, td.nb { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.nb { font-weight: var(--w-strong); color: var(--ink); }
+tr.total td { border-top: 1px solid var(--rule-strong); border-bottom: none; color: var(--ink); font-weight: var(--w-strong); }
+/* Sur un téléphone, en-têtes et clés se replient et le code d'une cellule peut
+   se couper, au lieu d'élargir le tableau. */
+@media (max-width: 640px) {
+  th, td.cle { white-space: normal; }
+  td code { overflow-wrap: anywhere; }
+}
+
+/* ============================================================
+   10. Code
+   ============================================================ */
+.codeblock {
+  margin: var(--sp-4) 0;
+  background: var(--code-bg);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+.codeblock .cap {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding: var(--sp-3) var(--sp-4) 0;
+}
+.codeblock pre {
+  margin: 0;
+  padding: var(--sp-3) var(--sp-4);
+  font-family: var(--font-mono);
+  font-size: var(--t-small);
+  line-height: 1.62;
+  color: var(--ink);
+  overflow-x: auto;
+}
+.codeblock pre code { background: none; padding: 0; font-size: inherit; }
+
+/* ============================================================
+   11. Étapes — une suite numérotée
+   ============================================================ */
+.etapes {
+  position: relative;
+  display: flex; flex-direction: column; gap: var(--sp-4);
+  padding-left: 40px;
+  margin: var(--sp-5) 0;
+}
+.etape { position: relative; }
+.etape__n {
+  position: absolute; left: -40px; top: 0;
+  width: 27px; height: 27px; border-radius: 50%;
+  background: var(--accent-tint);
+  color: var(--accent-ink);
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  line-height: 27px; text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.etape__txt { color: var(--ink-2); }
+.etape__txt b { color: var(--ink); }
+.etape__cmd {
+  display: block; width: fit-content;
+  margin-top: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: var(--t-small);
+  color: var(--ink);
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+  padding: 5px 12px;
+}
+
+/* ============================================================
+   12. Jauge — proportion, sans script
+   ============================================================ */
+.jauge {
+  height: 8px;
+  background: var(--surface-2);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+  margin: var(--sp-2) 0;
+}
+.jauge > span {
+  display: block; height: 100%;
+  background: var(--accent);
+  border-radius: inherit;
+}
+.jauge--ok  > span { background: var(--ok); }
+.jauge--bad > span { background: var(--bad); }
+.jauge__l {
+  display: flex; justify-content: space-between; gap: var(--sp-3);
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.jauge__l b { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* ============================================================
+   13. Sommaire
+   ============================================================ */
+.toc {
+  margin: var(--sp-6) 0;
+  background: var(--surface-2);
+  border-radius: var(--r-lg);
+  padding: var(--sp-4) var(--sp-5);
+}
+.toc h2 {
+  font-family: var(--font-mono);
+  font-size: var(--t-eyebrow);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 var(--sp-2);
+}
+.toc ol { margin: 0; padding: 0; list-style: none; counter-reset: toc; }
+.toc li { counter-increment: toc; border-top: 1px solid var(--rule); }
+.toc li:first-child { border-top: none; }
+.toc a {
+  display: flex; gap: var(--sp-3); align-items: baseline;
+  padding: var(--sp-2) 0;
+  color: var(--ink-2);
+  border-bottom: none;
+}
+.toc a::before {
+  content: counter(toc, upper-roman);
+  flex: none; min-width: 2.2rem;
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  color: var(--accent-ink);
+}
+.toc a .tt { font-family: var(--font-display); font-size: var(--t-h3); color: var(--ink); }
+.toc a .td { display: block; font-size: var(--t-small); color: var(--ink-3); }
+.toc a:hover .tt { color: var(--accent-ink); }
+
+/* ============================================================
+   15. Boutons
+   ============================================================ */
+.btn {
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: var(--w-strong);
+  padding: var(--sp-2) var(--sp-4);
+  border-radius: var(--r-pill);
+  border: 1px solid var(--rule-strong);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn:hover { border-color: var(--accent-ink); color: var(--accent-ink); }
+.btn--plein {
+  background: var(--accent-ink);
+  border-color: var(--accent-ink);
+  color: var(--surface);
+}
+.btn--plein:hover { color: var(--surface); opacity: .9; }
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+/* ============================================================
+   16. Colonnes
+   ============================================================ */
+.duo, .trio {
+  display: grid;
+  gap: var(--sp-4) var(--sp-6);
+  align-items: start;
+  margin: var(--sp-4) 0;
+}
+.duo  { grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }
+.trio { grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); }
+.duo > *, .trio > * { min-width: 0; }
+.col__titre {
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 var(--sp-3);
+}
+
+/* ============================================================
+   17. Aucun pied de document
+   ============================================================
+   Un livrable finit sur sa dernière section. Il ne porte aucun pied qui
+   liste ses sources, les fichiers ou les commits lus, l'historique de ses
+   versions, sa date, son auteur ou la mention d'autonomie du fichier : ce
+   qui fonde un chiffre se dit à côté de lui, dans la note de sa figure, et
+   l'historique d'un document vit hors de lui. Le pied d'une diapositive
+   (.slide__pied, section 18) reste : la marque et la pagination, rien d'autre. */
+
+/* ============================================================
+   18. Diapositives — 1280 × 720, sans script, imprimables
+   ============================================================ */
+.deck {
+  display: flex; flex-direction: column; align-items: center;
+  gap: var(--sp-5);
+  max-width: var(--slide-w);
+  margin: 0 auto;
+  padding: var(--sp-5) 0;
+  scroll-snap-type: y proximity;
+}
+/* Une diapositive garde ses proportions à toute taille : marges en %, espacement
+   interne en cqi. À 1280 px on retrouve exactement les valeurs du corpus (64/84/60). */
+.slide {
+  position: relative;
+  flex: none;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: flex; flex-direction: column;
+  padding: 5% 6.56% 4.7%;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  scroll-snap-align: center;
+  overflow: hidden;
+  container-type: inline-size;
+}
+.slide :is(.chiffres, .encadre, .principe, .etapes, .tablewrap, .cartes,
+           .duo, .trio, .citation, .codeblock, .jauge, .diagramme) { margin: 2cqi 0; }
+.slide .regle { margin: 1.4cqi 0 2.2cqi; }
+.slide ul.list > li { margin-bottom: 1.2cqi; }
+/* La couverture centre son bloc de titre dans la place laissée par le pied :
+   deux marges automatiques se partagent le vide, l'une au-dessus du bloc,
+   l'autre au-dessus du pied — qui reste ainsi au pied. */
+.slide--titre { background: var(--card); }
+.slide--titre > :first-child,
+.slide--titre .slide__pied { margin-top: auto; }
+.slide--titre > .marque { margin-bottom: 3cqi; }
+.slide--aplat { background: var(--surface-2); }
+/* Deux aplats l'un sur l'autre ne se distinguent pas : sur une diapositive en
+   aplat, le principe reprend le papier. */
+.slide--aplat .principe { background: var(--surface); }
+/* Le corps prend la place qui reste et garde son contenu chez lui : rien ne
+   déborde sur le pied. Une diapositive trop chargée se voit, elle ne s'empile pas. */
+/* Le schéma se cale au milieu de la place qui reste : une diapositive qui ne
+   porte qu'une phrase et un schéma respire des deux côtés au lieu de pendre. */
+.slide__corps {
+  flex: 1; min-height: 0; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.slide__corps > :first-child { margin-top: 0; }
+.slide__corps > :last-child  { margin-bottom: 0; }
+.slide__pied {
+  display: flex; justify-content: space-between; align-items: baseline; gap: var(--sp-4);
+  padding-top: 1.2cqi;
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+/* La phrase de thèse : une seule par diapositive, posée sous le titre et tenue
+   à la moitié de la largeur — au-delà, ce n'est plus une thèse, c'est un
+   paragraphe, et il n'a pas sa place sur une diapositive. */
+.slide__these { max-width: 46cqi; color: var(--ink-2); }
+.slide__these b { color: var(--ink); }
+.slide h1 { font-size: clamp(1.8rem, 4.8cqi, 3.9rem); line-height: var(--lh-tight); }
+.slide h2 { font-size: clamp(1.3rem, 3.1cqi, 2.5rem); margin-bottom: 0; }
+.slide p  { font-size: clamp(.95rem, 1.64cqi, 1.32rem); }
+.slide ul.list > li { font-size: clamp(.9rem, 1.56cqi, 1.25rem); }
+
+/* ============================================================
+   19. Diagrammes — SVG en ligne, posé sur les jetons, sans script
+   ============================================================
+   Dans une présentation, une diapositive porte un schéma, pas un paragraphe.
+   Le vocabulaire tient en une vingtaine de classes posées sur des <rect>,
+   <line>, <circle> et <text> : aucune couleur n'est écrite en dur, le sombre
+   suit donc les jetons sans un sélecteur de plus.
+
+   LA GRILLE DE PLACEMENT — toujours viewBox="0 0 1000 H", le SVG prend la
+   largeur utile ; H est la seule valeur à choisir (240 à 380 sur une
+   diapositive, sinon le schéma déborde sous le pied).
+
+     colonnes   2 : largeur 488, pas 512  |  3 : 316, pas 342
+                4 : 220, pas 260          |  5 : 180, pas 205
+                6 : 150, pas 170          (la dernière finit toujours à 1000)
+     boîte      rx 9 ; hauteur 44 (nom seul), 76 (nom + 1 ligne), 100 (nom +
+                1 ligne + étiquette d'état)
+     cadre      rx 10 ; 22 d'air à gauche et à droite des boîtes qu'il contient
+     texte      nom à +30 du bord haut de sa boîte, lignes à +52 puis tous les
+                17 ; retrait de 16 à 22 depuis le bord gauche
+     traits     1 pour .dg-trait, 1,5 pour .dg-fleche et .dg-jalon
+     flèche     28 de long au minimum, sinon la pointe mange le trait
+
+   Le texte d'un SVG ne se replie pas : une ligne = un <text>. Une étiquette
+   mono s'écrit en capitales dans le balisage, jamais par text-transform. */
+.diagramme { margin: var(--sp-5) 0; overflow-x: auto; }
+/* Dans un rapport, un schéma garde au moins 800 px : sur un téléphone il défile de côté
+   dans son cadre plutôt que de rapetisser son texte. */
+.page .diagramme svg { min-width: 800px; }
+.diagramme svg { width: 100%; max-width: var(--width-figure); height: auto; display: block; }
+
+/* Le marqueur de flèche est défini UNE SEULE FOIS par page, dans .dg-defs
+   posé en tête du document ; tous les schémas le réutilisent par son identifiant.
+   context-stroke fait prendre à la pointe la couleur du trait qui l'appelle ;
+   un navigateur qui l'ignore retombe sur le bleu déclaré juste avant. */
+.dg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+.dg-pointe { fill: var(--accent); fill: context-stroke; }
+
+/* --- surfaces : le cadre groupe, la boîte porte ---
+   Le filet d'une boîte est gradué, pas ordinaire : projeté, un filet de --rule
+   sur du papier disparaît. Une boîte posée dans un cadre se remplit de --surface
+   (elle éclaircit le cadre, comme dans le corpus) ; une boîte posée à même la
+   diapositive prend --aplat, sans quoi elle se confond avec le papier. */
+.dg-cadre { fill: var(--surface-2); }
+.dg-boite { fill: var(--surface); stroke: var(--rule-strong); stroke-width: 1; }
+.dg-boite--aplat  { fill: var(--surface-2); }
+/* Les états reprennent les teintes des pastilles, suffixe pour suffixe :
+   fait --ok · à surveiller --warn · bloqué --bad · en cours --accent. */
+.dg-boite--ok     { fill: var(--ok-tint);     stroke: var(--ok); }
+.dg-boite--warn   { fill: var(--warn-tint);   stroke: var(--warn); }
+.dg-boite--bad    { fill: var(--bad-tint);    stroke: var(--bad); }
+.dg-boite--accent { fill: var(--accent-tint); stroke: var(--accent-ink); }
+
+/* --- liaisons --- */
+.dg-trait  { fill: none; stroke: var(--rule-strong); stroke-width: 1; }
+.dg-fleche { fill: none; stroke: var(--accent); stroke-width: 1.5; }
+
+/* --- jalons : plein = franchi, creux = à venir --- */
+.dg-jalon       { fill: var(--surface); stroke: var(--accent); stroke-width: 1.5; }
+.dg-jalon--fait { fill: var(--accent); stroke: var(--accent); }
+
+/* --- barres : la part qualifiée en bleu, le reste en marque neutre --- */
+.dg-barre        { fill: var(--accent); }
+.dg-barre--reste { fill: var(--ink-4); }
+
+/* --- texte du schéma --- */
+.dg-titre {
+  font-family: var(--font-mono); font-size: 12.5px;
+  font-weight: var(--w-strong); letter-spacing: .06em; fill: var(--ink-3);
+}
+.dg-nom { font-family: var(--font-sans); font-size: 16px; font-weight: var(--w-strong); fill: var(--ink); }
+/* La ligne de légende d'un schéma est en --ink-2, pas en --ink-3 comme une
+   légende de document : elle doit tenir 4,5:1 sur les quatre teintes d'état,
+   et elle se lit projetée, pas à quarante centimètres. */
+.dg-l   { font-family: var(--font-sans); font-size: 13px; fill: var(--ink-2); }
+.dg-etiq {
+  font-family: var(--font-mono); font-size: 12px;
+  font-weight: var(--w-strong); letter-spacing: .06em; fill: var(--ink-3);
+}
+.dg-etiq--ok     { fill: var(--ok); }
+.dg-etiq--warn   { fill: var(--warn); }
+.dg-etiq--bad    { fill: var(--bad); }
+.dg-etiq--accent { fill: var(--accent-ink); }
+.dg-nb {
+  font-family: var(--font-mono); font-size: 14px; font-weight: var(--w-strong);
+  fill: var(--ink); font-variant-numeric: tabular-nums;
+}
+/* Une étiquette qui finit à droite de son point d'ancrage. */
+.dg-fin { text-anchor: end; }
+
+/* ============================================================
+   20. Graphiques — barres, colonnes, parts et courbes, sans script
+   ============================================================
+   Le graphique et le tableau passent avant le paragraphe. Les règles :
+   - une barre fait 16 px d'épaisseur (24 au plus), bout de donnée arrondi à
+     4 px, carré sur la ligne de base ; toutes partent de la même ligne de base ;
+   - la valeur s'écrit au bout de la barre ou sur la colonne, en encre, jamais
+     dans la couleur de la série ;
+   - les séries suivent l'ordre fixe s1 → s4 ; la série dont parle le graphique
+     prend s1, le contexte prend la marque neutre (.c-neutre) ;
+   - aucune piste de fond, aucun cadre, aucune ombre : s'il faut une grille,
+     c'est un filet --rule ;
+   - deux séries ou plus : une .legende ; une seule : le titre la nomme ;
+   - chaque marque porte un title="" (infobulle native, sans script) et les
+     chiffres exacts restent lisibles : au bout des barres ou dans un tableau.
+   Les largeurs viennent d'une variable --v posée en ligne (style="--v:62%"),
+   calculée par rapport à la plus grande valeur du graphique. */
+
+.graphe { margin: var(--sp-5) 0; min-width: 0; }
+.graphe__titre {
+  margin: 0 0 var(--sp-1);
+  font-family: var(--font-sans);
+  font-size: var(--t-small);
+  font-weight: var(--w-strong);
+  color: var(--ink);
+}
+.graphe__sous { margin: 0 0 var(--sp-3); font-size: var(--t-small); color: var(--ink-3); }
+.graphe__note {
+  margin: var(--sp-2) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: .04em;
+  color: var(--ink-3);
+}
+/* Deux graphiques côte à côte se replient en un seul sous 900 px. */
+.graphes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: var(--sp-5) var(--sp-7);
+  margin: var(--sp-5) 0;
+}
+.graphes > .graphe { margin: 0; }
+
+/* La couleur d'une marque : --c, posée par une classe de série. */
+.c-s1 { --c: var(--s1); }
+.c-s2 { --c: var(--s2); }
+.c-s3 { --c: var(--s3); }
+.c-s4 { --c: var(--s4); }
+.c-neutre { --c: var(--ink-4); }
+
+/* --- Barres horizontales : comparer des grandeurs, classer --- */
+.barres {
+  display: grid;
+  grid-template-columns: minmax(5rem, max-content) minmax(0, 1fr);
+  gap: 6px var(--sp-3);
+  align-items: center;
+}
+.barre { display: contents; }
+.barre__l { min-width: 0; font-size: var(--t-small); line-height: 1.3; color: var(--ink-2); overflow-wrap: anywhere; }
+.barre__piste { display: flex; align-items: center; gap: var(--sp-2); min-width: 0; min-height: 22px; }
+.barre__v {
+  flex: none;
+  width: calc(var(--v, 0%) * .78);
+  min-width: 2px;
+  height: 16px;
+  background: var(--c, var(--s1));
+  border-radius: 0 4px 4px 0;
+}
+/* Une fourchette : la part sûre pleine, la marge jusqu'au haut en clair, après un jour de 2 px. */
+.barre__v--marge { opacity: .38; }
+.barre__v + .barre__v--marge { margin-left: calc(2px - var(--sp-2)); }
+.barre__v:has(+ .barre__v--marge) { border-radius: 0; }
+.barre__n {
+  font-size: var(--t-small);
+  font-weight: var(--w-strong);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.barre__n small { font-weight: var(--w-regular); color: var(--ink-3); }
+.barre:hover .barre__l,
+.barre:hover .barre__n { color: var(--accent-ink); }
+
+/* --- Colonnes : une suite dans le temps ou dans un ordre --- */
+.colonnes {
+  --h: 150px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 0; /* la ligne de base court sans coupure sous les colonnes */
+  overflow-x: auto;
+}
+.colonne { display: flex; flex-direction: column; align-items: stretch; gap: 6px; min-width: 1.6rem; }
+.colonne__zone {
+  height: var(--h);
+  display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
+  gap: 4px;
+  border-bottom: 1px solid var(--rule-strong);
+}
+.colonne__v {
+  width: min(24px, 72%);
+  height: calc(var(--v, 0%) * .84);
+  min-height: 2px;
+  background: var(--c, var(--s1));
+  border-radius: 4px 4px 0 0;
+}
+.colonne__n {
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.colonne__l {
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: .04em;
+  color: var(--ink-3);
+  text-align: center;
+  line-height: 1.25;
+}
+.colonne:hover .colonne__n,
+.colonne:hover .colonne__l { color: var(--accent-ink); }
+
+/* --- Part : un tout réparti, en une barre empilée --- */
+/* Chaque segment prend flex-grow = sa part (style="flex:71"); un jour de 2 px les sépare. */
+.part { display: flex; gap: 2px; height: 16px; margin: var(--sp-2) 0 0; }
+.part > span { flex: 1 1 0; min-width: 2px; background: var(--c, var(--s1)); }
+.part > span:first-child { border-radius: 4px 0 0 4px; }
+.part > span:last-child { border-radius: 0 4px 4px 0; }
+.part > span:only-child { border-radius: 4px; }
+
+/* --- Légende : la pastille porte l'identité, le texte reste en encre --- */
+.legende {
+  display: flex; flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-4);
+  margin: var(--sp-2) 0 0; padding: 0;
+  list-style: none;
+  font-size: var(--t-small);
+  color: var(--ink-2);
+}
+.legende li { display: inline-flex; align-items: center; gap: 6px; }
+.legende li::before {
+  content: ""; flex: none;
+  width: 10px; height: 10px; border-radius: 3px;
+  background: var(--c, var(--s1));
+}
+.legende b { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* --- Barre dans un tableau : le tableau garde les chiffres, la barre les compare --- */
+td.mini { width: 30%; min-width: 6rem; vertical-align: middle; }
+.mini__v {
+  display: block;
+  width: var(--v, 0%);
+  min-width: 2px;
+  height: 10px;
+  background: var(--c, var(--s1));
+  border-radius: 0 3px 3px 0;
+}
+
+/* --- Courbes et barres en SVG : viewBox fixe, texte en encre --- */
+.graphe svg { display: block; width: 100%; max-width: var(--width-figure); height: auto; overflow: visible; }
+.gr-grille { stroke: var(--rule); stroke-width: 1; fill: none; }
+.gr-base   { stroke: var(--rule-strong); stroke-width: 1; fill: none; }
+.gr-ligne  { fill: none; stroke: var(--c, var(--s1)); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.gr-aire   { fill: var(--c, var(--s1)); opacity: .1; }
+.gr-point  { fill: var(--c, var(--s1)); stroke: var(--surface); stroke-width: 2; }
+.gr-barre  { fill: var(--c, var(--s1)); }
+.gr-t  { font-family: var(--font-sans); font-size: 13px; font-weight: var(--w-strong); fill: var(--ink); font-variant-numeric: tabular-nums; }
+.gr-ts { font-family: var(--font-mono); font-size: 12px; fill: var(--ink-3); font-variant-numeric: tabular-nums; }
+.gr-fin { text-anchor: end; }
+.gr-mil { text-anchor: middle; }
+
+@media (max-width: 640px) {
+  .barres { grid-template-columns: minmax(4.5rem, 38%) minmax(0, 1fr); }
+}
+
+
+/* ============================================================
+   21. Onglets — une section par onglet, un petit script
+   ============================================================
+   Un rapport de plus d'une section se lit en onglets plutôt qu'en un long
+   document : la couverture et ses chiffres restent au-dessus, la rangée
+   d'onglets reste en haut de l'écran pendant la lecture d'une section.
+   L'onglet choisi se lit à son fond teinté, sans trait ni barre.
+   Le script pose data-onglets sur le conteneur : sans lui, la rangée et les
+   boutons de suite disparaissent et toutes les sections se lisent à la suite.
+   À l'impression aussi. Sur un téléphone, la rangée défile de côté dans son
+   cadre ; la page, jamais. */
+.onglets,
+.suite { display: none; }
+[data-onglets] > .onglets {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 5;
+  display: flex;
+  gap: var(--sp-1);
+  margin: 0 calc(-1 * var(--gutter));
+  padding: var(--sp-2) var(--gutter);
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: var(--surface);
+  border-bottom: 1px solid var(--rule);
+}
+.onglets::-webkit-scrollbar { display: none; }
+[data-onglets] > [role="tabpanel"]:not([data-ouvert]) { display: none; }
+[data-onglets] .suite { display: flex; }
+
+.onglet {
+  flex: none;
+  display: inline-flex;
+  align-items: baseline;
+  gap: .45em;
+  padding: var(--sp-2) var(--sp-3);
+  border: 0;
+  border-radius: var(--r-pill);
+  background: none;
+  color: var(--ink-3);
+  font: inherit;
+  font-size: var(--t-small);
+  font-weight: var(--w-medium);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.onglet b {
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: .08em;
+  font-weight: var(--w-strong);
+  color: var(--ink-4);
+}
+.onglet:hover { color: var(--ink); background: var(--surface-2); }
+.onglet[aria-selected="true"] {
+  background: var(--accent-tint);
+  color: var(--accent-ink);
+  font-weight: var(--w-strong);
+}
+.onglet[aria-selected="true"] b { color: var(--accent-ink); }
+.onglet:focus-visible,
+.suite__btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+[role="tabpanel"]:focus { outline: none; }
+[role="tabpanel"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; border-radius: var(--r-sm); }
+
+/* Au pied d'une section : la précédente et la suivante. */
+.suite {
+  justify-content: space-between;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  margin-top: var(--sp-6);
+}
+.suite__btn {
+  display: inline-flex;
+  align-items: baseline;
+  gap: .45em;
+  max-width: 100%;
+  padding: var(--sp-2) var(--sp-4);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--ink-2);
+  font: inherit;
+  font-size: var(--t-small);
+  text-align: left;
+  cursor: pointer;
+}
+.suite__btn b { font-family: var(--font-mono); font-size: var(--t-micro); letter-spacing: .08em; color: var(--ink-3); }
+.suite__btn:hover { color: var(--accent-ink); background: var(--accent-tint); border-color: var(--accent-tint); }
+.suite__btn--next { margin-left: auto; }
+
+@media print {
+  [data-onglets] > .onglets, [data-onglets] .suite { display: none; }
+  [data-onglets] > [role="tabpanel"]:not([data-ouvert]) { display: block; }
+}
+
+@media print {
+  .deck { display: block; padding: 0; gap: 0; }
+  .deck { max-width: none; margin: 0; }
+  .slide {
+    width: var(--slide-w); height: var(--slide-h);
+    aspect-ratio: auto; border: none;
+    break-after: page; page-break-after: always;
+  }
+  .slide:last-of-type { break-after: auto; page-break-after: auto; }
+  .carte, .encadre, .principe, .codeblock, .diagramme, .graphe { break-inside: avoid; }
+}
+
+/* ============================================================
+   Ajouts propres à ce document
+   ============================================================ */
+/* Gouttière latérale : jamais moins de 16 px, ni moins que la zone sûre. */
+:root {
+  --gutter-l: max(var(--gutter), env(safe-area-inset-left, 0px));
+  --gutter-r: max(var(--gutter), env(safe-area-inset-right, 0px));
+}
+.page { padding-left: var(--gutter-l); padding-right: var(--gutter-r); }
+[data-onglets] > .onglets {
+  margin: 0 calc(-1 * var(--gutter-r)) 0 calc(-1 * var(--gutter-l));
+  padding: var(--sp-2) var(--gutter-r) var(--sp-2) var(--gutter-l);
+}
+html, body { overflow-x: clip; }
+/* Le schéma d'ensemble est large : il défile de côté dans son cadre. */
+.diagramme svg.erd { max-width: 1200px; }
+.dg-fleche--poly { stroke-dasharray: 5 4; }
+.dg-boite--futur { fill: var(--surface); stroke-dasharray: 4 4; }
+.dg-boite--ext   { fill: var(--surface); stroke-dasharray: 4 4; }
+/* Titre d'une table : son nom en code, ses pastilles à côté. */
+h3.tbl { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); margin-top: var(--sp-6); }
+h3.tbl code { font-size: 1rem; padding: 3px 9px; }
+.tablewrap table.champs td:nth-child(1) { white-space: nowrap; }
+.tablewrap table.champs td:nth-child(2) code { white-space: nowrap; }
+.tablewrap table.champs { min-width: 640px; }
+.tablewrap table.large { min-width: 600px; }
+td.commun { color: var(--ink-3); font-style: italic; }
+.chapitre > h3:not(.tbl) { margin-top: var(--sp-6); }
+.legende-dg { display: flex; flex-wrap: wrap; gap: var(--sp-2) var(--sp-4); align-items: center; margin: 0 0 var(--sp-3); font-size: var(--t-small); color: var(--ink-3); }
+</style>
+</head>
+<body>
+<svg class="dg-defs" aria-hidden="true" focusable="false"><defs>
+  <marker id="dg-pointe" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+    <path class="dg-pointe" d="M0,0 L8,4 L0,8 z"/>
+  </marker>
+</defs></svg>
+<main class="page reading">
+
+  <section class="hero">
+    <p class="eyebrow">OhO · Modèle de données · Prêt pour le lot 2</p>
+    <h1>Vingt-quatre tables, un foyer, une seule règle d'accès</h1>
+    <p class="lede">Le plan initial tient : tables dédiées par outil, checklist partagée, <code>household_id</code> partout. <b>Dix tables nouvelles et neuf retouchées</b> le rendent prêt pour les migrations : profil adossé à Supabase Auth, rayons en table, pièces jointes génériques, cache TMDB partagé, pierres tombales pour la synchronisation et un outil Dépenses façon Tricount.</p>
+    <div class="metastrip">
+      <div class="chiffre"><span class="n">24</span><span class="l">tables</span></div>
+      <div class="chiffre"><span class="n">10</span><span class="l">tables nouvelles</span></div>
+      <div class="chiffre"><span class="n">5</span><span class="l">domaines</span></div>
+      <div class="chiffre"><span class="n">1</span><span class="l">règle d'accès RLS</span></div>
+      <div class="chiffre"><span class="n">22</span><span class="l">décisions tranchées</span></div>
+    </div>
+  </section>
+
+  <div class="onglets__ancre"></div>
+  <div class="onglets" role="tablist" aria-label="Sections du document">
+    <button type="button" class="onglet" role="tab" id="t-c1" aria-controls="c1" aria-selected="true"><b>I</b>Vue d'ensemble</button>
+    <button type="button" class="onglet" role="tab" id="t-c2" aria-controls="c2" aria-selected="false" tabindex="-1"><b>II</b>Conventions</button>
+    <button type="button" class="onglet" role="tab" id="t-c3" aria-controls="c3" aria-selected="false" tabindex="-1"><b>III</b>Socle</button>
+    <button type="button" class="onglet" role="tab" id="t-c4" aria-controls="c4" aria-selected="false" tabindex="-1"><b>IV</b>Courses</button>
+    <button type="button" class="onglet" role="tab" id="t-c5" aria-controls="c5" aria-selected="false" tabindex="-1"><b>V</b>Voyages</button>
+    <button type="button" class="onglet" role="tab" id="t-c6" aria-controls="c6" aria-selected="false" tabindex="-1"><b>VI</b>À regarder</button>
+    <button type="button" class="onglet" role="tab" id="t-c7" aria-controls="c7" aria-selected="false" tabindex="-1"><b>VII</b>Dépenses</button>
+    <button type="button" class="onglet" role="tab" id="t-c8" aria-controls="c8" aria-selected="false" tabindex="-1"><b>VIII</b>Extensions</button>
+    <button type="button" class="onglet" role="tab" id="t-c9" aria-controls="c9" aria-selected="false" tabindex="-1"><b>IX</b>Décisions</button>
+  </div>
+  <script>document.currentScript.parentNode.setAttribute('data-onglets', '')</script>
+
+  <section class="chapitre" id="c1" role="tabpanel" aria-labelledby="t-c1" tabindex="0" data-ouvert>
+    <p class="chapitre__no"><b>I</b> · Vue d'ensemble</p>
+    <h2>Le plan tient : vingt-quatre tables, une seule règle d'accès</h2>
+    <p class="chapitre__intro">Le schéma garde l'approche « tables dédiées par outil » ; il précise les clés, sort trois JSON et ajoute ce que Supabase attend.</p>
+
+    <p class="legende-dg"><span class="pill pill--accent">Nouveau</span><span class="pill pill--warn">Modifié</span><span class="pill">Inchangé</span><span>Flèche : de la clé étrangère vers la table visée · pointillé : lien polymorphe</span></p>
+    <div class="diagramme">
+<svg class="erd" viewBox="0 0 1200 1128" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Modèle de données OhO : vingt tables réparties en quatre domaines. Le socle (profile, membership, household, tool_activation, push_subscription, notification_pref, activity_log, attachment) porte quatre outils : Courses et checklists, Voyages, À regarder, Dépenses partagées. Les flèches vont de la table qui porte la clé étrangère vers la table référencée." style="min-width:1100px">
+<rect class="dg-cadre" x="0" y="0" width="1200" height="360" rx="10"/>
+<text class="dg-titre" x="22" y="28">SOCLE — COMPTES, FOYER, JOURNAL</text>
+<rect class="dg-cadre" x="0" y="384" width="590" height="360" rx="10"/>
+<text class="dg-titre" x="22" y="412">COURSES ET CHECKLISTS</text>
+<rect class="dg-cadre" x="610" y="384" width="590" height="360" rx="10"/>
+<text class="dg-titre" x="632" y="412">VOYAGES</text>
+<rect class="dg-cadre" x="0" y="768" width="590" height="360" rx="10"/>
+<text class="dg-titre" x="22" y="796">À REGARDER</text>
+<rect class="dg-cadre" x="610" y="768" width="590" height="360" rx="10"/>
+<text class="dg-titre" x="632" y="796">DÉPENSES PARTAGÉES — V1.3</text>
+<line class="dg-fleche" x1="329.0" y1="102.5" x2="254.0" y2="102.5" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="563.0" y1="102.5" x2="638.0" y2="102.5" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="946.0" y1="102.5" x2="872.0" y2="102.5" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="137.0" y1="219.0" x2="137.0" y2="163.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="446.0" y1="219.0" x2="446.0" y2="163.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="755.0" y1="219.0" x2="755.0" y2="163.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="224.0" y1="486.5" x2="366.0" y2="486.5" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="122.0" y1="547.0" x2="122.0" y2="603.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="212.0" y1="547.0" x2="378.0" y2="603.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="224.0" y1="663.5" x2="366.0" y2="663.5" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="976.0" y1="486.5" x2="834.0" y2="486.5" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="732.0" y1="603.0" x2="732.0" y2="547.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="990.0" y1="603.0" x2="822.0" y2="547.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="570.0" y1="486.5" x2="630.0" y2="486.5" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche dg-fleche--poly" x1="1070.0" y1="340.0" x2="1070.0" y2="426.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="366.0" y1="870.5" x2="224.0" y2="870.5" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="122.0" y1="931.0" x2="122.0" y2="987.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="212.0" y1="931.0" x2="378.0" y2="987.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="976.0" y1="870.5" x2="834.0" y2="870.5" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="732.0" y1="987.0" x2="732.0" y2="931.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="1078.0" y1="987.0" x2="1078.0" y2="931.0" marker-end="url(#dg-pointe)"/>
+<rect class="dg-boite dg-boite--warn" x="22" y="44" width="230" height="117" rx="9"/>
+<text class="dg-nom" x="38" y="74">profile</text>
+<text class="dg-l" x="38" y="96">id = auth.users.id</text>
+<text class="dg-l" x="38" y="113">display_name, avatar_color</text>
+<text class="dg-etiq dg-etiq--warn" x="38" y="147">MODIFIÉ · EX-USER</text>
+<rect class="dg-boite" x="331" y="44" width="230" height="117" rx="9"/>
+<text class="dg-nom" x="347" y="74">membership</text>
+<text class="dg-l" x="347" y="96">user_id → profile</text>
+<text class="dg-l" x="347" y="113">unique (household, user)</text>
+<text class="dg-etiq" x="347" y="147">INCHANGÉ</text>
+<rect class="dg-boite" x="640" y="44" width="230" height="117" rx="9"/>
+<text class="dg-nom" x="656" y="74">household</text>
+<text class="dg-l" x="656" y="96">name, timezone</text>
+<text class="dg-l" x="656" y="113">racine de toutes les données</text>
+<text class="dg-etiq" x="656" y="147">INCHANGÉ</text>
+<rect class="dg-boite" x="948" y="44" width="230" height="117" rx="9"/>
+<text class="dg-nom" x="964" y="74">tool_activation</text>
+<text class="dg-l" x="964" y="96">tool_key, enabled, settings</text>
+<text class="dg-l" x="964" y="113">unique (household, tool_key)</text>
+<text class="dg-etiq" x="964" y="147">INCHANGÉ</text>
+<rect class="dg-boite dg-boite--warn" x="22" y="221" width="230" height="117" rx="9"/>
+<text class="dg-nom" x="38" y="251">push_subscription</text>
+<text class="dg-l" x="38" y="273">endpoint unique, clés VAPID</text>
+<text class="dg-l" x="38" y="290">last_seen_at, failure_count</text>
+<text class="dg-etiq dg-etiq--warn" x="38" y="324">MODIFIÉ</text>
+<rect class="dg-boite dg-boite--accent" x="331" y="221" width="230" height="117" rx="9"/>
+<text class="dg-nom" x="347" y="251">notification_pref</text>
+<text class="dg-l" x="347" y="273">par membre et par outil</text>
+<text class="dg-l" x="347" y="290">enabled, digest_minutes</text>
+<text class="dg-etiq dg-etiq--accent" x="347" y="324">NOUVEAU · V1.1</text>
+<rect class="dg-boite dg-boite--warn" x="640" y="221" width="230" height="117" rx="9"/>
+<text class="dg-nom" x="656" y="251">activity_log</text>
+<text class="dg-l" x="656" y="273">actor, action, entity</text>
+<text class="dg-l" x="656" y="290">immuable, écrit par trigger</text>
+<text class="dg-etiq dg-etiq--warn" x="656" y="324">MODIFIÉ</text>
+<rect class="dg-boite dg-boite--accent" x="948" y="221" width="230" height="117" rx="9"/>
+<text class="dg-nom" x="964" y="251">attachment</text>
+<text class="dg-l" x="964" y="273">entity_type + entity_id</text>
+<text class="dg-l" x="964" y="290">fichier privé dans Storage</text>
+<text class="dg-etiq dg-etiq--accent" x="964" y="324">NOUVEAU</text>
+<text class="dg-etiq" x="320.3" y="95.7" text-anchor="middle">N</text>
+<text class="dg-etiq" x="270.7" y="117.7" text-anchor="middle">1</text>
+<text class="dg-etiq" x="571.7" y="95.7" text-anchor="middle">N</text>
+<text class="dg-etiq" x="621.3" y="117.7" text-anchor="middle">1</text>
+<text class="dg-etiq" x="937.3" y="95.7" text-anchor="middle">N</text>
+<text class="dg-etiq" x="888.7" y="117.7" text-anchor="middle">1</text>
+<text class="dg-etiq" x="147.7" y="212.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="147.7" y="186.2" text-anchor="middle">1</text>
+<text class="dg-etiq" x="456.7" y="212.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="456.7" y="186.2" text-anchor="middle">1</text>
+<text class="dg-etiq" x="765.7" y="212.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="765.7" y="186.2" text-anchor="middle">1</text>
+<rect class="dg-boite dg-boite--warn" x="22" y="428" width="200" height="117" rx="9"/>
+<text class="dg-nom" x="38" y="458">checklist_item</text>
+<text class="dg-l" x="38" y="480">label, quantity, checked</text>
+<text class="dg-l" x="38" y="497">→ rayon, → catalogue</text>
+<text class="dg-etiq dg-etiq--warn" x="38" y="531">MODIFIÉ</text>
+<rect class="dg-boite dg-boite--warn" x="368" y="428" width="200" height="117" rx="9"/>
+<text class="dg-nom" x="384" y="458">checklist</text>
+<text class="dg-l" x="384" y="480">kind, name, is_default</text>
+<text class="dg-l" x="384" y="497">trip_id (prépa voyage)</text>
+<text class="dg-etiq dg-etiq--warn" x="384" y="531">MODIFIÉ</text>
+<rect class="dg-boite dg-boite--warn" x="22" y="605" width="200" height="117" rx="9"/>
+<text class="dg-nom" x="38" y="635">catalog_item</text>
+<text class="dg-l" x="38" y="657">label_key unique / foyer</text>
+<text class="dg-l" x="38" y="674">usage_count, last_used_at</text>
+<text class="dg-etiq dg-etiq--warn" x="38" y="708">MODIFIÉ</text>
+<rect class="dg-boite dg-boite--accent" x="368" y="605" width="200" height="117" rx="9"/>
+<text class="dg-nom" x="384" y="635">shopping_category</text>
+<text class="dg-l" x="384" y="657">name, sort_order</text>
+<text class="dg-l" x="384" y="674">remplace category_order</text>
+<text class="dg-etiq dg-etiq--accent" x="384" y="708">NOUVEAU</text>
+<text class="dg-etiq" x="232.7" y="479.7" text-anchor="middle">N</text>
+<text class="dg-etiq" x="349.3" y="501.7" text-anchor="middle">1</text>
+<text class="dg-etiq" x="132.7" y="562.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="143.8" y="588.2" text-anchor="middle">0..1</text>
+<text class="dg-etiq" x="238.9" y="545.9" text-anchor="middle">N</text>
+<text class="dg-etiq" x="330.4" y="609.2" text-anchor="middle">0..1</text>
+<text class="dg-etiq" x="232.7" y="656.7" text-anchor="middle">N</text>
+<text class="dg-etiq" x="338.2" y="678.7" text-anchor="middle">0..1</text>
+<rect class="dg-boite dg-boite--warn" x="632" y="428" width="200" height="117" rx="9"/>
+<text class="dg-nom" x="648" y="458">trip</text>
+<text class="dg-l" x="648" y="480">destination, dates</text>
+<text class="dg-l" x="648" y="497">status : idea → done</text>
+<text class="dg-etiq dg-etiq--warn" x="648" y="531">MODIFIÉ</text>
+<rect class="dg-boite dg-boite--warn" x="978" y="428" width="200" height="117" rx="9"/>
+<text class="dg-nom" x="994" y="458">booking</text>
+<text class="dg-l" x="994" y="480">kind, starts_at, tz</text>
+<text class="dg-l" x="994" y="497">amount, currency</text>
+<text class="dg-etiq dg-etiq--warn" x="994" y="531">MODIFIÉ</text>
+<rect class="dg-boite" x="632" y="605" width="200" height="117" rx="9"/>
+<text class="dg-nom" x="648" y="635">trip_activity</text>
+<text class="dg-l" x="648" y="657">title, url, done</text>
+<text class="dg-l" x="648" y="674">planned_date, sort_order</text>
+<text class="dg-etiq" x="648" y="708">INCHANGÉ</text>
+<rect class="dg-boite dg-boite--accent" x="978" y="605" width="200" height="117" rx="9"/>
+<text class="dg-nom" x="994" y="635">trip_budget_line</text>
+<text class="dg-l" x="994" y="657">category, planned_amount</text>
+<text class="dg-l" x="994" y="674">dépensé : calculé</text>
+<text class="dg-etiq dg-etiq--accent" x="994" y="708">NOUVEAU · V1.1</text>
+<text class="dg-etiq" x="967.3" y="479.7" text-anchor="middle">N</text>
+<text class="dg-etiq" x="850.7" y="501.7" text-anchor="middle">1</text>
+<text class="dg-etiq" x="742.7" y="596.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="742.7" y="570.2" text-anchor="middle">1</text>
+<text class="dg-etiq" x="971.8" y="586.8" text-anchor="middle">N</text>
+<text class="dg-etiq" x="849.8" y="574.8" text-anchor="middle">1</text>
+<text class="dg-etiq" x="589.8" y="479.7" text-anchor="middle">0..1</text>
+<text class="dg-etiq" x="602.2" y="501.7" text-anchor="middle">0..1</text>
+<text class="dg-etiq" x="1080.7" y="355.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="1080.7" y="411.2" text-anchor="middle">1</text>
+<text class="dg-etiq" x="1082.0" y="380.0">POLYMORPHE</text>
+<rect class="dg-boite dg-boite--warn" x="22" y="812" width="200" height="117" rx="9"/>
+<text class="dg-nom" x="38" y="842">watch_item</text>
+<text class="dg-l" x="38" y="864">kind, status, platform_id</text>
+<text class="dg-l" x="38" y="881">season, episode, media_id</text>
+<text class="dg-etiq dg-etiq--warn" x="38" y="915">MODIFIÉ</text>
+<rect class="dg-boite" x="368" y="812" width="200" height="117" rx="9"/>
+<text class="dg-nom" x="384" y="842">watch_rating</text>
+<text class="dg-l" x="384" y="864">rating 1–5, user_id</text>
+<text class="dg-l" x="384" y="881">unique (item, user)</text>
+<text class="dg-etiq" x="384" y="915">INCHANGÉ</text>
+<rect class="dg-boite dg-boite--accent" x="22" y="989" width="200" height="117" rx="9"/>
+<text class="dg-nom" x="38" y="1019">external_media</text>
+<text class="dg-l" x="38" y="1041">source + external_id</text>
+<text class="dg-l" x="38" y="1058">cache TMDB, global</text>
+<text class="dg-etiq dg-etiq--accent" x="38" y="1092">NOUVEAU</text>
+<rect class="dg-boite dg-boite--accent" x="368" y="989" width="200" height="117" rx="9"/>
+<text class="dg-nom" x="384" y="1019">watch_platform</text>
+<text class="dg-l" x="384" y="1041">name, is_subscribed</text>
+<text class="dg-l" x="384" y="1058">ce que le foyer a</text>
+<text class="dg-etiq dg-etiq--accent" x="384" y="1092">NOUVEAU</text>
+<text class="dg-etiq" x="357.3" y="863.7" text-anchor="middle">N</text>
+<text class="dg-etiq" x="240.7" y="885.7" text-anchor="middle">1</text>
+<text class="dg-etiq" x="132.7" y="946.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="143.8" y="972.2" text-anchor="middle">0..1</text>
+<text class="dg-etiq" x="238.9" y="929.9" text-anchor="middle">N</text>
+<text class="dg-etiq" x="330.4" y="993.2" text-anchor="middle">0..1</text>
+<rect class="dg-boite dg-boite--accent" x="632" y="812" width="200" height="117" rx="9"/>
+<text class="dg-nom" x="648" y="842">expense_book</text>
+<text class="dg-l" x="648" y="864">currency, archived_at</text>
+<text class="dg-l" x="648" y="881">trip_id → trip (option)</text>
+<text class="dg-etiq dg-etiq--accent" x="648" y="915">NOUVEAU · V1.3</text>
+<rect class="dg-boite dg-boite--accent" x="978" y="812" width="200" height="117" rx="9"/>
+<text class="dg-nom" x="994" y="842">expense</text>
+<text class="dg-l" x="994" y="864">paid_by, amount_cents</text>
+<text class="dg-l" x="994" y="881">fx_rate, booking_id</text>
+<text class="dg-etiq dg-etiq--accent" x="994" y="915">NOUVEAU · V1.3</text>
+<rect class="dg-boite dg-boite--accent" x="632" y="989" width="200" height="117" rx="9"/>
+<text class="dg-nom" x="648" y="1019">settlement</text>
+<text class="dg-l" x="648" y="1041">from_user → to_user</text>
+<text class="dg-l" x="648" y="1058">amount_cents, settled_on</text>
+<text class="dg-etiq dg-etiq--accent" x="648" y="1092">NOUVEAU · V1.3</text>
+<rect class="dg-boite dg-boite--accent" x="978" y="989" width="200" height="117" rx="9"/>
+<text class="dg-nom" x="994" y="1019">expense_share</text>
+<text class="dg-l" x="994" y="1041">user_id, share_cents</text>
+<text class="dg-l" x="994" y="1058">Σ parts = montant</text>
+<text class="dg-etiq dg-etiq--accent" x="994" y="1092">NOUVEAU · V1.3</text>
+<text class="dg-etiq" x="967.3" y="863.7" text-anchor="middle">N</text>
+<text class="dg-etiq" x="850.7" y="885.7" text-anchor="middle">1</text>
+<text class="dg-etiq" x="742.7" y="980.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="742.7" y="954.2" text-anchor="middle">1</text>
+<text class="dg-etiq" x="1088.7" y="980.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="1088.7" y="954.2" text-anchor="middle">1</text>
+</svg>
+</div>
+    <p class="note"><b>Lecture.</b> Toutes les tables d'un foyer portent <code>household_id</code> vers <code>household</code>, et leurs colonnes <code>created_by</code> / <code>updated_by</code> pointent vers <code>profile</code> : ces liens ne sont pas dessinés. Le schéma défile de côté sur un téléphone.</p>
+
+    <h3>Ce qui change par rapport au plan initial</h3>
+    <div class="tablewrap"><table class="large">
+      <thead><tr><th>Table</th><th style="min-width:9.5rem">Statut</th><th>Ce qui change</th></tr></thead>
+      <tbody>
+        <tr><td class="cle"><code>profile</code></td><td><span class="pill pill--warn">Modifié</span></td><td>Remplace <code>USER</code> : l'identité, le courriel et le mot de passe restent dans <code>auth.users</code> de Supabase.</td></tr>
+        <tr><td class="cle"><code>checklist</code></td><td><span class="pill pill--warn">Modifié</span></td><td>Porte <code>trip_id</code> (la clé passe du côté de la checklist) ; <code>category_order</code> disparaît au profit d'une table.</td></tr>
+        <tr><td class="cle"><code>checklist_item</code></td><td><span class="pill pill--warn">Modifié</span></td><td><code>category</code> texte → <code>category_id</code> ; lien vers le catalogue ; ordre en <code>double precision</code>.</td></tr>
+        <tr><td class="cle"><code>catalog_item</code></td><td><span class="pill pill--warn">Modifié</span></td><td>Clé normalisée <code>label_key</code> unique par foyer ; rayon par défaut en clé étrangère.</td></tr>
+        <tr><td class="cle"><code>activity_log</code></td><td><span class="pill pill--warn">Modifié</span></td><td>Écrit seulement par trigger, immuable ; garde un instantané du libellé (<code>entity_label</code>).</td></tr>
+        <tr><td class="cle"><code>push_subscription</code></td><td><span class="pill pill--warn">Modifié</span></td><td><code>endpoint</code> unique, suivi des échecs pour retirer les appareils morts.</td></tr>
+        <tr><td class="cle"><code>trip</code></td><td><span class="pill pill--warn">Modifié</span></td><td>Perd <code>prep_checklist_id</code> ; gagne un contrôle sur l'ordre des dates.</td></tr>
+        <tr><td class="cle"><code>booking</code></td><td><span class="pill pill--warn">Modifié</span></td><td><code>type</code> → <code>kind</code> (enum) ; fuseau <code>tz</code> ; <code>attachment_url</code> remplacé par <code>attachment</code>.</td></tr>
+        <tr><td class="cle"><code>watch_item</code></td><td><span class="pill pill--warn">Modifié</span></td><td>Plateforme en table ; affiche, durée et synopsis lus dans le cache <code>external_media</code>.</td></tr>
+        <tr><td class="cle"><code>shopping_category</code></td><td><span class="pill pill--accent">Nouveau</span></td><td>Les rayons, ordonnables, au lieu d'un JSON d'ordre dans chaque liste.</td></tr>
+        <tr><td class="cle"><code>attachment</code></td><td><span class="pill pill--accent">Nouveau</span></td><td>Pièces jointes génériques vers un bucket privé, servies par URL signée.</td></tr>
+        <tr><td class="cle"><code>external_media</code></td><td><span class="pill pill--accent">Nouveau</span></td><td>Cache TMDB partagé, hors foyer, écrit par une Edge Function.</td></tr>
+        <tr><td class="cle"><code>watch_platform</code></td><td><span class="pill pill--accent">Nouveau</span></td><td>Les plateformes du foyer, pour le filtre « ce soir ».</td></tr>
+        <tr><td class="cle"><code>notification_pref</code></td><td><span class="pill pill--accent">Nouveau</span> <span class="pill">v1.1</span></td><td>Préférences de push par membre et par outil.</td></tr>
+        <tr><td class="cle"><code>trip_budget_line</code></td><td><span class="pill pill--accent">Nouveau</span> <span class="pill">v1.1</span></td><td>Budget prévu par poste ; le dépensé est calculé depuis les dépenses du carnet lié.</td></tr>
+        <tr><td class="cle"><code>expense_book</code></td><td><span class="pill pill--accent">Nouveau</span> <span class="pill">v1.3</span></td><td>Le « tricount » : un carnet de comptes, sa devise, un voyage en option.</td></tr>
+        <tr><td class="cle"><code>expense</code></td><td><span class="pill pill--accent">Nouveau</span> <span class="pill">v1.3</span></td><td>Qui a payé quoi, en centimes, avec le taux de change figé à la saisie.</td></tr>
+        <tr><td class="cle"><code>expense_share</code></td><td><span class="pill pill--accent">Nouveau</span> <span class="pill">v1.3</span></td><td>La part de chacun ; leur somme égale le montant, au centime près.</td></tr>
+        <tr><td class="cle"><code>settlement</code></td><td><span class="pill pill--accent">Nouveau</span> <span class="pill">v1.3</span></td><td>Un remboursement d'un membre à un autre.</td></tr>
+        <tr><td class="cle"><code>expense_balance</code></td><td><span class="pill pill--accent">Nouveau</span> <span class="pill">Vue</span></td><td>Les soldes, calculés à la lecture et jamais stockés.</td></tr>
+        <tr><td class="cle" style="white-space:normal"><code>household</code>, <code>membership</code>, <code>tool_activation</code>, <code>trip_activity</code>, <code>watch_rating</code></td><td><span class="pill">Inchangé</span></td><td>Reçoivent les colonnes communes et leurs contraintes d'unicité, rien d'autre.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="encadre"><b>Ce qui part.</b> <code>password_hash</code>, <code>category_order</code>, <code>prep_checklist_id</code>, <code>attachment_url</code>, <code>poster_url</code> et le <code>platform</code> en texte libre : chacun est remplacé par une table ou une colonne mieux typée.</div>
+
+    <nav class="suite" aria-label="Sections voisines"><span></span><button type="button" class="suite__btn suite__btn--next" data-go="c2"><b>II</b> Les conventions communes →</button></nav>
+  </section>
+  <section class="chapitre" id="c2" role="tabpanel" aria-labelledby="t-c2" tabindex="0">
+    <p class="chapitre__no"><b>II</b> · Les conventions communes</p>
+    <h2>Chaque table hérite des mêmes colonnes et de la même policy</h2>
+    <p class="chapitre__intro">Ces conventions font le gros du lot 2 : une fois posées, chaque outil les recopie.</p>
+
+    <div class="diagramme">
+<svg viewBox="0 0 1000 112" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Le trajet d&#x27;une écriture : le téléphone génère l&#x27;identifiant et met l&#x27;écriture en file, l&#x27;API applique la RLS, les triggers datent et journalisent, Realtime diffuse à l&#x27;autre téléphone.">
+<text class="dg-titre" x="0" y="11">LE TRAJET D&#x27;UNE ÉCRITURE</text>
+<line class="dg-fleche" x1="226.0" y1="67.5" x2="254.0" y2="67.5" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="486.0" y1="67.5" x2="514.0" y2="67.5" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="746.0" y1="67.5" x2="774.0" y2="67.5" marker-end="url(#dg-pointe)"/>
+<rect class="dg-boite dg-boite--accent" x="0" y="24" width="220" height="87" rx="9"/>
+<text class="dg-nom" x="16" y="54">Le téléphone</text>
+<text class="dg-l" x="16" y="76">UUID v7 généré hors ligne</text>
+<text class="dg-l" x="16" y="93">écriture mise en outbox</text>
+<rect class="dg-boite dg-boite--aplat" x="260" y="24" width="220" height="87" rx="9"/>
+<text class="dg-nom" x="276" y="54">API et RLS</text>
+<text class="dg-l" x="276" y="76">seuls les champs changés</text>
+<text class="dg-l" x="276" y="93">is_member(household_id)</text>
+<rect class="dg-boite dg-boite--aplat" x="520" y="24" width="220" height="87" rx="9"/>
+<text class="dg-nom" x="536" y="54">Triggers</text>
+<text class="dg-l" x="536" y="76">updated_at, updated_by</text>
+<text class="dg-l" x="536" y="93">une ligne d&#x27;activity_log</text>
+<rect class="dg-boite dg-boite--aplat" x="780" y="24" width="220" height="87" rx="9"/>
+<text class="dg-nom" x="796" y="54">Diffusion</text>
+<text class="dg-l" x="796" y="76">Realtime vers l&#x27;autre</text>
+<text class="dg-l" x="796" y="93">téléphone ; push en v1.1</text>
+</svg>
+</div>
+    <h3>Sept colonnes communes, plus l'archivage</h3>
+    <div class="tablewrap"><table class="champs">
+      <thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead>
+      <tbody>
+        <tr><td class="cle"><code>id</code></td><td><code>uuid</code></td><td>PK, défaut <code>uuidv7()</code></td><td>Généré par le client pour l'outbox ; trié par date de création.</td></tr>
+        <tr><td class="cle"><code>household_id</code></td><td><code>uuid</code></td><td>NOT NULL, FK <code>household</code> ON DELETE CASCADE</td><td>Seule clé de la RLS, dénormalisée jusque sur les tables filles.</td></tr>
+        <tr><td class="cle"><code>created_at</code></td><td><code>timestamptz</code></td><td>NOT NULL DEFAULT <code>now()</code></td><td>Affichage « il y a 2 min ».</td></tr>
+        <tr><td class="cle"><code>updated_at</code></td><td><code>timestamptz</code></td><td>NOT NULL, posé par trigger</td><td>Curseur de synchronisation et arbitre du dernier écrit (heure serveur).</td></tr>
+        <tr><td class="cle"><code>created_by</code></td><td><code>uuid</code></td><td>FK <code>profile</code> ON DELETE SET NULL, défaut <code>auth.uid()</code></td><td>« Ajouté par Auriane ».</td></tr>
+        <tr><td class="cle"><code>updated_by</code></td><td><code>uuid</code></td><td>FK <code>profile</code> ON DELETE SET NULL, posé par trigger</td><td>Auteur de la dernière modification ; nourrit le journal.</td></tr>
+        <tr><td class="cle"><code>deleted_at</code></td><td><code>timestamptz</code></td><td>NULL</td><td>Pierre tombale : la suppression devient un UPDATE que la synchronisation voit. Purge après 30 jours.</td></tr>
+        <tr><td class="cle"><code>archived_at</code></td><td><code>timestamptz</code></td><td>NULL ; <code>checklist</code>, <code>trip</code>, <code>shopping_category</code></td><td>Archivage voulu par l'utilisateur, réversible, distinct de la suppression.</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note"><b>Exceptions.</b> <code>profile</code> et <code>household</code> sont leur propre clé ; <code>push_subscription</code> appartient à une personne ; <code>activity_log</code> est immuable (ni <code>updated_*</code> ni <code>deleted_at</code>) ; <code>external_media</code> est un cache global sans foyer.</p>
+
+    <h3>Les pierres tombales servent la synchronisation</h3>
+    <div class="cartes">
+      <article class="carte"><span class="pill pill--warn">Modifié</span><h3>Suppression = UPDATE</h3><p>Le plan supprimait physiquement les items. Un téléphone resté hors ligne ne verrait jamais la suppression en relisant <code>updated_at &gt; curseur</code>.</p></article>
+      <article class="carte"><span class="pill pill--warn">Modifié</span><h3>Realtime filtrable</h3><p>Avec la RLS, Supabase Realtime ne filtre pas les événements DELETE et n'en donne que la clé. Un UPDATE de <code>deleted_at</code> passe par le même filtre <code>household_id</code> que le reste.</p></article>
+      <article class="carte"><span class="pill pill--accent">Nouveau</span><h3>Purge planifiée</h3><p>Une tâche <code>pg_cron</code> quotidienne supprime pour de bon les lignes mortes depuis 30 jours. Les clés étrangères en cascade font le ménage des enfants.</p></article>
+    </div>
+
+    <h3>Une seule règle d'accès</h3>
+    <div class="codeblock"><span class="cap">La fonction d'appartenance, puis la policy recopiée sur chaque table</span>
+<pre><code>create function private.is_member(hh uuid)
+returns boolean
+language sql stable security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1 from public.membership m
+    where m.household_id = hh
+      and m.user_id = (select auth.uid())
+  );
+$$;
+
+alter table public.checklist_item enable row level security;
+create policy membres_du_foyer on public.checklist_item
+  for all to authenticated
+  using (private.is_member(household_id))
+  with check (private.is_member(household_id));</code></pre></div>
+    <p class="note"><b>Pourquoi <code>security definer</code>.</b> La fonction lit <code>membership</code> sans repasser par sa propre RLS, ce qui évite la récursion ; <code>(select auth.uid())</code> est évalué une fois par requête et non par ligne. Variantes : <code>push_subscription</code> et <code>notification_pref</code> filtrent sur <code>user_id = auth.uid()</code>, <code>activity_log</code> n'a qu'une policy SELECT, <code>external_media</code> est lisible par tout compte connecté et écrit par le seul <code>service_role</code>.</p>
+
+    <h3>Une clé étrangère composite empêche de traverser les foyers</h3>
+    <div class="codeblock"><span class="cap">Le parent expose (household_id, id) ; l'enfant y pointe avec les deux colonnes</span>
+<pre><code>alter table checklist add unique (household_id, id);
+
+alter table checklist_item
+  add foreign key (household_id, checklist_id)
+      references checklist (household_id, id) on delete cascade,
+  add foreign key (household_id, category_id)
+      references shopping_category (household_id, id)
+      on delete set null (category_id);   -- Postgres 15+</code></pre></div>
+    <p class="note"><b>Ce que ça garantit.</b> La RLS ne contrôle que le <code>household_id</code> de la ligne écrite ; sans clé composite, un item du foyer A pourrait viser une liste du foyer B. La forme <code>set null (category_id)</code> ne vide que la colonne visée, pas <code>household_id</code>.</p>
+
+    <h3>Types énumérés</h3>
+    <div class="tablewrap"><table class="large">
+      <thead><tr><th>Type</th><th>Valeurs</th><th>Forme</th></tr></thead>
+      <tbody>
+        <tr><td class="cle"><code>membership_role</code></td><td><code>owner</code>, <code>member</code></td><td>enum Postgres</td></tr>
+        <tr><td class="cle"><code>checklist_kind</code></td><td><code>shopping</code>, <code>trip_prep</code>, <code>generic</code></td><td>enum Postgres</td></tr>
+        <tr><td class="cle"><code>trip_status</code></td><td><code>idea</code>, <code>planned</code>, <code>ongoing</code>, <code>done</code></td><td>enum Postgres</td></tr>
+        <tr><td class="cle"><code>booking_kind</code></td><td><code>flight</code>, <code>train</code>, <code>lodging</code>, <code>car</code>, <code>activity</code>, <code>other</code></td><td>enum Postgres (<code>train</code> ajouté)</td></tr>
+        <tr><td class="cle"><code>watch_kind</code></td><td><code>movie</code>, <code>series</code></td><td>enum Postgres</td></tr>
+        <tr><td class="cle"><code>watch_status</code></td><td><code>to_watch</code>, <code>watching</code>, <code>watched</code>, <code>dropped</code></td><td>enum Postgres</td></tr>
+        <tr><td class="cle"><code>expense_split_mode</code></td><td><code>equal</code>, <code>amounts</code>, <code>weights</code></td><td>enum Postgres</td></tr>
+        <tr><td class="cle"><code>expense_category</code></td><td><code>transport</code>, <code>lodging</code>, <code>food</code>, <code>activity</code>, <code>shopping</code>, <code>other</code></td><td>enum Postgres, partagé avec <code>trip_budget_line</code></td></tr>
+        <tr><td class="cle"><code>tool_key</code>, <code>entity_type</code>, <code>action</code></td><td><code>shopping</code>, <code>trips</code>, <code>watchlist</code>, <code>expenses</code>… ; <code>created</code>, <code>checked</code>…</td><td><code>text</code> + CHECK par expression régulière, pour qu'un nouvel outil n'ait pas à modifier le socle</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Triggers</h3>
+    <div class="tablewrap"><table class="large">
+      <thead><tr><th>Trigger</th><th>Quand, sur quoi</th><th>Effet</th></tr></thead>
+      <tbody>
+        <tr><td class="cle"><code>touch_row</code></td><td>BEFORE UPDATE, toutes les tables</td><td>Pose <code>updated_at = now()</code> et <code>updated_by = auth.uid()</code>.</td></tr>
+        <tr><td class="cle"><code>log_activity</code></td><td>AFTER INSERT / UPDATE / DELETE, tables d'outils</td><td>Écrit <code>activity_log</code> (<code>security definer</code>) ; ignore un changement de <code>sort_order</code> seul.</td></tr>
+        <tr><td class="cle"><code>catalog_learn</code></td><td>BEFORE INSERT sur <code>checklist_item</code> d'une liste <code>shopping</code></td><td>Upsert du catalogue et renseigne <code>catalog_item_id</code> (voir IV).</td></tr>
+        <tr><td class="cle"><code>stamp_checked</code></td><td>BEFORE UPDATE OF <code>checked</code></td><td>Pose ou vide <code>checked_by</code> / <code>checked_at</code>.</td></tr>
+        <tr><td class="cle"><code>check_shares_sum</code></td><td>CONSTRAINT TRIGGER DEFERRABLE INITIALLY DEFERRED sur <code>expense</code> et <code>expense_share</code></td><td>À la validation, refuse une dépense dont la somme des parts diffère de <code>book_amount_cents</code>.</td></tr>
+        <tr><td class="cle"><code>handle_new_user</code></td><td>AFTER INSERT sur <code>auth.users</code></td><td>Crée le <code>profile</code>.</td></tr>
+        <tr><td class="cle"><code>attachment_cascade</code></td><td>AFTER UPDATE OF <code>deleted_at</code> sur <code>booking</code>, <code>trip</code></td><td>Marque les pièces jointes ; la purge retire aussi l'objet Storage.</td></tr>
+        <tr><td class="cle"><code>notify_push</code> <span class="pill">v1.1</span></td><td>Database Webhook, INSERT sur <code>activity_log</code></td><td>Appelle l'Edge Function VAPID, qui regroupe et ignore l'auteur.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Index</h3>
+    <div class="tablewrap"><table class="large">
+      <thead><tr><th>Table</th><th>Index</th><th>Sert à</th></tr></thead>
+      <tbody>
+        <tr><td class="cle">toutes</td><td><code>(household_id, updated_at)</code></td><td>La relecture « ce qui a changé depuis » au retour du réseau.</td></tr>
+        <tr><td class="cle">toutes</td><td>chaque colonne de clé étrangère</td><td>Postgres ne les indexe pas seul ; les cascades en dépendent.</td></tr>
+        <tr><td class="cle"><code>membership</code></td><td>unique <code>(household_id, user_id)</code> ; <code>(user_id)</code></td><td><code>is_member()</code> et « mes foyers ».</td></tr>
+        <tr><td class="cle"><code>checklist_item</code></td><td><code>(checklist_id, checked, sort_order)</code> WHERE <code>deleted_at is null</code></td><td>L'écran de liste, panier en bas.</td></tr>
+        <tr><td class="cle"><code>catalog_item</code></td><td>unique <code>(household_id, label_key)</code></td><td>L'upsert du catalogue et l'autocomplétion.</td></tr>
+        <tr><td class="cle"><code>activity_log</code></td><td><code>(household_id, created_at desc)</code> ; <code>(entity_type, entity_id)</code></td><td>Le fil d'historique, l'historique d'un objet.</td></tr>
+        <tr><td class="cle"><code>booking</code></td><td><code>(trip_id, starts_at)</code></td><td>Les réservations dans l'ordre du voyage.</td></tr>
+        <tr><td class="cle"><code>expense</code></td><td><code>(book_id, spent_on desc)</code> ; unique <code>(booking_id)</code> partiel</td><td>Le fil du carnet ; une réservation comptée une seule fois.</td></tr>
+        <tr><td class="cle"><code>expense_share</code></td><td>unique <code>(expense_id, user_id)</code> ; <code>(user_id)</code></td><td>Une part par membre ; le calcul des soldes.</td></tr>
+        <tr><td class="cle"><code>watch_item</code></td><td><code>(household_id, status)</code> ; unique <code>(household_id, media_id)</code> partiel</td><td>Le filtre par statut ; pas deux fois le même film.</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note"><b>Unicité et pierres tombales.</b> Tout index unique sur une table à <code>deleted_at</code> est partiel (<code>where deleted_at is null</code>), sinon une ligne supprimée bloquerait sa recréation.</p>
+
+    <h3>Cascades</h3>
+    <div class="tablewrap"><table class="large">
+      <thead><tr><th>Quand on supprime</th><th>Effet</th></tr></thead>
+      <tbody>
+        <tr><td class="cle"><code>household</code></td><td>CASCADE sur toutes les tables du foyer.</td></tr>
+        <tr><td class="cle"><code>auth.users</code> → <code>profile</code></td><td>CASCADE sur <code>membership</code>, <code>watch_rating</code>, <code>push_subscription</code>, <code>notification_pref</code> ; SET NULL sur tous les <code>*_by</code> et <code>actor_id</code>.</td></tr>
+        <tr><td class="cle"><code>trip</code></td><td>CASCADE sur <code>trip_activity</code>, <code>booking</code>, <code>trip_budget_line</code> et la <code>checklist</code> de préparation ; SET NULL sur <code>expense_book.trip_id</code> : l'argent survit au voyage.</td></tr>
+        <tr><td class="cle"><code>expense_book</code></td><td>CASCADE sur <code>expense</code>, <code>expense_share</code>, <code>settlement</code>.</td></tr>
+        <tr><td class="cle"><code>membership</code> d'un payeur</td><td>RESTRICT : on ne retire pas un membre qui figure dans des comptes ; on archive le carnet d'abord.</td></tr>
+        <tr><td class="cle"><code>checklist</code></td><td>CASCADE sur <code>checklist_item</code>.</td></tr>
+        <tr><td class="cle"><code>shopping_category</code>, <code>catalog_item</code>, <code>watch_platform</code></td><td>SET NULL sur la seule colonne qui les vise (de même <code>booking</code> pour <code>expense.booking_id</code>).</td></tr>
+        <tr><td class="cle"><code>external_media</code></td><td>RESTRICT : un cache référencé ne disparaît pas.</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note"><b>Avec les pierres tombales.</b> Les cascades ne jouent qu'à la purge ; entre-temps, l'enfant d'un parent supprimé est masqué parce que le client filtre sur le parent.</p>
+
+    <nav class="suite" aria-label="Sections voisines"><button type="button" class="suite__btn" data-go="c1">← <b>I</b> Vue d'ensemble</button><button type="button" class="suite__btn suite__btn--next" data-go="c3"><b>III</b> Le socle →</button></nav>
+  </section>
+  <section class="chapitre" id="c3" role="tabpanel" aria-labelledby="t-c3" tabindex="0">
+    <p class="chapitre__no"><b>III</b> · Le socle</p>
+    <h2>Le socle s'adosse à Supabase Auth au lieu de le refaire</h2>
+    <p class="chapitre__intro">Huit tables : les comptes, le foyer, le registre d'outils, le journal, les push et les pièces jointes.</p>
+
+    <div class="diagramme">
+<svg viewBox="0 0 1000 304" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Le socle : profile, membership, household et tool_activation sur la première rangée ; push_subscription, notification_pref, activity_log et attachment sur la seconde.">
+<line class="dg-fleche" x1="258.0" y1="60.5" x2="222.0" y2="60.5" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="482.0" y1="60.5" x2="518.0" y2="60.5" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="778.0" y1="60.5" x2="742.0" y2="60.5" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="110.0" y1="179.0" x2="110.0" y2="123.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="370.0" y1="179.0" x2="370.0" y2="123.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="630.0" y1="179.0" x2="630.0" y2="123.0" marker-end="url(#dg-pointe)"/>
+<rect class="dg-boite dg-boite--aplat" x="0" y="0" width="220" height="121" rx="9"/>
+<text class="dg-nom" x="16" y="30">profile</text>
+<text class="dg-l" x="16" y="52">PK id → auth.users</text>
+<text class="dg-l" x="16" y="69">display_name</text>
+<text class="dg-l" x="16" y="86">avatar_color</text>
+<text class="dg-l" x="16" y="103">locale</text>
+<rect class="dg-boite dg-boite--aplat" x="260" y="0" width="220" height="121" rx="9"/>
+<text class="dg-nom" x="276" y="30">membership</text>
+<text class="dg-l" x="276" y="52">household_id → household</text>
+<text class="dg-l" x="276" y="69">user_id → profile</text>
+<text class="dg-l" x="276" y="86">role membership_role</text>
+<text class="dg-l" x="276" y="103">joined_at</text>
+<rect class="dg-boite dg-boite--aplat" x="520" y="0" width="220" height="121" rx="9"/>
+<text class="dg-nom" x="536" y="30">household</text>
+<text class="dg-l" x="536" y="52">PK id</text>
+<text class="dg-l" x="536" y="69">name</text>
+<text class="dg-l" x="536" y="86">timezone (IANA)</text>
+<text class="dg-l" x="536" y="103">created_by → profile</text>
+<rect class="dg-boite dg-boite--aplat" x="780" y="0" width="220" height="121" rx="9"/>
+<text class="dg-nom" x="796" y="30">tool_activation</text>
+<text class="dg-l" x="796" y="52">household_id, tool_key</text>
+<text class="dg-l" x="796" y="69">enabled</text>
+<text class="dg-l" x="796" y="86">sort_order</text>
+<text class="dg-l" x="796" y="103">settings jsonb</text>
+<rect class="dg-boite dg-boite--aplat" x="0" y="181" width="220" height="121" rx="9"/>
+<text class="dg-nom" x="16" y="211">push_subscription</text>
+<text class="dg-l" x="16" y="233">user_id → profile</text>
+<text class="dg-l" x="16" y="250">endpoint unique</text>
+<text class="dg-l" x="16" y="267">p256dh, auth</text>
+<text class="dg-l" x="16" y="284">last_seen_at</text>
+<rect class="dg-boite dg-boite--aplat" x="260" y="181" width="220" height="121" rx="9"/>
+<text class="dg-nom" x="276" y="211">notification_pref</text>
+<text class="dg-l" x="276" y="233">(household_id, user_id)</text>
+<text class="dg-l" x="276" y="250">  → membership</text>
+<text class="dg-l" x="276" y="267">tool_key, enabled</text>
+<text class="dg-l" x="276" y="284">digest_minutes</text>
+<rect class="dg-boite dg-boite--aplat" x="520" y="181" width="220" height="121" rx="9"/>
+<text class="dg-nom" x="536" y="211">activity_log</text>
+<text class="dg-l" x="536" y="233">actor_id → profile</text>
+<text class="dg-l" x="536" y="250">tool_key, action</text>
+<text class="dg-l" x="536" y="267">entity_type, entity_id</text>
+<text class="dg-l" x="536" y="284">entity_label, payload</text>
+<rect class="dg-boite dg-boite--aplat" x="780" y="181" width="220" height="121" rx="9"/>
+<text class="dg-nom" x="796" y="211">attachment</text>
+<text class="dg-l" x="796" y="233">entity_type, entity_id</text>
+<text class="dg-l" x="796" y="250">storage_path unique</text>
+<text class="dg-l" x="796" y="267">file_name, mime_type</text>
+<text class="dg-l" x="796" y="284">size_bytes</text>
+<text class="dg-etiq" x="249.3" y="53.7" text-anchor="middle">N</text>
+<text class="dg-etiq" x="238.7" y="75.7" text-anchor="middle">1</text>
+<text class="dg-etiq" x="490.7" y="53.7" text-anchor="middle">N</text>
+<text class="dg-etiq" x="501.3" y="75.7" text-anchor="middle">1</text>
+<text class="dg-etiq" x="769.3" y="53.7" text-anchor="middle">N</text>
+<text class="dg-etiq" x="758.7" y="75.7" text-anchor="middle">1</text>
+<text class="dg-etiq" x="120.7" y="172.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="120.7" y="146.2" text-anchor="middle">1</text>
+<text class="dg-etiq" x="380.7" y="172.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="380.7" y="146.2" text-anchor="middle">1</text>
+<text class="dg-etiq" x="640.7" y="172.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="640.7" y="146.2" text-anchor="middle">1</text>
+</svg>
+</div>
+<h3 class="tbl"><code>profile</code> <span class="pill pill--warn">Modifié</span> <span class="pill">v1</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">Pas de household_id : un profil peut appartenir à plusieurs foyers.</td></tr>
+<tr><td class="cle"><code>id</code></td><td><code>uuid</code></td><td>PK, FK <code>auth.users(id)</code> ON DELETE CASCADE</td><td>Même identifiant que le compte Supabase.</td></tr>
+<tr><td class="cle"><code>display_name</code></td><td><code>text</code></td><td>NOT NULL, 1 à 40 caractères</td><td>« Auriane », « Aurélien ».</td></tr>
+<tr><td class="cle"><code>avatar_color</code></td><td><code>text</code></td><td>CHECK <code>~ ^#[0-9a-f]{6}$</code></td><td>Pastille de l'auteur dans les listes.</td></tr>
+<tr><td class="cle"><code>locale</code></td><td><code>text</code></td><td>NOT NULL DEFAULT <code>'fr'</code></td><td>Langue de l'interface.</td></tr>
+<tr><td class="cle"><code>created_at, updated_at</code></td><td><code>timestamptz</code></td><td>comme partout</td><td>—</td></tr>
+</tbody></table></div>
+<p class="note"><b>Pas de <code>password_hash</code>.</b> Courriel, mot de passe, magic link et sessions vivent dans <code>auth.users</code> ; toutes les colonnes « qui » de l'app pointent vers <code>profile</code> pour que PostgREST puisse y joindre le nom.</p>
+<h3 class="tbl"><code>household</code> <span class="pill">Inchangé</span> <span class="pill">v1</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">id, created_at, updated_at, created_by, deleted_at.</td></tr>
+<tr><td class="cle"><code>name</code></td><td><code>text</code></td><td>NOT NULL</td><td>« Chez nous ».</td></tr>
+<tr><td class="cle"><code>timezone</code></td><td><code>text</code></td><td>NOT NULL, fuseau IANA</td><td>Dates des rappels et de « aujourd'hui ».</td></tr>
+</tbody></table></div>
+<h3 class="tbl"><code>membership</code> <span class="pill">Inchangé</span> <span class="pill">v1</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">Colonnes communes : id, household_id, created_at, updated_at, created_by, updated_by, deleted_at (voir II).</td></tr>
+<tr><td class="cle"><code>user_id</code></td><td><code>uuid</code></td><td>NOT NULL, FK <code>profile</code> ON DELETE CASCADE</td><td>Le membre.</td></tr>
+<tr><td class="cle"><code>role</code></td><td><code>membership_role</code></td><td>NOT NULL DEFAULT <code>member</code></td><td>Le propriétaire gère les membres.</td></tr>
+<tr><td class="cle"><code>joined_at</code></td><td><code>timestamptz</code></td><td>NOT NULL DEFAULT now()</td><td>—</td></tr>
+<tr><td class="cle"><code>(household_id, user_id)</code></td><td><code>—</code></td><td>UNIQUE</td><td>Cible de <code>is_member()</code> et de <code>notification_pref</code>.</td></tr>
+</tbody></table></div>
+<h3 class="tbl"><code>tool_activation</code> <span class="pill">Inchangé</span> <span class="pill">v1</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">Colonnes communes : id, household_id, created_at, updated_at, created_by, updated_by, deleted_at (voir II).</td></tr>
+<tr><td class="cle"><code>tool_key</code></td><td><code>text</code></td><td>NOT NULL, CHECK <code>~ ^[a-z][a-z0-9_]{1,30}$</code></td><td>Clé du registre front (<code>tools/registry.ts</code>).</td></tr>
+<tr><td class="cle"><code>enabled</code></td><td><code>boolean</code></td><td>NOT NULL DEFAULT true</td><td>Outil visible sur l'accueil.</td></tr>
+<tr><td class="cle"><code>sort_order</code></td><td><code>smallint</code></td><td>NOT NULL DEFAULT 0</td><td>Ordre de la grille d'accueil.</td></tr>
+<tr><td class="cle"><code>settings</code></td><td><code>jsonb</code></td><td>NOT NULL DEFAULT '{}'</td><td>Réglages propres à l'outil (ex. durée max du filtre « ce soir »).</td></tr>
+<tr><td class="cle"><code>(household_id, tool_key)</code></td><td><code>—</code></td><td>UNIQUE</td><td>Un outil activé une fois par foyer.</td></tr>
+</tbody></table></div>
+<h3 class="tbl"><code>activity_log</code> <span class="pill pill--warn">Modifié</span> <span class="pill">v1</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">household_id seulement : ni updated_*, ni deleted_at.</td></tr>
+<tr><td class="cle"><code>id</code></td><td><code>uuid</code></td><td>PK, UUID v7</td><td>Ordre chronologique sans index de plus.</td></tr>
+<tr><td class="cle"><code>actor_id</code></td><td><code>uuid</code></td><td>FK <code>profile</code> ON DELETE SET NULL</td><td>Qui.</td></tr>
+<tr><td class="cle"><code>tool_key</code></td><td><code>text</code></td><td>NOT NULL</td><td>Pour filtrer l'historique et les préférences de push.</td></tr>
+<tr><td class="cle"><code>action</code></td><td><code>text</code></td><td>NOT NULL, CHECK <code>~ ^[a-z_]+$</code></td><td><code>created</code>, <code>updated</code>, <code>checked</code>, <code>unchecked</code>, <code>archived</code>, <code>deleted</code>, <code>restored</code>…</td></tr>
+<tr><td class="cle"><code>entity_type, entity_id</code></td><td><code>text, uuid</code></td><td>NOT NULL, sans FK</td><td>L'objet touché, quelle que soit sa table.</td></tr>
+<tr><td class="cle"><code>entity_label</code></td><td><code>text</code></td><td>NULL</td><td>Instantané du libellé : « Auriane a supprimé lait » reste lisible après la purge.</td></tr>
+<tr><td class="cle"><code>payload</code></td><td><code>jsonb</code></td><td>NOT NULL DEFAULT '{}'</td><td>Champs modifiés, ancien et nouveau.</td></tr>
+<tr><td class="cle"><code>created_at</code></td><td><code>timestamptz</code></td><td>NOT NULL DEFAULT now()</td><td>—</td></tr>
+</tbody></table></div>
+<p class="note"><b>Immuable.</b> Une seule policy SELECT ; l'écriture passe par le trigger <code>log_activity</code> en <code>security definer</code>. C'est aussi la source unique des push.</p>
+<h3 class="tbl"><code>push_subscription</code> <span class="pill pill--warn">Modifié</span> <span class="pill">v1.1</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">id, created_at, updated_at ; pas de household_id, RLS sur user_id.</td></tr>
+<tr><td class="cle"><code>user_id</code></td><td><code>uuid</code></td><td>NOT NULL, FK <code>profile</code> ON DELETE CASCADE</td><td>L'appareil appartient à une personne.</td></tr>
+<tr><td class="cle"><code>endpoint</code></td><td><code>text</code></td><td>NOT NULL UNIQUE</td><td>URL Web Push ; un réabonnement fait un upsert.</td></tr>
+<tr><td class="cle"><code>p256dh, auth</code></td><td><code>text</code></td><td>NOT NULL</td><td>Clés de chiffrement du navigateur.</td></tr>
+<tr><td class="cle"><code>user_agent</code></td><td><code>text</code></td><td>NULL</td><td>« Pixel 8, Chrome » dans la liste des appareils.</td></tr>
+<tr><td class="cle"><code>last_seen_at</code></td><td><code>timestamptz</code></td><td>NULL</td><td>Dernier envoi réussi.</td></tr>
+<tr><td class="cle"><code>failure_count</code></td><td><code>smallint</code></td><td>NOT NULL DEFAULT 0</td><td>Retrait après une réponse 404 / 410 ou trois échecs.</td></tr>
+</tbody></table></div>
+<h3 class="tbl"><code>notification_pref</code> <span class="pill pill--accent">Nouveau</span> <span class="pill">v1.1</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">created_at, updated_at.</td></tr>
+<tr><td class="cle"><code>household_id, user_id</code></td><td><code>uuid</code></td><td>FK composite vers <code>membership</code> ON DELETE CASCADE</td><td>Une préférence par membre.</td></tr>
+<tr><td class="cle"><code>tool_key</code></td><td><code>text</code></td><td>NOT NULL</td><td>Par outil.</td></tr>
+<tr><td class="cle"><code>enabled</code></td><td><code>boolean</code></td><td>NOT NULL DEFAULT true</td><td>Couper les push d'un outil.</td></tr>
+<tr><td class="cle"><code>digest_minutes</code></td><td><code>smallint</code></td><td>NOT NULL DEFAULT 5, CHECK 0 à 120</td><td>Fenêtre de regroupement « 5 items ajoutés ».</td></tr>
+<tr><td class="cle"><code>(household_id, user_id, tool_key)</code></td><td><code>—</code></td><td>PK</td><td>—</td></tr>
+</tbody></table></div>
+<h3 class="tbl"><code>attachment</code> <span class="pill pill--accent">Nouveau</span> <span class="pill">v1</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">Colonnes communes : id, household_id, created_at, updated_at, created_by, updated_by, deleted_at (voir II).</td></tr>
+<tr><td class="cle"><code>entity_type, entity_id</code></td><td><code>text, uuid</code></td><td>NOT NULL, CHECK <code>~ ^[a-z_]+$</code></td><td>L'objet porteur : <code>booking</code> et <code>expense</code> aujourd'hui, n'importe quelle table demain.</td></tr>
+<tr><td class="cle"><code>storage_path</code></td><td><code>text</code></td><td>NOT NULL UNIQUE</td><td><code>{household_id}/{entity_type}/{entity_id}/{id}</code> dans le bucket privé <code>attachments</code>.</td></tr>
+<tr><td class="cle"><code>file_name</code></td><td><code>text</code></td><td>NOT NULL</td><td>Nom d'origine, rendu au téléchargement.</td></tr>
+<tr><td class="cle"><code>mime_type</code></td><td><code>text</code></td><td>NOT NULL</td><td>Aperçu PDF ou image.</td></tr>
+<tr><td class="cle"><code>size_bytes</code></td><td><code>integer</code></td><td>NOT NULL, CHECK ≤ 20 Mo</td><td>Garde-fou de quota.</td></tr>
+</tbody></table></div>
+<p class="note"><b>Aucune URL stockée.</b> Le client demande une URL signée de 60 s à l'ouverture. La policy de <code>storage.objects</code> exige que le premier segment du chemin soit un foyer dont on est membre.</p>
+    <nav class="suite" aria-label="Sections voisines"><button type="button" class="suite__btn" data-go="c2">← <b>II</b> Les conventions communes</button><button type="button" class="suite__btn suite__btn--next" data-go="c4"><b>IV</b> Courses et checklists →</button></nav>
+  </section>
+  <section class="chapitre" id="c4" role="tabpanel" aria-labelledby="t-c4" tabindex="0">
+    <p class="chapitre__no"><b>IV</b> · Courses et checklists</p>
+    <h2>Une seule mécanique de liste sert les courses et la valise</h2>
+    <p class="chapitre__intro">Quatre tables : les listes, leurs items, les rayons ordonnables et le catalogue qui apprend.</p>
+
+    <div class="diagramme">
+<svg viewBox="0 0 1000 304" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Courses : checklist_item pointe vers checklist, catalog_item et shopping_category ; catalog_item garde un rayon par défaut ; checklist peut pointer vers un voyage.">
+<line class="dg-fleche" x1="258.0" y1="69.0" x2="222.0" y2="69.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="482.0" y1="69.0" x2="518.0" y2="69.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="742.0" y1="69.0" x2="778.0" y2="69.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="370.0" y1="140.0" x2="370.0" y2="196.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="196.0" y1="140.0" x2="272.0" y2="196.0" marker-end="url(#dg-pointe)"/>
+<rect class="dg-boite dg-boite--aplat" x="0" y="0" width="220" height="138" rx="9"/>
+<text class="dg-nom" x="16" y="30">catalog_item</text>
+<text class="dg-l" x="16" y="52">label, label_key</text>
+<text class="dg-l" x="16" y="69">default_category_id</text>
+<text class="dg-l" x="16" y="86">usage_count</text>
+<text class="dg-l" x="16" y="103">last_used_at</text>
+<text class="dg-l" x="16" y="120">hidden_at</text>
+<rect class="dg-boite dg-boite--aplat" x="260" y="0" width="220" height="138" rx="9"/>
+<text class="dg-nom" x="276" y="30">checklist_item</text>
+<text class="dg-l" x="276" y="52">checklist_id</text>
+<text class="dg-l" x="276" y="69">category_id</text>
+<text class="dg-l" x="276" y="86">catalog_item_id</text>
+<text class="dg-l" x="276" y="103">label, quantity, checked</text>
+<text class="dg-l" x="276" y="120">sort_order double</text>
+<rect class="dg-boite dg-boite--aplat" x="520" y="0" width="220" height="138" rx="9"/>
+<text class="dg-nom" x="536" y="30">checklist</text>
+<text class="dg-l" x="536" y="52">kind checklist_kind</text>
+<text class="dg-l" x="536" y="69">name, is_default</text>
+<text class="dg-l" x="536" y="86">trip_id → trip</text>
+<text class="dg-l" x="536" y="103">sort_order</text>
+<text class="dg-l" x="536" y="120">archived_at</text>
+<rect class="dg-boite dg-boite--ext" x="780" y="0" width="220" height="138" rx="9"/>
+<text class="dg-nom" x="796" y="30">trip</text>
+<text class="dg-l" x="796" y="52">Outil Voyages</text>
+<text class="dg-l" x="796" y="69">la colonne trip_id est</text>
+<text class="dg-l" x="796" y="86">ajoutée par sa migration</text>
+<rect class="dg-boite dg-boite--aplat" x="260" y="198" width="220" height="104" rx="9"/>
+<text class="dg-nom" x="276" y="228">shopping_category</text>
+<text class="dg-l" x="276" y="250">name, emoji</text>
+<text class="dg-l" x="276" y="267">sort_order double</text>
+<text class="dg-l" x="276" y="284">archived_at</text>
+<text class="dg-etiq" x="249.3" y="62.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="249.8" y="84.2" text-anchor="middle">0..1</text>
+<text class="dg-etiq" x="490.7" y="62.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="501.3" y="84.2" text-anchor="middle">1</text>
+<text class="dg-etiq" x="761.8" y="62.2" text-anchor="middle">0..1</text>
+<text class="dg-etiq" x="750.2" y="84.2" text-anchor="middle">0..1</text>
+<text class="dg-etiq" x="380.7" y="155.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="391.8" y="181.2" text-anchor="middle">0..1</text>
+<text class="dg-etiq" x="225.3" y="147.4" text-anchor="middle">N</text>
+<text class="dg-etiq" x="222.6" y="190.3" text-anchor="middle">0..1</text>
+</svg>
+</div>
+<h3 class="tbl"><code>checklist</code> <span class="pill pill--warn">Modifié</span> <span class="pill">v1</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">Colonnes communes : id, household_id, created_at, updated_at, created_by, updated_by, deleted_at (voir II).</td></tr>
+<tr><td class="cle"><code>kind</code></td><td><code>checklist_kind</code></td><td>NOT NULL</td><td><code>shopping</code> pour les courses, <code>trip_prep</code> pour la valise, <code>generic</code> pour le reste.</td></tr>
+<tr><td class="cle"><code>name</code></td><td><code>text</code></td><td>NOT NULL, 1 à 60 caractères</td><td>« Épicerie », « Pharmacie », « Costco ».</td></tr>
+<tr><td class="cle"><code>is_default</code></td><td><code>boolean</code></td><td>NOT NULL DEFAULT false</td><td>Liste ouverte par défaut.</td></tr>
+<tr><td class="cle"><code>trip_id</code></td><td><code>uuid</code></td><td>NULL, FK composite <code>trip</code> ON DELETE CASCADE</td><td>Ajoutée par la migration Voyages (lot 6), pas par le lot 2.</td></tr>
+<tr><td class="cle"><code>sort_order</code></td><td><code>double precision</code></td><td>NOT NULL</td><td>Ordre des listes.</td></tr>
+<tr><td class="cle"><code>—</code></td><td><code>—</code></td><td>CHECK <code>trip_id is null or kind = 'trip_prep'</code></td><td>Seule une checklist de préparation vise un voyage.</td></tr>
+<tr><td class="cle"><code>—</code></td><td><code>—</code></td><td>UNIQUE <code>(household_id, kind)</code> WHERE <code>is_default</code></td><td>Une seule liste par défaut par type.</td></tr>
+<tr><td class="cle"><code>—</code></td><td><code>—</code></td><td>UNIQUE <code>(trip_id)</code> WHERE non nul</td><td>Une checklist de préparation par voyage.</td></tr>
+</tbody></table></div>
+<h3 class="tbl"><code>checklist_item</code> <span class="pill pill--warn">Modifié</span> <span class="pill">v1</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">Colonnes communes : id, household_id, created_at, updated_at, created_by, updated_by, deleted_at (voir II).</td></tr>
+<tr><td class="cle"><code>checklist_id</code></td><td><code>uuid</code></td><td>NOT NULL, FK composite ON DELETE CASCADE</td><td>La liste.</td></tr>
+<tr><td class="cle"><code>label</code></td><td><code>text</code></td><td>NOT NULL, 1 à 120 caractères</td><td>« lait ».</td></tr>
+<tr><td class="cle"><code>quantity</code></td><td><code>text</code></td><td>NULL</td><td>« 2 », « 1 kg » : texte libre, assumé.</td></tr>
+<tr><td class="cle"><code>note</code></td><td><code>text</code></td><td>NULL</td><td>« sans lactose ».</td></tr>
+<tr><td class="cle"><code>category_id</code></td><td><code>uuid</code></td><td>NULL, FK <code>shopping_category</code> SET NULL (col.)</td><td>Le rayon, proposé par le catalogue.</td></tr>
+<tr><td class="cle"><code>catalog_item_id</code></td><td><code>uuid</code></td><td>NULL, FK <code>catalog_item</code> SET NULL (col.)</td><td>Posé par <code>catalog_learn</code>.</td></tr>
+<tr><td class="cle"><code>checked</code></td><td><code>boolean</code></td><td>NOT NULL DEFAULT false</td><td>Dans le panier.</td></tr>
+<tr><td class="cle"><code>checked_by, checked_at</code></td><td><code>uuid, timestamptz</code></td><td>CHECK <code>checked = (checked_at is not null)</code></td><td>Qui a coché, et quand.</td></tr>
+<tr><td class="cle"><code>sort_order</code></td><td><code>double precision</code></td><td>NOT NULL</td><td>Insérer entre deux items = moyenne des voisins, sans renuméroter hors ligne.</td></tr>
+</tbody></table></div>
+<h3 class="tbl"><code>shopping_category</code> <span class="pill pill--accent">Nouveau</span> <span class="pill">v1</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">Colonnes communes : id, household_id, created_at, updated_at, created_by, updated_by, deleted_at (voir II).</td></tr>
+<tr><td class="cle"><code>name</code></td><td><code>text</code></td><td>NOT NULL, UNIQUE <code>(household_id, lower(name))</code></td><td>« Fruits et légumes ».</td></tr>
+<tr><td class="cle"><code>emoji</code></td><td><code>text</code></td><td>NULL</td><td>Repère visuel du rayon.</td></tr>
+<tr><td class="cle"><code>sort_order</code></td><td><code>double precision</code></td><td>NOT NULL</td><td>L'ordre du magasin, réordonnable par glisser-déposer.</td></tr>
+<tr><td class="cle"><code>archived_at</code></td><td><code>timestamptz</code></td><td>NULL</td><td>Masquer un rayon sans perdre l'historique.</td></tr>
+</tbody></table></div>
+<p class="note"><b>Pourquoi une table plutôt que <code>category_order</code>.</b> Un rayon renommé l'est partout, le catalogue peut y pointer, et deux personnes qui réordonnent en même temps touchent deux lignes au lieu d'écraser le même JSON.</p>
+<h3 class="tbl"><code>catalog_item</code> <span class="pill pill--warn">Modifié</span> <span class="pill">v1</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">Colonnes communes : id, household_id, created_at, updated_at, created_by, updated_by, deleted_at (voir II).</td></tr>
+<tr><td class="cle"><code>label</code></td><td><code>text</code></td><td>NOT NULL</td><td>Forme affichée, celle de la première saisie.</td></tr>
+<tr><td class="cle"><code>label_key</code></td><td><code>text</code></td><td>GENERATED <code>lower(btrim(label))</code> STORED</td><td>Clé d'unicité : « Lait » et « lait » sont le même article.</td></tr>
+<tr><td class="cle"><code>—</code></td><td><code>—</code></td><td>UNIQUE <code>(household_id, label_key)</code></td><td>Cible de l'upsert.</td></tr>
+<tr><td class="cle"><code>default_category_id</code></td><td><code>uuid</code></td><td>NULL, FK <code>shopping_category</code> SET NULL (col.)</td><td>Le rayon appris à la dernière saisie.</td></tr>
+<tr><td class="cle"><code>usage_count</code></td><td><code>integer</code></td><td>NOT NULL DEFAULT 0</td><td>Trie l'autocomplétion.</td></tr>
+<tr><td class="cle"><code>last_used_at</code></td><td><code>timestamptz</code></td><td>NULL</td><td>Départage, et propose « déjà acheté la semaine dernière ».</td></tr>
+<tr><td class="cle"><code>hidden_at</code></td><td><code>timestamptz</code></td><td>NULL</td><td>Retirer une faute de frappe des suggestions.</td></tr>
+</tbody></table></div>
+    <div class="codeblock"><span class="cap">catalog_learn : le catalogue apprend à chaque ajout de course</span>
+<pre><code>insert into catalog_item (household_id, label, default_category_id, usage_count, last_used_at)
+values (new.household_id, new.label, new.category_id, 1, now())
+on conflict (household_id, label_key) do update
+  set usage_count  = catalog_item.usage_count + 1,
+      last_used_at = now(),
+      default_category_id = coalesce(excluded.default_category_id,
+                                     catalog_item.default_category_id)
+returning id into new.catalog_item_id;</code></pre></div>
+    <p class="note"><b>Autocomplétion.</b> Quelques centaines d'articles tiennent dans le cache du téléphone : le filtrage se fait côté client, sans index trigramme en v1.</p>
+
+    <nav class="suite" aria-label="Sections voisines"><button type="button" class="suite__btn" data-go="c3">← <b>III</b> Le socle</button><button type="button" class="suite__btn suite__btn--next" data-go="c5"><b>V</b> Voyages →</button></nav>
+  </section>
+  <section class="chapitre" id="c5" role="tabpanel" aria-labelledby="t-c5" tabindex="0">
+    <p class="chapitre__no"><b>V</b> · Voyages</p>
+    <h2>Le voyage ne connaît pas sa checklist, c'est elle qui le connaît</h2>
+    <p class="chapitre__intro">Quatre tables, dont le budget en v1.1 ; les fichiers passent par le socle, les dépenses par leur propre outil.</p>
+
+    <div class="diagramme">
+<svg viewBox="0 0 1000 321" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Voyages : trip_activity et booking pointent vers trip ; attachment pointe vers booking ; la checklist de préparation et les lignes de budget pointent aussi vers trip.">
+<line class="dg-fleche" x1="222.0" y1="69.0" x2="258.0" y2="69.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="518.0" y1="69.0" x2="482.0" y2="69.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche dg-fleche--poly" x1="778.0" y1="69.0" x2="742.0" y2="69.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="370.0" y1="196.0" x2="370.0" y2="140.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="534.0" y1="196.0" x2="482.0" y2="140.0" marker-end="url(#dg-pointe)"/>
+<rect class="dg-boite dg-boite--aplat" x="0" y="0" width="220" height="138" rx="9"/>
+<text class="dg-nom" x="16" y="30">trip_activity</text>
+<text class="dg-l" x="16" y="52">trip_id → trip</text>
+<text class="dg-l" x="16" y="69">title, url, note</text>
+<text class="dg-l" x="16" y="86">done, planned_date</text>
+<text class="dg-l" x="16" y="103">sort_order</text>
+<rect class="dg-boite dg-boite--aplat" x="260" y="0" width="220" height="138" rx="9"/>
+<text class="dg-nom" x="276" y="30">trip</text>
+<text class="dg-l" x="276" y="52">title, destination</text>
+<text class="dg-l" x="276" y="69">start_date, end_date</text>
+<text class="dg-l" x="276" y="86">status trip_status</text>
+<text class="dg-l" x="276" y="103">cover_emoji, notes</text>
+<text class="dg-l" x="276" y="120">archived_at</text>
+<rect class="dg-boite dg-boite--aplat" x="520" y="0" width="220" height="138" rx="9"/>
+<text class="dg-nom" x="536" y="30">booking</text>
+<text class="dg-l" x="536" y="52">trip_id → trip</text>
+<text class="dg-l" x="536" y="69">kind booking_kind</text>
+<text class="dg-l" x="536" y="86">starts_at, ends_at, tz</text>
+<text class="dg-l" x="536" y="103">reference, url</text>
+<text class="dg-l" x="536" y="120">amount, currency</text>
+<rect class="dg-boite dg-boite--ext" x="780" y="0" width="220" height="138" rx="9"/>
+<text class="dg-nom" x="796" y="30">attachment</text>
+<text class="dg-l" x="796" y="52">Socle</text>
+<text class="dg-l" x="796" y="69">entity_type = &#x27;booking&#x27;</text>
+<text class="dg-l" x="796" y="86">entity_id = booking.id</text>
+<rect class="dg-boite dg-boite--ext" x="260" y="198" width="220" height="121" rx="9"/>
+<text class="dg-nom" x="276" y="228">checklist</text>
+<text class="dg-l" x="276" y="250">Courses</text>
+<text class="dg-l" x="276" y="267">kind = &#x27;trip_prep&#x27;</text>
+<text class="dg-l" x="276" y="284">trip_id → trip</text>
+<rect class="dg-boite dg-boite--aplat" x="520" y="198" width="220" height="121" rx="9"/>
+<text class="dg-nom" x="536" y="228">trip_budget_line</text>
+<text class="dg-l" x="536" y="250">trip_id → trip</text>
+<text class="dg-l" x="536" y="267">category expense_category</text>
+<text class="dg-l" x="536" y="284">planned_amount</text>
+<text class="dg-l" x="536" y="301">dépensé : vue calculée</text>
+<text class="dg-etiq" x="230.7" y="62.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="241.3" y="84.2" text-anchor="middle">1</text>
+<text class="dg-etiq" x="509.3" y="62.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="498.7" y="84.2" text-anchor="middle">1</text>
+<text class="dg-etiq" x="769.3" y="62.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="758.7" y="84.2" text-anchor="middle">1</text>
+<text class="dg-etiq" x="391.8" y="189.2" text-anchor="middle">0..1</text>
+<text class="dg-etiq" x="380.7" y="163.2" text-anchor="middle">1</text>
+<text class="dg-etiq" x="527.2" y="171.0" text-anchor="middle">N</text>
+<text class="dg-etiq" x="496.4" y="181.7" text-anchor="middle">1</text>
+</svg>
+</div>
+<h3 class="tbl"><code>trip</code> <span class="pill pill--warn">Modifié</span> <span class="pill">v1.1</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">Colonnes communes : id, household_id, created_at, updated_at, created_by, updated_by, deleted_at (voir II).</td></tr>
+<tr><td class="cle"><code>title</code></td><td><code>text</code></td><td>NOT NULL</td><td>« Portugal 2027 ».</td></tr>
+<tr><td class="cle"><code>destination</code></td><td><code>text</code></td><td>NULL</td><td>Ville ou pays, texte libre.</td></tr>
+<tr><td class="cle"><code>start_date, end_date</code></td><td><code>date</code></td><td>NULL, CHECK <code>end_date >= start_date</code></td><td>Dates facultatives d'un voyage « idée ».</td></tr>
+<tr><td class="cle"><code>status</code></td><td><code>trip_status</code></td><td>NOT NULL DEFAULT <code>idea</code></td><td>Stocké ; l'interface propose « en cours » d'après les dates.</td></tr>
+<tr><td class="cle"><code>cover_emoji</code></td><td><code>text</code></td><td>NULL</td><td>Vignette de la carte « prochain voyage ».</td></tr>
+<tr><td class="cle"><code>notes</code></td><td><code>text</code></td><td>NULL</td><td>—</td></tr>
+<tr><td class="cle"><code>archived_at</code></td><td><code>timestamptz</code></td><td>NULL</td><td>Voyages passés rangés.</td></tr>
+</tbody></table></div>
+<p class="note"><b><code>prep_checklist_id</code> disparaît.</b> La clé vit dans <code>checklist.trip_id</code> : supprimer le voyage emporte sa checklist, et le socle Courses ne dépend pas de l'outil Voyages.</p>
+<h3 class="tbl"><code>trip_activity</code> <span class="pill">Inchangé</span> <span class="pill">v1.1</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">Colonnes communes : id, household_id, created_at, updated_at, created_by, updated_by, deleted_at (voir II).</td></tr>
+<tr><td class="cle"><code>trip_id</code></td><td><code>uuid</code></td><td>NOT NULL, FK composite ON DELETE CASCADE</td><td>Le voyage.</td></tr>
+<tr><td class="cle"><code>title</code></td><td><code>text</code></td><td>NOT NULL</td><td>« Musée Gulbenkian ».</td></tr>
+<tr><td class="cle"><code>url</code></td><td><code>text</code></td><td>NULL, CHECK <code>~ ^https?://</code></td><td>Lien vers la fiche.</td></tr>
+<tr><td class="cle"><code>note</code></td><td><code>text</code></td><td>NULL</td><td>—</td></tr>
+<tr><td class="cle"><code>done</code></td><td><code>boolean</code></td><td>NOT NULL DEFAULT false</td><td>Fait sur place.</td></tr>
+<tr><td class="cle"><code>planned_date</code></td><td><code>date</code></td><td>NULL</td><td>Jour prévu, sans contrainte stricte.</td></tr>
+<tr><td class="cle"><code>sort_order</code></td><td><code>double precision</code></td><td>NOT NULL</td><td>—</td></tr>
+</tbody></table></div>
+<h3 class="tbl"><code>booking</code> <span class="pill pill--warn">Modifié</span> <span class="pill">v1.1</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">Colonnes communes : id, household_id, created_at, updated_at, created_by, updated_by, deleted_at (voir II).</td></tr>
+<tr><td class="cle"><code>trip_id</code></td><td><code>uuid</code></td><td>NOT NULL, FK composite ON DELETE CASCADE</td><td>Le voyage.</td></tr>
+<tr><td class="cle"><code>kind</code></td><td><code>booking_kind</code></td><td>NOT NULL</td><td>Renommé : <code>type</code> est un mot réservé dans bien des outils.</td></tr>
+<tr><td class="cle"><code>title</code></td><td><code>text</code></td><td>NOT NULL</td><td>« Vol YUL → LIS ».</td></tr>
+<tr><td class="cle"><code>starts_at, ends_at</code></td><td><code>timestamptz</code></td><td>NULL, CHECK <code>ends_at >= starts_at</code></td><td>Instants absolus.</td></tr>
+<tr><td class="cle"><code>tz</code></td><td><code>text</code></td><td>NULL, fuseau IANA</td><td>Afficher l'heure locale du lieu, pas celle du téléphone.</td></tr>
+<tr><td class="cle"><code>reference</code></td><td><code>text</code></td><td>NULL</td><td>Code de réservation.</td></tr>
+<tr><td class="cle"><code>url</code></td><td><code>text</code></td><td>NULL</td><td>—</td></tr>
+<tr><td class="cle"><code>amount</code></td><td><code>numeric(12,2)</code></td><td>NULL, CHECK ≥ 0</td><td>Montant payé.</td></tr>
+<tr><td class="cle"><code>currency</code></td><td><code>char(3)</code></td><td>CHECK <code>~ ^[A-Z]{3}$</code> ; requis si <code>amount</code></td><td>ISO 4217, sans conversion.</td></tr>
+</tbody></table></div>
+<p class="note"><b><code>attachment_url</code> disparaît.</b> Les fichiers passent par <code>attachment</code> avec <code>entity_type = 'booking'</code> : plusieurs pièces par réservation, et des URL signées plutôt qu'un lien stocké qui fuirait.</p>
+<h3 class="tbl"><code>trip_budget_line</code> <span class="pill pill--accent">Nouveau</span> <span class="pill">v1.1</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">Colonnes communes : id, household_id, created_at, updated_at, created_by, updated_by, deleted_at (voir II).</td></tr>
+<tr><td class="cle"><code>trip_id</code></td><td><code>uuid</code></td><td>NOT NULL, FK composite ON DELETE CASCADE</td><td>Le voyage.</td></tr>
+<tr><td class="cle"><code>category</code></td><td><code>expense_category</code></td><td>NOT NULL, UNIQUE <code>(trip_id, category)</code></td><td>Le même vocabulaire que les dépenses : transport, logement, repas…</td></tr>
+<tr><td class="cle"><code>planned_amount</code></td><td><code>numeric(12,2)</code></td><td>NULL, CHECK ≥ 0</td><td>Prévu.</td></tr>
+<tr><td class="cle"><code>currency</code></td><td><code>char(3)</code></td><td>NOT NULL</td><td>—</td></tr>
+<tr><td class="cle"><code>sort_order</code></td><td><code>double precision</code></td><td>NOT NULL</td><td>—</td></tr>
+</tbody></table></div>
+<p class="note"><b>Le dépensé n'est plus saisi.</b> La vue <code>trip_budget_view</code> additionne, par catégorie, les <code>book_amount_cents</code> du carnet lié au voyage (<code>expense_book.trip_id</code>). Avant la v1.3, la colonne reste vide.</p>
+    <nav class="suite" aria-label="Sections voisines"><button type="button" class="suite__btn" data-go="c4">← <b>IV</b> Courses et checklists</button><button type="button" class="suite__btn suite__btn--next" data-go="c6"><b>VI</b> À regarder →</button></nav>
+  </section>
+  <section class="chapitre" id="c6" role="tabpanel" aria-labelledby="t-c6" tabindex="0">
+    <p class="chapitre__no"><b>VI</b> · À regarder</p>
+    <h2>Le cache TMDB est partagé, les notes restent personnelles</h2>
+    <p class="chapitre__intro">Quatre tables : le titre du foyer, une note par personne, les plateformes et le cache externe.</p>
+
+    <div class="diagramme">
+<svg viewBox="0 0 1000 321" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="À regarder : watch_rating pointe vers watch_item et profile ; watch_item pointe vers external_media (cache TMDB) et watch_platform.">
+<line class="dg-fleche" x1="222.0" y1="77.5" x2="258.0" y2="77.5" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="482.0" y1="77.5" x2="518.0" y2="77.5" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="110.0" y1="157.0" x2="110.0" y2="213.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="370.0" y1="157.0" x2="370.0" y2="213.0" marker-end="url(#dg-pointe)"/>
+<rect class="dg-boite dg-boite--aplat" x="0" y="0" width="220" height="155" rx="9"/>
+<text class="dg-nom" x="16" y="30">watch_rating</text>
+<text class="dg-l" x="16" y="52">watch_item_id → item</text>
+<text class="dg-l" x="16" y="69">user_id → profile</text>
+<text class="dg-l" x="16" y="86">rating 1–5</text>
+<text class="dg-l" x="16" y="103">comment</text>
+<rect class="dg-boite dg-boite--aplat" x="260" y="0" width="220" height="155" rx="9"/>
+<text class="dg-nom" x="276" y="30">watch_item</text>
+<text class="dg-l" x="276" y="52">title, kind, status</text>
+<text class="dg-l" x="276" y="69">platform_id → plateforme</text>
+<text class="dg-l" x="276" y="86">media_id → external_media</text>
+<text class="dg-l" x="276" y="103">season/episode_current</text>
+<text class="dg-l" x="276" y="120">runtime_min, watched_at</text>
+<text class="dg-l" x="276" y="137">suggested_by → profile</text>
+<rect class="dg-boite dg-boite--aplat" x="520" y="0" width="220" height="155" rx="9"/>
+<text class="dg-nom" x="536" y="30">external_media</text>
+<text class="dg-l" x="536" y="52">source, media_type</text>
+<text class="dg-l" x="536" y="69">external_id (TMDB)</text>
+<text class="dg-l" x="536" y="86">title, year, runtime</text>
+<text class="dg-l" x="536" y="103">poster_path, overview</text>
+<text class="dg-l" x="536" y="120">providers, fetched_at</text>
+<rect class="dg-boite dg-boite--ext" x="0" y="215" width="220" height="104" rx="9"/>
+<text class="dg-nom" x="16" y="245">profile</text>
+<text class="dg-l" x="16" y="267">Socle</text>
+<text class="dg-l" x="16" y="284">une note par personne</text>
+<rect class="dg-boite dg-boite--aplat" x="260" y="215" width="220" height="104" rx="9"/>
+<text class="dg-nom" x="276" y="245">watch_platform</text>
+<text class="dg-l" x="276" y="267">name, is_subscribed</text>
+<text class="dg-l" x="276" y="284">tmdb_provider_id</text>
+<text class="dg-l" x="276" y="301">sort_order</text>
+<text class="dg-etiq" x="230.7" y="70.7" text-anchor="middle">N</text>
+<text class="dg-etiq" x="241.3" y="92.7" text-anchor="middle">1</text>
+<text class="dg-etiq" x="490.7" y="70.7" text-anchor="middle">N</text>
+<text class="dg-etiq" x="490.2" y="92.7" text-anchor="middle">0..1</text>
+<text class="dg-etiq" x="120.7" y="172.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="120.7" y="198.2" text-anchor="middle">1</text>
+<text class="dg-etiq" x="380.7" y="172.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="391.8" y="198.2" text-anchor="middle">0..1</text>
+</svg>
+</div>
+<h3 class="tbl"><code>watch_item</code> <span class="pill pill--warn">Modifié</span> <span class="pill">v1.2</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">Colonnes communes : id, household_id, created_at, updated_at, created_by, updated_by, deleted_at (voir II).</td></tr>
+<tr><td class="cle"><code>title</code></td><td><code>text</code></td><td>NOT NULL</td><td>Copie locale, modifiable ; reste lisible sans TMDB.</td></tr>
+<tr><td class="cle"><code>kind</code></td><td><code>watch_kind</code></td><td>NOT NULL</td><td>Film ou série.</td></tr>
+<tr><td class="cle"><code>status</code></td><td><code>watch_status</code></td><td>NOT NULL DEFAULT <code>to_watch</code></td><td>À voir, en cours, vu, abandonné.</td></tr>
+<tr><td class="cle"><code>platform_id</code></td><td><code>uuid</code></td><td>NULL, FK <code>watch_platform</code> SET NULL (col.)</td><td>Où on compte le regarder.</td></tr>
+<tr><td class="cle"><code>media_id</code></td><td><code>uuid</code></td><td>NULL, FK <code>external_media</code> RESTRICT</td><td>Fiche TMDB, si trouvée.</td></tr>
+<tr><td class="cle"><code>season_current, episode_current</code></td><td><code>smallint</code></td><td>CHECK &gt; 0 ; nuls si <code>kind = 'movie'</code></td><td>Progression partagée du couple.</td></tr>
+<tr><td class="cle"><code>runtime_min</code></td><td><code>smallint</code></td><td>NULL</td><td>Surcharge ; sinon lue dans le cache.</td></tr>
+<tr><td class="cle"><code>suggested_by</code></td><td><code>uuid</code></td><td>FK <code>profile</code> SET NULL</td><td>Qui l'a proposé.</td></tr>
+<tr><td class="cle"><code>comment</code></td><td><code>text</code></td><td>NULL</td><td>—</td></tr>
+<tr><td class="cle"><code>watched_at</code></td><td><code>timestamptz</code></td><td>NULL</td><td>Posé au passage en « vu ».</td></tr>
+<tr><td class="cle"><code>—</code></td><td><code>—</code></td><td>UNIQUE <code>(household_id, media_id)</code> partiel</td><td>Pas deux fois le même titre.</td></tr>
+</tbody></table></div>
+<p class="note"><b>Filtre « ce soir ».</b> Une vue <code>watch_item_view</code> en <code>security_invoker</code> joint le cache : <code>status = 'to_watch'</code>, <code>coalesce(runtime_min, media.runtime_min) &lt;= :max</code>, plateforme <code>is_subscribed</code>. Le tirage au sort se fait côté client dans ce résultat.</p>
+<h3 class="tbl"><code>watch_rating</code> <span class="pill">Inchangé</span> <span class="pill">v1.2</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">Colonnes communes : id, household_id, created_at, updated_at, created_by, updated_by, deleted_at (voir II).</td></tr>
+<tr><td class="cle"><code>watch_item_id</code></td><td><code>uuid</code></td><td>NOT NULL, FK composite ON DELETE CASCADE</td><td>Le titre noté.</td></tr>
+<tr><td class="cle"><code>user_id</code></td><td><code>uuid</code></td><td>NOT NULL, FK <code>profile</code> ON DELETE CASCADE</td><td>Qui note.</td></tr>
+<tr><td class="cle"><code>rating</code></td><td><code>smallint</code></td><td>NOT NULL, CHECK 1 à 5</td><td>La note.</td></tr>
+<tr><td class="cle"><code>comment</code></td><td><code>text</code></td><td>NULL</td><td>—</td></tr>
+<tr><td class="cle"><code>(watch_item_id, user_id)</code></td><td><code>—</code></td><td>UNIQUE</td><td>Une note par personne ; on la modifie par upsert.</td></tr>
+</tbody></table></div>
+<h3 class="tbl"><code>watch_platform</code> <span class="pill pill--accent">Nouveau</span> <span class="pill">v1.2</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">Colonnes communes : id, household_id, created_at, updated_at, created_by, updated_by, deleted_at (voir II).</td></tr>
+<tr><td class="cle"><code>name</code></td><td><code>text</code></td><td>NOT NULL, UNIQUE <code>(household_id, lower(name))</code></td><td>« Netflix », « Crave ».</td></tr>
+<tr><td class="cle"><code>is_subscribed</code></td><td><code>boolean</code></td><td>NOT NULL DEFAULT true</td><td>Abonnement actif du foyer.</td></tr>
+<tr><td class="cle"><code>tmdb_provider_id</code></td><td><code>integer</code></td><td>NULL</td><td>Rapproche des fournisseurs TMDB.</td></tr>
+<tr><td class="cle"><code>sort_order</code></td><td><code>double precision</code></td><td>NOT NULL</td><td>—</td></tr>
+</tbody></table></div>
+<h3 class="tbl"><code>external_media</code> <span class="pill pill--accent">Nouveau</span> <span class="pill">v1.2</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">created_at, updated_at ; pas de household_id.</td></tr>
+<tr><td class="cle"><code>id</code></td><td><code>uuid</code></td><td>PK</td><td>Clé interne, stable même si TMDB change.</td></tr>
+<tr><td class="cle"><code>source</code></td><td><code>text</code></td><td>NOT NULL DEFAULT <code>'tmdb'</code></td><td>Ouvre la porte à une autre source.</td></tr>
+<tr><td class="cle"><code>media_type</code></td><td><code>text</code></td><td>CHECK in (<code>movie</code>, <code>tv</code>)</td><td>TMDB numérote films et séries séparément.</td></tr>
+<tr><td class="cle"><code>external_id</code></td><td><code>text</code></td><td>UNIQUE <code>(source, media_type, external_id)</code></td><td>Un film et une série peuvent partager un même id TMDB.</td></tr>
+<tr><td class="cle"><code>title, original_title, year</code></td><td><code>text, text, smallint</code></td><td>—</td><td>Affichage et recherche.</td></tr>
+<tr><td class="cle"><code>overview, poster_path</code></td><td><code>text</code></td><td>NULL</td><td>L'URL de l'affiche se compose côté client.</td></tr>
+<tr><td class="cle"><code>runtime_min, number_of_seasons</code></td><td><code>smallint</code></td><td>NULL</td><td>Filtre « ce soir ».</td></tr>
+<tr><td class="cle"><code>genres, providers</code></td><td><code>jsonb</code></td><td>NULL</td><td>Plateformes par pays, telles que TMDB les donne.</td></tr>
+<tr><td class="cle"><code>fetched_at</code></td><td><code>timestamptz</code></td><td>NOT NULL</td><td>Rafraîchir après 30 jours.</td></tr>
+</tbody></table></div>
+<p class="note"><b>Hors foyer.</b> Ces métadonnées sont publiques : une seule copie suffit. Lecture pour tout compte connecté, écriture par l'Edge Function qui détient la clé TMDB (<code>service_role</code>).</p>
+    <nav class="suite" aria-label="Sections voisines"><button type="button" class="suite__btn" data-go="c5">← <b>V</b> Voyages</button><button type="button" class="suite__btn suite__btn--next" data-go="c7"><b>VII</b> Dépenses partagées →</button></nav>
+  </section>
+  <section class="chapitre" id="c7" role="tabpanel" aria-labelledby="t-c7" tabindex="0">
+    <p class="chapitre__no"><b>VII</b> · Dépenses partagées</p>
+    <h2>Les comptes se calculent, ils ne se stockent pas</h2>
+    <p class="chapitre__intro">Quatre tables et une vue, façon Tricount : des carnets, des dépenses, des parts et des remboursements.</p>
+
+    <div class="diagramme">
+<svg viewBox="0 0 1000 338" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dépenses : expense_share pointe vers expense, qui pointe vers expense_book ; expense_book vise un voyage en option, expense une réservation en option ; settlement pointe vers expense_book ; parts et payeurs sont des membres du foyer.">
+<line class="dg-fleche" x1="222.0" y1="86.0" x2="258.0" y2="86.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="482.0" y1="86.0" x2="518.0" y2="86.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="742.0" y1="86.0" x2="798.0" y2="86.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="110.0" y1="174.0" x2="110.0" y2="230.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="370.0" y1="174.0" x2="370.0" y2="230.0" marker-end="url(#dg-pointe)"/>
+<line class="dg-fleche" x1="630.0" y1="230.0" x2="630.0" y2="174.0" marker-end="url(#dg-pointe)"/>
+<rect class="dg-boite dg-boite--aplat" x="0" y="0" width="220" height="172" rx="9"/>
+<text class="dg-nom" x="16" y="30">expense_share</text>
+<text class="dg-l" x="16" y="52">expense_id → expense</text>
+<text class="dg-l" x="16" y="69">user_id → membership</text>
+<text class="dg-l" x="16" y="86">share_cents</text>
+<text class="dg-l" x="16" y="103">weight (mode parts)</text>
+<rect class="dg-boite dg-boite--aplat" x="260" y="0" width="220" height="172" rx="9"/>
+<text class="dg-nom" x="276" y="30">expense</text>
+<text class="dg-l" x="276" y="52">book_id → carnet</text>
+<text class="dg-l" x="276" y="69">paid_by → membership</text>
+<text class="dg-l" x="276" y="86">amount_cents, currency</text>
+<text class="dg-l" x="276" y="103">fx_rate, book_amount_cents</text>
+<text class="dg-l" x="276" y="120">spent_on, category</text>
+<text class="dg-l" x="276" y="137">split_mode</text>
+<text class="dg-l" x="276" y="154">booking_id → booking</text>
+<rect class="dg-boite dg-boite--aplat" x="520" y="0" width="220" height="172" rx="9"/>
+<text class="dg-nom" x="536" y="30">expense_book</text>
+<text class="dg-l" x="536" y="52">name, currency</text>
+<text class="dg-l" x="536" y="69">trip_id → trip</text>
+<text class="dg-l" x="536" y="86">sort_order</text>
+<text class="dg-l" x="536" y="103">archived_at</text>
+<rect class="dg-boite dg-boite--ext" x="800" y="0" width="200" height="172" rx="9"/>
+<text class="dg-nom" x="816" y="30">trip</text>
+<text class="dg-l" x="816" y="52">Voyages</text>
+<text class="dg-l" x="816" y="69">au plus un carnet</text>
+<text class="dg-l" x="816" y="86">par voyage</text>
+<rect class="dg-boite dg-boite--ext" x="0" y="232" width="220" height="104" rx="9"/>
+<text class="dg-nom" x="16" y="262">membership</text>
+<text class="dg-l" x="16" y="284">Socle</text>
+<text class="dg-l" x="16" y="301">participants = membres</text>
+<rect class="dg-boite dg-boite--ext" x="260" y="232" width="220" height="104" rx="9"/>
+<text class="dg-nom" x="276" y="262">booking</text>
+<text class="dg-l" x="276" y="284">Voyages</text>
+<text class="dg-l" x="276" y="301">une dépense au plus</text>
+<text class="dg-l" x="276" y="318">par réservation</text>
+<rect class="dg-boite dg-boite--aplat" x="520" y="232" width="220" height="104" rx="9"/>
+<text class="dg-nom" x="536" y="262">settlement</text>
+<text class="dg-l" x="536" y="284">book_id → carnet</text>
+<text class="dg-l" x="536" y="301">from_user, to_user</text>
+<text class="dg-l" x="536" y="318">amount_cents, settled_on</text>
+<text class="dg-etiq" x="230.7" y="79.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="241.3" y="101.2" text-anchor="middle">1</text>
+<text class="dg-etiq" x="490.7" y="79.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="501.3" y="101.2" text-anchor="middle">1</text>
+<text class="dg-etiq" x="761.8" y="79.2" text-anchor="middle">0..1</text>
+<text class="dg-etiq" x="770.2" y="101.2" text-anchor="middle">0..1</text>
+<text class="dg-etiq" x="120.7" y="189.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="120.7" y="215.2" text-anchor="middle">1</text>
+<text class="dg-etiq" x="391.8" y="189.2" text-anchor="middle">0..1</text>
+<text class="dg-etiq" x="391.8" y="215.2" text-anchor="middle">0..1</text>
+<text class="dg-etiq" x="640.7" y="223.2" text-anchor="middle">N</text>
+<text class="dg-etiq" x="640.7" y="197.2" text-anchor="middle">1</text>
+</svg>
+</div>
+    <div class="cartes">
+      <article class="carte"><span class="pill pill--accent">Nouveau</span><h3>Des centimes entiers</h3><p>Montants en <code>bigint</code>, dans l'unité mineure de la devise. La somme des parts se compare à l'égalité stricte, sans flottant.</p></article>
+      <article class="carte"><span class="pill pill--accent">Nouveau</span><h3>Un taux figé</h3><p>Le taux vers la devise du carnet est enregistré à la saisie. Un solde d'hier ne bouge pas quand l'euro bouge.</p></article>
+      <article class="carte"><span class="pill pill--accent">Nouveau</span><h3>Des soldes calculés</h3><p>Rien n'est stocké : la vue <code>expense_balance</code> additionne dépenses, parts et remboursements. Un solde ne peut donc pas diverger.</p></article>
+    </div>
+<h3 class="tbl"><code>expense_book</code> <span class="pill pill--accent">Nouveau</span> <span class="pill">v1.3</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">Colonnes communes : id, household_id, created_at, updated_at, created_by, updated_by, deleted_at (voir II).</td></tr>
+<tr><td class="cle"><code>name</code></td><td><code>text</code></td><td>NOT NULL, 1 à 60 caractères</td><td>« Quotidien », « Lisbonne et Porto ».</td></tr>
+<tr><td class="cle"><code>currency</code></td><td><code>char(3)</code></td><td>NOT NULL, CHECK <code>~ ^[A-Z]{3}$</code></td><td>Devise de référence : parts et soldes y sont exprimés.</td></tr>
+<tr><td class="cle"><code>trip_id</code></td><td><code>uuid</code></td><td>NULL, FK composite <code>trip</code> SET NULL (col.), UNIQUE partiel</td><td>Le carnet d'un voyage ; il survit à la suppression du voyage.</td></tr>
+<tr><td class="cle"><code>sort_order</code></td><td><code>double precision</code></td><td>NOT NULL</td><td>—</td></tr>
+<tr><td class="cle"><code>archived_at</code></td><td><code>timestamptz</code></td><td>NULL</td><td>Carnet soldé, rangé.</td></tr>
+</tbody></table></div>
+<p class="note"><b>Participants.</b> Tous les membres du foyer, sans table de plus : un troisième membre devient participant en entrant dans <code>membership</code>.</p>
+<h3 class="tbl"><code>expense</code> <span class="pill pill--accent">Nouveau</span> <span class="pill">v1.3</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">Colonnes communes : id, household_id, created_at, updated_at, created_by, updated_by, deleted_at (voir II).</td></tr>
+<tr><td class="cle"><code>book_id</code></td><td><code>uuid</code></td><td>NOT NULL, FK composite ON DELETE CASCADE</td><td>Le carnet.</td></tr>
+<tr><td class="cle"><code>label</code></td><td><code>text</code></td><td>NOT NULL, 1 à 120 caractères</td><td>« Restaurant Alfama ».</td></tr>
+<tr><td class="cle"><code>paid_by</code></td><td><code>uuid</code></td><td>NOT NULL, FK <code>(household_id, paid_by)</code> → <code>membership</code> RESTRICT</td><td>Qui a payé : forcément un membre du foyer.</td></tr>
+<tr><td class="cle"><code>amount_cents</code></td><td><code>bigint</code></td><td>NOT NULL, CHECK &gt; 0</td><td>Montant dans la devise payée, en unité mineure.</td></tr>
+<tr><td class="cle"><code>currency</code></td><td><code>char(3)</code></td><td>NOT NULL</td><td>Devise payée.</td></tr>
+<tr><td class="cle"><code>fx_rate</code></td><td><code>numeric(18,8)</code></td><td>NOT NULL DEFAULT 1, CHECK &gt; 0</td><td>Taux vers la devise du carnet, figé à la saisie ; 1 si même devise (trigger).</td></tr>
+<tr><td class="cle"><code>book_amount_cents</code></td><td><code>bigint</code></td><td>GENERATED <code>round(amount_cents * fx_rate)</code> STORED</td><td>Montant converti : c'est lui que les parts se partagent.</td></tr>
+<tr><td class="cle"><code>spent_on</code></td><td><code>date</code></td><td>NOT NULL DEFAULT current_date</td><td>Date de la dépense.</td></tr>
+<tr><td class="cle"><code>category</code></td><td><code>expense_category</code></td><td>NOT NULL DEFAULT <code>other</code></td><td>Alimente le budget du voyage.</td></tr>
+<tr><td class="cle"><code>split_mode</code></td><td><code>expense_split_mode</code></td><td>NOT NULL DEFAULT <code>equal</code></td><td>Égal, montants saisis ou parts pondérées.</td></tr>
+<tr><td class="cle"><code>note</code></td><td><code>text</code></td><td>NULL</td><td>—</td></tr>
+<tr><td class="cle"><code>booking_id</code></td><td><code>uuid</code></td><td>NULL, FK composite <code>booking</code> SET NULL (col.), UNIQUE partiel</td><td>La dépense née d'une réservation, comptée une fois.</td></tr>
+</tbody></table></div>
+<p class="note"><b>Justificatif.</b> Le ticket passe par <code>attachment</code> avec <code>entity_type = 'expense'</code>. Une réservation avec montant propose « Créer la dépense », préremplie.</p>
+<h3 class="tbl"><code>expense_share</code> <span class="pill pill--accent">Nouveau</span> <span class="pill">v1.3</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">Colonnes communes : id, household_id, created_at, updated_at, created_by, updated_by, deleted_at (voir II).</td></tr>
+<tr><td class="cle"><code>expense_id</code></td><td><code>uuid</code></td><td>NOT NULL, FK composite ON DELETE CASCADE</td><td>La dépense.</td></tr>
+<tr><td class="cle"><code>user_id</code></td><td><code>uuid</code></td><td>NOT NULL, FK <code>(household_id, user_id)</code> → <code>membership</code> RESTRICT</td><td>Qui doit cette part.</td></tr>
+<tr><td class="cle"><code>weight</code></td><td><code>numeric(6,2)</code></td><td>NULL, CHECK &gt; 0</td><td>Mode « parts » : 2 contre 1 ; vide sinon.</td></tr>
+<tr><td class="cle"><code>share_cents</code></td><td><code>bigint</code></td><td>NOT NULL, CHECK ≥ 0</td><td>Part due, en devise du carnet ; stockée quel que soit le mode.</td></tr>
+<tr><td class="cle"><code>(expense_id, user_id)</code></td><td><code>—</code></td><td>UNIQUE</td><td>Une part par membre.</td></tr>
+</tbody></table></div>
+<p class="note"><b>La somme fait foi.</b> <code>check_shares_sum</code> vérifie à la validation que les parts totalisent <code>book_amount_cents</code>. 10,00 € en trois donnent 3,34 + 3,33 + 3,33 : le centime restant va par la méthode du plus fort reste.</p>
+<h3 class="tbl"><code>settlement</code> <span class="pill pill--accent">Nouveau</span> <span class="pill">v1.3</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">Colonnes communes : id, household_id, created_at, updated_at, created_by, updated_by, deleted_at (voir II).</td></tr>
+<tr><td class="cle"><code>book_id</code></td><td><code>uuid</code></td><td>NOT NULL, FK composite ON DELETE CASCADE</td><td>Le carnet.</td></tr>
+<tr><td class="cle"><code>from_user, to_user</code></td><td><code>uuid</code></td><td>NOT NULL, FK vers <code>membership</code> RESTRICT, CHECK distincts</td><td>A rembourse B.</td></tr>
+<tr><td class="cle"><code>amount_cents</code></td><td><code>bigint</code></td><td>NOT NULL, CHECK &gt; 0</td><td>En devise du carnet.</td></tr>
+<tr><td class="cle"><code>settled_on</code></td><td><code>date</code></td><td>NOT NULL DEFAULT current_date</td><td>—</td></tr>
+<tr><td class="cle"><code>note</code></td><td><code>text</code></td><td>NULL</td><td>« Virement Interac ».</td></tr>
+</tbody></table></div>
+<h3 class="tbl"><code>expense_balance</code> <span class="pill pill--accent">Nouveau</span> <span class="pill">Vue</span></h3>
+<div class="tablewrap"><table class="champs">
+<thead><tr><th>Champ</th><th>Type</th><th>Contraintes</th><th>Rôle</th></tr></thead><tbody>
+<tr><td class="cle"><code>…</code></td><td colspan="3" class="commun">Vue en <code>security_invoker</code> : la RLS des tables lues s'applique.</td></tr>
+<tr><td class="cle"><code>household_id, book_id</code></td><td><code>uuid</code></td><td>—</td><td>Pour filtrer comme partout.</td></tr>
+<tr><td class="cle"><code>user_id</code></td><td><code>uuid</code></td><td>—</td><td>Le membre.</td></tr>
+<tr><td class="cle"><code>balance_cents</code></td><td><code>bigint</code></td><td>—</td><td>Payé − dû + remboursé − reçu ; positif = on lui doit.</td></tr>
+</tbody></table></div>
+    <p class="note"><b>Qui doit quoi.</b> Le téléphone apparie le plus gros débiteur au plus gros créancier jusqu'à zéro : un virement à deux, au plus n − 1 à n membres. Le résultat n'est jamais stocké ; un remboursement fait devient une ligne <code>settlement</code>.</p>
+    <div class="codeblock"><span class="cap">expense_balance : chaque mouvement d'argent devient un flux signé</span>
+<pre><code>create view expense_balance with (security_invoker = true) as
+with flux as (
+  select household_id, book_id, paid_by as user_id, book_amount_cents as cents
+    from expense where deleted_at is null
+  union all
+  select e.household_id, e.book_id, s.user_id, -s.share_cents
+    from expense_share s join expense e on e.id = s.expense_id
+   where e.deleted_at is null
+  union all
+  select household_id, book_id, from_user, amount_cents
+    from settlement where deleted_at is null
+  union all
+  select household_id, book_id, to_user, -amount_cents
+    from settlement where deleted_at is null
+)
+select household_id, book_id, user_id, sum(cents)::bigint as balance_cents
+from flux group by household_id, book_id, user_id;</code></pre></div>
+    <p class="note"><b>Journal et push.</b> <code>log_activity</code> couvre <code>expense</code> et <code>settlement</code> avec <code>tool_key = 'expenses'</code> ; <code>entity_label</code> garde « Restaurant Alfama · 42,00 € ». Le push dit la part de l'autre : « ta part : 21,00 € ».</p>
+
+    <nav class="suite" aria-label="Sections voisines"><button type="button" class="suite__btn" data-go="c6">← <b>VI</b> À regarder</button><button type="button" class="suite__btn suite__btn--next" data-go="c8"><b>VIII</b> Les outils futurs →</button></nav>
+  </section>
+  <section class="chapitre" id="c8" role="tabpanel" aria-labelledby="t-c8" tabindex="0">
+    <p class="chapitre__no"><b>VIII</b> · Les outils futurs</p>
+    <h2>Un nouvel outil s'ajoute sans toucher au socle</h2>
+    <p class="chapitre__intro">Trois outils candidats, branchés par des clés qui partent d'eux.</p>
+
+    <div class="diagramme">
+<svg viewBox="0 0 1000 236" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Trois outils futurs se branchent sans modifier le socle : recettes vers le catalogue, rappels vers le journal d&#x27;activité, notes par le seul contrat.">
+<text class="dg-titre" x="0" y="12">RECETTES → COURSES</text>
+<rect class="dg-cadre" x="0" y="22" width="316" height="214" rx="10"/>
+<rect class="dg-boite dg-boite--ok" x="22" y="166" width="272" height="40" rx="8"/>
+<text class="dg-titre" x="342" y="12">NOTES ET LIENS</text>
+<rect class="dg-cadre" x="342" y="22" width="316" height="214" rx="10"/>
+<rect class="dg-boite dg-boite--ok" x="364" y="166" width="272" height="40" rx="8"/>
+<text class="dg-titre" x="684" y="12">DATES ET RAPPELS</text>
+<rect class="dg-cadre" x="684" y="22" width="316" height="214" rx="10"/>
+<rect class="dg-boite dg-boite--ok" x="706" y="166" width="272" height="40" rx="8"/>
+<text class="dg-nom" x="22" y="62">recipe, recipe_ingredient</text>
+<text class="dg-l" x="22" y="88">ingrédient → catalog_item</text>
+<text class="dg-l" x="22" y="105">« Ajouter aux courses » crée</text>
+<text class="dg-l" x="22" y="122">des checklist_item</text>
+<text class="dg-etiq dg-etiq--ok" x="40" y="191">SOCLE INTACT</text>
+<text class="dg-nom" x="364" y="62">note</text>
+<text class="dg-l" x="364" y="88">texte, url, épinglée</text>
+<text class="dg-l" x="364" y="105">pièces jointes par attachment</text>
+<text class="dg-l" x="364" y="122">rien d'autre que le contrat</text>
+<text class="dg-etiq dg-etiq--ok" x="382" y="191">SOCLE INTACT</text>
+<text class="dg-nom" x="706" y="62">reminder</text>
+<text class="dg-l" x="706" y="88">due_on, rrule, entity_id</text>
+<text class="dg-l" x="706" y="105">pg_cron écrit dans activity_log</text>
+<text class="dg-l" x="706" y="122">→ le même chemin de push</text>
+<text class="dg-etiq dg-etiq--ok" x="724" y="191">SOCLE INTACT</text>
+</svg>
+</div>
+    <h3>Le contrat d'un nouvel outil</h3>
+    <div class="etapes">
+      <div class="etape"><span class="etape__n">1</span><div class="etape__txt"><b>Ses tables.</b> Les sept colonnes communes, et une clé composite vers chaque parent.</div></div>
+      <div class="etape"><span class="etape__n">2</span><div class="etape__txt"><b>Une policy par table.</b> La même <code>is_member(household_id)</code>, recopiée.</div></div>
+      <div class="etape"><span class="etape__n">3</span><div class="etape__txt"><b>Deux triggers par table.</b> <code>touch_row</code> et <code>log_activity</code> : l'historique et les push suivent seuls.</div></div>
+      <div class="etape"><span class="etape__n">4</span><div class="etape__txt"><b>Une clé de registre.</b> Une ligne dans <code>tools/registry.ts</code> et une dans <code>tool_activation</code> au seed.</div></div>
+    </div>
+    <div class="encadre encadre--ok"><b>Dépenses a suivi ce contrat.</b> <code>expense_book.trip_id</code> et <code>expense.booking_id</code> partent du nouvel outil vers Voyages : ni <code>trip</code> ni <code>booking</code> n'ont changé (voir VII).</div>
+    <div class="principe"><p>La clé étrangère vit toujours du côté de l'outil qui arrive : le nouveau pointe vers l'ancien, jamais l'inverse.</p></div>
+
+    <div class="tablewrap"><table class="large">
+      <thead><tr><th>Outil</th><th>Ses tables</th><th>Où il se branche</th><th>Version</th></tr></thead>
+      <tbody>
+        <tr><td class="cle">Recettes</td><td><code>recipe</code>, <code>recipe_ingredient</code>, <code>meal_plan</code></td><td><code>recipe_ingredient.catalog_item_id</code> → catalogue ; « Ajouter aux courses » insère des <code>checklist_item</code>, la provenance va dans le <code>payload</code> du journal.</td><td><span class="pill">Lot 12</span></td></tr>
+        <tr><td class="cle">Dates et rappels</td><td><code>reminder</code></td><td><code>entity_type</code> / <code>entity_id</code> facultatifs ; <code>pg_cron</code> écrit <code>action = 'reminder_due'</code> dans le journal, qui déclenche le push.</td><td><span class="pill">Lot 14</span></td></tr>
+        <tr><td class="cle">Notes et liens</td><td><code>note</code></td><td>Rien d'autre que le contrat ; pièces jointes par <code>attachment</code>.</td><td><span class="pill">À la demande</span></td></tr>
+      </tbody>
+    </table></div>
+    <p class="note"><b>Pourquoi les CHECK du socle sont des expressions régulières.</b> <code>tool_key</code>, <code>entity_type</code> et <code>action</code> acceptent toute clé bien formée : un nouvel outil n'a ni enum à étendre ni contrainte à réécrire.</p>
+
+    <nav class="suite" aria-label="Sections voisines"><button type="button" class="suite__btn" data-go="c7">← <b>VII</b> Dépenses partagées</button><button type="button" class="suite__btn suite__btn--next" data-go="c9"><b>IX</b> Les décisions tranchées →</button></nav>
+  </section>
+  <section class="chapitre" id="c9" role="tabpanel" aria-labelledby="t-c9" tabindex="0">
+    <p class="chapitre__no"><b>IX</b> · Les décisions tranchées</p>
+    <h2>Vingt-deux décisions tranchées, le lot 2 peut démarrer</h2>
+    <p class="chapitre__intro">Toutes les propositions par défaut ont été retenues le 22&nbsp;octobre 2026. Les cinq premières fixent la forme des migrations du lot 2.</p>
+
+    <div class="tablewrap"><table class="large">
+      <thead><tr><th class="nb">N°</th><th>Décision</th><th>Décision retenue</th><th>Lot</th></tr></thead>
+      <tbody>
+<tr><td class="nb">1</td><td>Suppression : pierres tombales ou suppression physique&nbsp;?</td><td>Pierres tombales (<code>deleted_at</code>) sur toutes les tables synchronisées, purge <code>pg_cron</code> à 30 jours.</td><td><span class="pill">Lot 2</span></td></tr>
+<tr><td class="nb">2</td><td>Types : enum Postgres ou text + CHECK&nbsp;?</td><td>Enum pour les listes fermées (types TypeScript générés), text + CHECK pour <code>tool_key</code>, <code>entity_type</code>, <code>action</code>.</td><td><span class="pill">Lot 2</span></td></tr>
+<tr><td class="nb">3</td><td>Où générer l'UUID v7&nbsp;?</td><td>Côté client pour l'outbox ; défaut serveur <code>uuidv7()</code> si Postgres 18, sinon une fonction SQL.</td><td><span class="pill">Lot 2</span></td></tr>
+<tr><td class="nb">4</td><td>Horodatage du dernier écrit : serveur ou client&nbsp;?</td><td>Serveur (<code>updated_at</code> par trigger) ; le dernier arrivé gagne, champ par champ.</td><td><span class="pill">Lot 5</span></td></tr>
+<tr><td class="nb">5</td><td>Colonnes « qui » vers <code>profile</code> ou <code>auth.users</code>&nbsp;?</td><td><code>profile</code>, pour que PostgREST joigne le nom sans vue.</td><td><span class="pill">Lot 2</span></td></tr>
+<tr><td class="nb">6</td><td>Ordre des rayons : global ou par liste&nbsp;?</td><td>Global au foyer ; une table de surcharge par liste si Costco l'exige.</td><td><span class="pill">Lot 4</span></td></tr>
+<tr><td class="nb">7</td><td>Catalogue insensible aux accents&nbsp;?</td><td>Non en v1 (<code>lower + btrim</code>) ; <code>unaccent</code> si « oeufs » et « œufs » se dédoublent.</td><td><span class="pill">Lot 4</span></td></tr>
+<tr><td class="nb">8</td><td>Une ou plusieurs checklists de préparation par voyage&nbsp;?</td><td>Une ; retirer l'index unique suffit pour en permettre plusieurs.</td><td><span class="pill">Lot 6</span></td></tr>
+<tr><td class="nb">9</td><td>Pièces jointes : table polymorphe ou clés typées&nbsp;?</td><td>Polymorphe, avec trigger de nettoyage.</td><td><span class="pill">Lot 6</span></td></tr>
+<tr><td class="nb">10</td><td>Statut du voyage : stocké ou déduit des dates&nbsp;?</td><td>Stocké ; l'interface suggère.</td><td><span class="pill">Lot 6</span></td></tr>
+<tr><td class="nb">11</td><td>Budget : « dépensé » saisi ou calculé&nbsp;?</td><td>Calculé par <code>trip_budget_view</code> depuis le carnet lié ; vide tant que l'outil Dépenses n'est pas livré.</td><td><span class="pill">v1.1</span></td></tr>
+<tr><td class="nb">12</td><td>Progression d'une série : partagée ou par personne&nbsp;?</td><td>Partagée sur <code>watch_item</code>.</td><td><span class="pill">Lot 7</span></td></tr>
+<tr><td class="nb">13</td><td>Durée de conservation du journal&nbsp;?</td><td>Douze mois, purge mensuelle.</td><td><span class="pill">Lot 11</span></td></tr>
+<tr><td class="nb">14</td><td>Dépenses : participants sans compte (un ami en voyage)&nbsp;?</td><td>Non en v1.3 : participants = membres du foyer. Sinon, une table <code>expense_participant</code> (profil facultatif) que visent parts et payeurs, dans la migration de l'outil seule.</td><td><span class="pill">Lot 13</span></td></tr>
+<tr><td class="nb">15</td><td>Taux de change : saisi ou récupéré&nbsp;?</td><td>Proposé par une Edge Function (taux du jour), modifiable, puis figé dans <code>fx_rate</code>.</td><td><span class="pill">Lot 13</span></td></tr>
+<tr><td class="nb">16</td><td>Arrondi au centime : à qui le reliquat&nbsp;?</td><td>Méthode du plus fort reste ; à égalité, ordre stable des participants. Jamais recalculé après la saisie.</td><td><span class="pill">Lot 13</span></td></tr>
+<tr><td class="nb">17</td><td>Montants négatifs (remboursement d'un commerçant)&nbsp;?</td><td>Non : <code>amount_cents &gt; 0</code>. Un remboursement se saisit comme une dépense payée par celui qui reçoit l'argent.</td><td><span class="pill">Lot 13</span></td></tr>
+<tr><td class="nb">18</td><td>Un ou plusieurs carnets par voyage&nbsp;?</td><td>Au plus un (unique partiel sur <code>trip_id</code>) ; les carnets hors voyage sont libres.</td><td><span class="pill">Lot 13</span></td></tr>
+<tr><td class="nb">19</td><td>Modifier une dépense : champ par champ ou d'un bloc&nbsp;?</td><td>D'un bloc : la RPC <code>save_expense</code> remplace dépense et parts dans une transaction, une seule entrée d'outbox.</td><td><span class="pill">Lot 13</span></td></tr>
+<tr><td class="nb">20</td><td>Créer un carnet automatiquement à chaque voyage&nbsp;?</td><td><b>Tranché le 22 oct.</b> Non : la fiche voyage propose d'en ouvrir un ; <code>expense_book.trip_id</code> reste facultatif.</td><td><span class="pill pill--ok">Tranché</span></td></tr>
+<tr><td class="nb">21</td><td>Rembourser par un lien bancaire&nbsp;?</td><td><b>Tranché le 22 oct.</b> Non : <code>settlement</code> est un simple marquage, le virement se fait hors de l'app.</td><td><span class="pill pill--ok">Tranché</span></td></tr>
+<tr><td class="nb">22</td><td>Modifier ou supprimer la dépense saisie par l'autre&nbsp;?</td><td><b>Tranché le 22 oct.</b> Oui, pour tous les membres ; chaque modification passe par <code>activity_log</code>.</td><td><span class="pill pill--ok">Tranché</span></td></tr>
+      </tbody>
+    </table></div>
+    <div class="encadre encadre--ok"><b>Lot 2 débloqué.</b> Les décisions 1 à 5 sont confirmées&nbsp;: les migrations peuvent s'écrire telles que décrites. Chaque autre décision s'applique au lot indiqué.</div>
+
+    <nav class="suite" aria-label="Sections voisines"><button type="button" class="suite__btn" data-go="c8">← <b>VIII</b> Les outils futurs</button></nav>
+  </section>
+
+</main>
+<script>
+// Onglets : une section ouverte à la fois. Le lien #c3 ouvre la section III ; les flèches,
+// Début et Fin passent d'un onglet à l'autre ; un bouton data-go="c4" ouvre la section IV.
+// Sans script, toutes les sections se lisent à la suite.
+(function () {
+  var list = document.querySelector('.onglets')
+  if (!list) return
+  var box = list.parentNode
+  box.setAttribute('data-onglets', '')
+  var tabs = Array.prototype.slice.call(list.querySelectorAll('[role="tab"]'))
+  var panels = tabs.map(function (t) { return document.getElementById(t.getAttribute('aria-controls')) })
+  var anchor = list.previousElementSibling
+
+  function show(id, opts) {
+    opts = opts || {}
+    var i = panels.findIndex(function (p) { return p && p.id === id })
+    if (i < 0) i = 0
+    tabs.forEach(function (t, j) {
+      var on = j === i
+      t.setAttribute('aria-selected', String(on))
+      t.tabIndex = on ? 0 : -1
+      if (on) panels[j].setAttribute('data-ouvert', '')
+      else panels[j].removeAttribute('data-ouvert')
+    })
+    // L'onglet choisi reste en vue dans sa rangée, sans faire défiler la page.
+    var tab = tabs[i]
+    list.scrollLeft = tab.offsetLeft - (list.clientWidth - tab.offsetWidth) / 2
+    if (opts.focus) tab.focus()
+    // Une section ouverte depuis le bas de la précédente commence en haut de l'écran.
+    if (opts.scroll && anchor && anchor.getBoundingClientRect().top < 0) anchor.scrollIntoView()
+    // Au chargement, l'adresse ne change pas : le navigateur ferait défiler jusqu'à la section.
+    if (opts.scroll || opts.focus) {
+      try { history.replaceState(null, '', '#' + panels[i].id) } catch (e) { /* le cadre peut le refuser */ }
+    }
+  }
+
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () { show(panels[i].id, { scroll: true }) })
+    t.addEventListener('keydown', function (e) {
+      var to = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[e.key]
+      if (to === undefined) return
+      e.preventDefault()
+      show(panels[(to + tabs.length) % tabs.length].id, { focus: true })
+    })
+  })
+  document.addEventListener('click', function (e) {
+    var go = e.target.closest('[data-go], a[href^="#"]')
+    if (!go) return
+    var id = go.getAttribute('data-go') || go.getAttribute('href').slice(1)
+    if (!panels.some(function (p) { return p.id === id })) return
+    e.preventDefault()
+    show(id, { scroll: true })
+  })
+  show(location.hash.slice(1))
+})()
+</script>
+</body>
+</html>
