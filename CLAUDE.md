@@ -10,6 +10,7 @@ PWA mobile d'abord pour deux personnes (Aurélien et Auriane) qui partagent des 
 ## Commandes
 - `npm run dev` : serveur de dev (http://localhost:5173).
 - `npm run lint` · `npm run typecheck` · `npm test` · `npm run build` : la CI lance les quatre.
+- `npm run test:db` : migrations, seed et tests d'accès (RLS) sur un Postgres 16 jetable, sans Docker.
 - `npx supabase start` : Supabase local (Docker requis), puis copier l'URL et la clé anon dans `.env.local` (voir `.env.example`).
 
 ## Architecture

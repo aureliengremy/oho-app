@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import type { Database } from './db/database.types'
 import { readEnv } from './env'
 
 const env = readEnv()
@@ -7,8 +8,8 @@ const env = readEnv()
  * Client Supabase unique de l'app, ou null tant que .env.local n'est pas rempli.
  * La session est persistée et rafraîchie automatiquement (session longue, décision S15).
  */
-export const supabase: SupabaseClient | null = env
-  ? createClient(env.supabaseUrl, env.supabaseAnonKey, {
+export const supabase: SupabaseClient<Database> | null = env
+  ? createClient<Database>(env.supabaseUrl, env.supabaseAnonKey, {
       auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
     })
   : null

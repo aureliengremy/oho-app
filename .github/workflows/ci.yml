@@ -20,3 +20,11 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+
+  db:
+    name: Base de données (migrations, RLS, seed)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      # Postgres 16 est préinstallé sur l'image ubuntu-24.04 (service arrêté) ; le script crée son propre cluster.
+      - run: bash scripts/db-test.sh
