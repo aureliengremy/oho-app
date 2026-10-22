@@ -1,0 +1,99 @@
+-- =============================================================================
+-- OhO · Seed (S13 : comptes créés à la main, pas d'inscription ouverte)
+-- Rejouable : nettoie d'abord ce qu'il a créé (identifiants fixes).
+--
+-- ATTENTION : mots de passe de développement. Changez-les avant tout usage réel
+-- (tableau de bord Supabase > Authentication, ou update auth.users avec un
+-- nouveau crypt()) et ne réutilisez jamais ce seed tel quel en production.
+-- =============================================================================
+
+-- Nettoyage : le foyer emporte tout par cascade ; les comptes emportent profils
+-- et adhésions.
+delete from public.household where id = '0192f000-0000-7000-8000-000000000001';
+delete from auth.users
+where id in ('0192f000-0000-7000-8000-0000000000a1', '0192f000-0000-7000-8000-0000000000a2')
+   or email in ('aurelien@example.com', 'auriane@example.com');
+
+-- -----------------------------------------------------------------------------
+-- Comptes (format attendu par Supabase Auth en local). handle_new_user crée
+-- les profils à partir de raw_user_meta_data.
+-- -----------------------------------------------------------------------------
+insert into auth.users (
+  instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+  raw_app_meta_data, raw_user_meta_data,
+  confirmation_token, recovery_token, email_change_token_new, email_change,
+  created_at, updated_at
+)
+values
+  ('00000000-0000-0000-0000-000000000000', '0192f000-0000-7000-8000-0000000000a1',
+   'authenticated', 'authenticated', 'aurelien@example.com',
+   extensions.crypt('oho-aurelien-dev', extensions.gen_salt('bf')), now(),
+   '{"provider": "email", "providers": ["email"]}',
+   '{"display_name": "Aurélien", "avatar_color": "#1f6f8b"}',
+   '', '', '', '', now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '0192f000-0000-7000-8000-0000000000a2',
+   'authenticated', 'authenticated', 'auriane@example.com',
+   extensions.crypt('oho-auriane-dev', extensions.gen_salt('bf')), now(),
+   '{"provider": "email", "providers": ["email"]}',
+   '{"display_name": "Auriane", "avatar_color": "#c9a46a"}',
+   '', '', '', '', now(), now());
+
+insert into auth.identities (provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
+select u.id::text, u.id,
+       jsonb_build_object('sub', u.id::text, 'email', u.email, 'email_verified', true),
+       'email', now(), now(), now()
+from auth.users u
+where u.id in ('0192f000-0000-7000-8000-0000000000a1', '0192f000-0000-7000-8000-0000000000a2');
+
+-- -----------------------------------------------------------------------------
+-- L'espace commun et ses deux propriétaires
+-- -----------------------------------------------------------------------------
+insert into public.household (id, name, timezone, created_by)
+values ('0192f000-0000-7000-8000-000000000001', 'Aurélien & Auriane', 'America/Toronto',
+        '0192f000-0000-7000-8000-0000000000a1');
+
+insert into public.membership (household_id, user_id, role, created_by)
+values
+  ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000000a1', 'owner',
+   '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000000a2', 'owner',
+   '0192f000-0000-7000-8000-0000000000a1');
+
+-- Outils : Courses en v1, les autres arrivent désactivés.
+insert into public.tool_activation (household_id, tool_key, enabled, sort_order, created_by)
+values
+  ('0192f000-0000-7000-8000-000000000001', 'shopping',  true,  1, '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-000000000001', 'trips',     false, 2, '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-000000000001', 'watchlist', false, 3, '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-000000000001', 'expenses',  false, 4, '0192f000-0000-7000-8000-0000000000a1');
+
+-- -----------------------------------------------------------------------------
+-- Rayons, dans l'ordre du magasin
+-- -----------------------------------------------------------------------------
+insert into public.shopping_category (id, household_id, name, emoji, sort_order, created_by)
+values
+  ('0192f000-0000-7000-8000-0000000c0001', '0192f000-0000-7000-8000-000000000001', 'Fruits et légumes', '🥕', 1, '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-0000000c0002', '0192f000-0000-7000-8000-000000000001', 'Boulangerie',       '🥖', 2, '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-0000000c0003', '0192f000-0000-7000-8000-000000000001', 'Produits laitiers', '🧀', 3, '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-0000000c0004', '0192f000-0000-7000-8000-000000000001', 'Viandes et poissons','🐟', 4, '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-0000000c0005', '0192f000-0000-7000-8000-000000000001', 'Épicerie',          '🥫', 5, '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-0000000c0006', '0192f000-0000-7000-8000-000000000001', 'Surgelés',          '🧊', 6, '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-0000000c0007', '0192f000-0000-7000-8000-000000000001', 'Maison et hygiène', '🧴', 7, '0192f000-0000-7000-8000-0000000000a1');
+
+-- -----------------------------------------------------------------------------
+-- La liste Épicerie par défaut et quelques items (catalog_learn remplit le
+-- catalogue au passage).
+-- -----------------------------------------------------------------------------
+insert into public.checklist (id, household_id, kind, name, is_default, sort_order, created_by)
+values ('0192f000-0000-7000-8000-0000000d0001', '0192f000-0000-7000-8000-000000000001',
+        'shopping', 'Épicerie', true, 1, '0192f000-0000-7000-8000-0000000000a1');
+
+insert into public.checklist_item (household_id, checklist_id, label, quantity, note, category_id, checked, sort_order, created_by)
+values
+  ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000d0001', 'Pommes',        '6',    null,             '0192f000-0000-7000-8000-0000000c0001', false, 1, '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000d0001', 'Bananes',       null,   null,             '0192f000-0000-7000-8000-0000000c0001', false, 2, '0192f000-0000-7000-8000-0000000000a2'),
+  ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000d0001', 'Baguette',      '1',    null,             '0192f000-0000-7000-8000-0000000c0002', false, 3, '0192f000-0000-7000-8000-0000000000a2'),
+  ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000d0001', 'Lait',          '2 L',  'sans lactose',   '0192f000-0000-7000-8000-0000000c0003', false, 4, '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000d0001', 'Œufs',          '12',   null,             '0192f000-0000-7000-8000-0000000c0003', false, 5, '0192f000-0000-7000-8000-0000000000a2'),
+  ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000d0001', 'Café',          null,   null,             '0192f000-0000-7000-8000-0000000c0005', false, 6, '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000d0001', 'Papier toilette', null, null,             '0192f000-0000-7000-8000-0000000c0007', true,  7, '0192f000-0000-7000-8000-0000000000a2');
