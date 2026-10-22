@@ -1,0 +1,51 @@
+@import "tailwindcss";
+@import "./core/theme/tokens.css";
+
+/* Les jetons Océan deviennent des utilitaires Tailwind : bg-surface, text-ink-2, rounded-lg… */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-ink-4: var(--ink-4);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-tint: var(--accent-tint);
+  --color-ok: var(--ok);
+  --color-ok-tint: var(--ok-tint);
+  --color-warn: var(--warn);
+  --color-warn-tint: var(--warn-tint);
+  --color-bad: var(--bad);
+  --color-bad-tint: var(--bad-tint);
+  --color-person-a: var(--s1);
+  --color-person-b: var(--s2);
+
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-pill: var(--r-pill);
+}
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+}
