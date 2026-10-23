@@ -13,7 +13,8 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       // Coquille de l'app en cache ; les données hors ligne (outbox) arrivent au lot 5.
-      workbox: { globPatterns: ['**/*.{js,css,html,svg,png,woff2}'], navigateFallback: '/index.html' },
+      // push-sw.js ajoute la réception des notifications (lot 10).
+      workbox: { globPatterns: ['**/*.{js,css,html,svg,png,woff2}'], navigateFallback: '/index.html', importScripts: ['push-sw.js'] },
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
         name: 'OhO',

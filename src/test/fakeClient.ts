@@ -43,7 +43,7 @@ export function fakeClient({ userId = null as string | null, rows = {} as Rows }
 
   const from = vi.fn((table: string) => {
     const filters: Filter[] = []
-    let op: { kind: 'select' } | { kind: 'insert'; rows: Row[] } | { kind: 'update'; patch: Row } = { kind: 'select' }
+    let op: { kind: 'select' } | { kind: 'insert'; rows: Row[] } | { kind: 'update'; patch: Row } | { kind: 'delete' } = { kind: 'select' }
     let sort: { column: string; ascending: boolean } | null = null
     let max: number | null = null
     let one: 'single' | 'maybe' | null = null
@@ -69,6 +69,10 @@ export function fakeClient({ userId = null as string | null, rows = {} as Rows }
         return { data: structuredClone(inserted), error: null }
       }
       const matched = tableRows.filter((r) => filters.every((f) => f(r)))
+      if (op.kind === 'delete') {
+        db[table] = tableRows.filter((r) => !matched.includes(r))
+        return { data: structuredClone(matched), error: null }
+      }
       if (op.kind === 'update') {
         for (const r of matched) Object.assign(r, op.patch, { updated_at: new Date().toISOString() })
         return { data: structuredClone(matched), error: null }
@@ -96,6 +100,10 @@ export function fakeClient({ userId = null as string | null, rows = {} as Rows }
       },
       update: (patch: Row) => {
         op = { kind: 'update', patch }
+        return builder
+      },
+      delete: () => {
+        op = { kind: 'delete' }
         return builder
       },
       eq: (column: string, value: unknown) => {
@@ -180,6 +188,14 @@ export function fakeClient({ userId = null as string | null, rows = {} as Rows }
       )
       for (const r of cleared) r.deleted_at = new Date().toISOString()
       return { data: cleared.length, error: null }
+    }
+    if (name === 'register_push') {
+      const list = (db.push_subscription ??= [])
+      const existing = list.find((r) => r.endpoint === args.p_endpoint)
+      const row = { user_id: current?.user.id, endpoint: args.p_endpoint, p256dh: args.p_p256dh, auth: args.p_auth, user_agent: args.p_user_agent ?? null }
+      if (existing) Object.assign(existing, row)
+      else list.push({ id: `push-${list.length + 1}`, last_seen_at: null, failure_count: 0, created_at: new Date().toISOString(), ...row })
+      return { data: existing?.id ?? list[list.length - 1].id, error: null }
     }
     if (name === 'save_expense') {
       // Comme la RPC : taux forcé à 1 en devise du carnet, montant converti, parts remplacées d'un bloc.

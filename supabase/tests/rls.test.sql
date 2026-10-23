@@ -31,6 +31,11 @@ declare
   v_count bigint;
 begin
   for v_table in select tablename from pg_tables where schemaname = 'public' order by 1 loop
+    if v_table = 'push_digest' then
+      -- File d'envoi des push : réservée au service, aucun accès depuis l'app (exception documentée).
+      perform tests.throws('select count(*) from public.push_digest', '42501', 'intrus lit la file des push');
+      continue;
+    end if;
     execute format('select count(*) from public.%I', v_table) into v_count;
     if v_table = 'profile' then
       perform tests.assert(v_count = 1, 'intrus ne voit que son propre profil, voit ' || v_count);
@@ -90,6 +95,11 @@ begin
   perform tests.throws(format('update public.activity_log set action = ''x'' where household_id = %s', hh),
     '42501', 'intrus modifie le journal');
   for v_table in select tablename from pg_tables where schemaname = 'public' order by 1 loop
+    if v_table = 'push_subscription' then
+      -- Chacun peut retirer ses propres appareils : la RLS limite la suppression aux siens.
+      perform tests.assert(tests.affected('delete from public.push_subscription') = 0, 'intrus supprime des appareils');
+      continue;
+    end if;
     perform tests.throws(format('delete from public.%I', v_table), '42501', 'intrus supprime dans ' || v_table);
   end loop;
   perform tests.ok('un compte hors espace ne peut rien modifier ni supprimer');

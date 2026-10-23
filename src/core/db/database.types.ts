@@ -927,6 +927,44 @@ export type Database = {
           },
         ]
       }
+      notification_pref: {
+        Row: {
+          created_at: string
+          digest_minutes: number
+          enabled: boolean
+          household_id: string
+          tool_key: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          digest_minutes?: number
+          enabled?: boolean
+          household_id: string
+          tool_key: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          digest_minutes?: number
+          enabled?: boolean
+          household_id?: string
+          tool_key?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_pref_household_id_user_id_fkey"
+            columns: ["household_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "membership"
+            referencedColumns: ["household_id", "user_id"]
+          },
+        ]
+      }
       profile: {
         Row: {
           avatar_color: string | null
@@ -956,6 +994,110 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      push_digest: {
+        Row: {
+          actor_ids: unknown[]
+          created_at: string
+          due_at: string
+          entity_types: unknown[]
+          household_id: string
+          id: string
+          item_count: number
+          labels: unknown[]
+          sent_at: string | null
+          tool_key: string
+          user_id: string
+        }
+        Insert: {
+          actor_ids?: unknown[]
+          created_at?: string
+          due_at: string
+          entity_types?: unknown[]
+          household_id: string
+          id?: string
+          item_count?: number
+          labels?: unknown[]
+          sent_at?: string | null
+          tool_key: string
+          user_id: string
+        }
+        Update: {
+          actor_ids?: unknown[]
+          created_at?: string
+          due_at?: string
+          entity_types?: unknown[]
+          household_id?: string
+          id?: string
+          item_count?: number
+          labels?: unknown[]
+          sent_at?: string | null
+          tool_key?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_digest_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "push_digest_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      push_subscription: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          failure_count: number
+          id: string
+          last_seen_at: string | null
+          p256dh: string
+          updated_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          failure_count?: number
+          id?: string
+          last_seen_at?: string | null
+          p256dh: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          failure_count?: number
+          id?: string
+          last_seen_at?: string | null
+          p256dh?: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_subscription_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       settlement: {
         Row: {
@@ -1678,9 +1820,12 @@ export type Database = {
       }
     }
     Functions: {
+      claim_push_digests: { Args: { p_limit?: number }; Returns: unknown[] }
       clear_checked: { Args: { p_checklist_id: string }; Returns: number }
       create_household: { Args: { p_name: string; p_timezone?: string }; Returns: string }
       ping: { Args: never; Returns: Json }
+      register_push: { Args: { p_endpoint: string; p_p256dh: string; p_auth: string; p_user_agent?: string }; Returns: string }
+      report_push: { Args: { p_ok: unknown; p_gone: unknown; p_failed: unknown }; Returns: undefined }
       save_expense: { Args: { p_expense: Json; p_shares: Json }; Returns: string }
     }
     Enums: {
