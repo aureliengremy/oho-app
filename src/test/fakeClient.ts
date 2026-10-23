@@ -181,6 +181,27 @@ export function fakeClient({ userId = null as string | null, rows = {} as Rows }
       for (const r of cleared) r.deleted_at = new Date().toISOString()
       return { data: cleared.length, error: null }
     }
+    if (name === 'save_expense') {
+      // Comme la RPC : taux forcé à 1 en devise du carnet, montant converti, parts remplacées d'un bloc.
+      const e = args.p_expense as Row
+      const shares = args.p_shares as Row[]
+      const book = (db.expense_book ?? []).find((b) => b.id === e.book_id)
+      const fx = book?.currency === e.currency ? 1 : Number(e.fx_rate ?? 1)
+      const row = { ...e, fx_rate: fx, book_amount_cents: Math.round(Number(e.amount_cents) * fx) }
+      const sum = shares.reduce((t, x) => t + Number(x.share_cents), 0)
+      if (sum !== row.book_amount_cents) return { data: null, error: { message: 'les parts ne totalisent pas la dépense', code: '23514' } }
+      const stamp = new Date().toISOString()
+      const expenses = (db.expense ??= [])
+      const existing = expenses.find((r) => r.id === e.id)
+      if (existing) Object.assign(existing, row, { updated_at: stamp })
+      else expenses.push({ created_at: stamp, updated_at: stamp, created_by: current?.user.id ?? null, deleted_at: null, ...row })
+      const list = (db.expense_share ??= [])
+      for (const old of list) if (old.expense_id === e.id && old.deleted_at === null) old.deleted_at = stamp
+      shares.forEach((x, i) =>
+        list.push({ id: `${String(e.id)}-part-${list.length + i}`, household_id: e.household_id, expense_id: e.id, created_at: stamp, updated_at: stamp, deleted_at: null, ...x }),
+      )
+      return { data: e.id, error: null }
+    }
     return { data: null, error: { message: `rpc inconnue : ${name}` } }
   })
 
@@ -384,5 +405,44 @@ export const watchRows = {
   watch_rating: [
     stamped({ id: 'r-a', watch_item_id: 'w-sev', user_id: 'user-a', rating: 5, comment: null }),
     stamped({ id: 'r-b', watch_item_id: 'w-sev', user_id: 'user-b', rating: 4, comment: 'Lent au début, puis impossible d’arrêter.', created_by: 'user-b' }),
+  ],
+}
+
+const share = (id: string, expense_id: string, user_id: string, share_cents: number) => stamped({ id, expense_id, user_id, share_cents, weight: null })
+const expense = (row: Row): Row => stamped({ fx_rate: 1, split_mode: 'equal', note: null, booking_id: null, ...row })
+
+/** Seed de l'espace + Voyages + Dépenses : le carnet de Lisbonne (deux devises) et le carnet Quotidien. */
+export const expenseRows = {
+  ...tripRows,
+  tool_activation: [
+    ...tripRows.tool_activation,
+    { household_id: 'hh-1', tool_key: 'expenses', enabled: true, sort_order: 4, settings: {}, deleted_at: null },
+  ],
+  expense_book: [
+    stamped({ id: 'book-lisbonne', name: 'Lisbonne & Porto', currency: 'CAD', trip_id: 'trip-lisbonne', sort_order: 1, archived_at: null }),
+    stamped({ id: 'book-quotidien', name: 'Quotidien', currency: 'CAD', trip_id: null, sort_order: 2, archived_at: null }),
+  ],
+  expense: [
+    expense({ id: 'exp-appart', book_id: 'book-lisbonne', label: 'Appartement Alfama', paid_by: 'user-b', amount_cents: 112000, currency: 'EUR', fx_rate: 1.52, book_amount_cents: 170240, spent_on: '2026-10-15', category: 'lodging', created_by: 'user-b' }),
+    expense({ id: 'exp-vols', book_id: 'book-lisbonne', label: 'Vols YUL ⇄ LIS', paid_by: 'user-a', amount_cents: 148600, currency: 'CAD', book_amount_cents: 148600, spent_on: '2026-10-12', category: 'transport' }),
+    expense({ id: 'exp-pasteis', book_id: 'book-lisbonne', label: 'Pastéis de Belém', paid_by: 'user-b', amount_cents: 960, currency: 'EUR', fx_rate: 1.52, book_amount_cents: 1459, spent_on: '2026-11-09', category: 'food', created_by: 'user-b' }),
+    expense({ id: 'exp-iga', book_id: 'book-quotidien', label: 'Épicerie IGA', paid_by: 'user-b', amount_cents: 8740, currency: 'CAD', book_amount_cents: 8740, spent_on: '2026-10-20', category: 'shopping', created_by: 'user-b' }),
+  ],
+  expense_share: [
+    share('s-1', 'exp-appart', 'user-a', 85120),
+    share('s-2', 'exp-appart', 'user-b', 85120),
+    share('s-3', 'exp-vols', 'user-a', 74300),
+    share('s-4', 'exp-vols', 'user-b', 74300),
+    share('s-5', 'exp-pasteis', 'user-a', 730),
+    share('s-6', 'exp-pasteis', 'user-b', 729),
+    share('s-7', 'exp-iga', 'user-a', 4370),
+    share('s-8', 'exp-iga', 'user-b', 4370),
+  ],
+  settlement: [stamped({ id: 'set-1', book_id: 'book-quotidien', from_user: 'user-a', to_user: 'user-b', amount_cents: 6475, settled_on: '2026-10-01', note: null })],
+  // La vue n'existe pas dans le faux client : ses lignes sont posées telles que la base les rendrait.
+  trip_budget_view: [
+    { household_id: 'hh-1', trip_id: 'trip-lisbonne', book_id: 'book-lisbonne', currency: 'CAD', category: 'lodging', spent_cents: 170240 },
+    { household_id: 'hh-1', trip_id: 'trip-lisbonne', book_id: 'book-lisbonne', currency: 'CAD', category: 'transport', spent_cents: 148600 },
+    { household_id: 'hh-1', trip_id: 'trip-lisbonne', book_id: 'book-lisbonne', currency: 'CAD', category: 'food', spent_cents: 1459 },
   ],
 }

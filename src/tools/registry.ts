@@ -54,7 +54,15 @@ export const tools: readonly ToolDefinition[] = [
     tables: ['watch_item', 'watch_rating', 'watch_platform'],
     load: () => import('./watchlist'),
   },
-  { key: 'expenses', label: 'Dépenses', path: '/depenses', icon: Wallet, defaultOrder: 4, tables: [], load: () => import('./expenses') },
+  {
+    key: 'expenses',
+    label: 'Dépenses',
+    path: '/depenses',
+    icon: Wallet,
+    defaultOrder: 4,
+    tables: ['expense_book', 'expense', 'expense_share', 'settlement'],
+    load: () => import('./expenses'),
+  },
 ]
 
 /** Nombre d'outils dans la barre du bas, à côté d'Accueil (décision D1). */

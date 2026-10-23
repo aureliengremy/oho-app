@@ -1,5 +1,6 @@
 import { useRef, useState, type ChangeEvent } from 'react'
-import { BedDouble, Car, FileText, Paperclip, Pencil, Plane, Plus, Ticket, TrainFront, Tag, X, type LucideIcon } from 'lucide-react'
+import { BedDouble, Car, FileText, Paperclip, Pencil, Plane, Plus, Ticket, TrainFront, Tag, Wallet, X, type LucideIcon } from 'lucide-react'
+import { Link } from 'react-router'
 import { useHousehold } from '@/core/household/HouseholdProvider'
 import { formatZoned, zoneName } from '@/core/lib/zoned'
 import { Button } from '@/core/ui/Button'
@@ -68,7 +69,8 @@ function When({ label, iso, tz }: { label: string; iso: string; tz: string }) {
 }
 
 function BookingCard({ booking, attachments, onEdit }: { booking: Booking; attachments: Attachment[]; onEdit: () => void }) {
-  const { household } = useHousehold()
+  const { household, activations } = useHousehold()
+  const expensesOn = activations.some((a) => a.tool_key === 'expenses' && a.enabled)
   const { attach, removeAttachment, signedUrl } = useTrips()
   const [busy, setBusy] = useState(false)
   const [problem, setProblem] = useState<string | null>(null)
@@ -175,15 +177,28 @@ function BookingCard({ booking, attachments, onEdit }: { booking: Booking; attac
         </p>
       ) : null}
       <input ref={input} type="file" className="sr-only" tabIndex={-1} aria-hidden="true" onChange={upload} />
-      <button
-        type="button"
-        onClick={() => input.current?.click()}
-        disabled={busy}
-        className="flex min-h-11 items-center gap-2 self-start rounded-pill px-1 text-sm font-semibold text-accent-ink disabled:opacity-50"
-      >
-        <Paperclip size={16} aria-hidden="true" />
-        {busy ? 'Envoi…' : 'Joindre un fichier'}
-      </button>
+      <div className="flex flex-wrap gap-x-5">
+        <button
+          type="button"
+          onClick={() => input.current?.click()}
+          disabled={busy}
+          className="flex min-h-11 items-center gap-2 rounded-pill px-1 text-sm font-semibold text-accent-ink disabled:opacity-50"
+        >
+          <Paperclip size={16} aria-hidden="true" />
+          {busy ? 'Envoi…' : 'Joindre un fichier'}
+        </button>
+        {/* Simple lien vers l'outil Dépenses : il lit la réservation lui-même (un outil n'importe pas un autre). */}
+        {expensesOn ? (
+          <Link
+            to={`/depenses/voyage/${booking.trip_id}?reservation=${booking.id}`}
+            aria-label={`Créer la dépense de ${booking.title}`}
+            className="flex min-h-11 items-center gap-2 rounded-pill px-1 text-sm font-semibold text-accent-ink"
+          >
+            <Wallet size={16} aria-hidden="true" />
+            Créer la dépense
+          </Link>
+        ) : null}
+      </div>
     </li>
   )
 }

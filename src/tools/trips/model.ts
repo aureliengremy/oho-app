@@ -38,30 +38,11 @@ export const bookingKindLabel: Record<BookingKind, string> = {
   other: 'Autre',
 }
 
-export const budgetCategoryLabel: Record<BudgetCategory, string> = {
-  transport: 'Transport',
-  lodging: 'Logement',
-  food: 'Repas',
-  activity: 'Activités',
-  shopping: 'Achats',
-  other: 'Divers',
-}
+// Postes de budget et montants : les mêmes que l'outil Dépenses (src/core/lib/money.ts).
+export { categoryLabel as budgetCategoryLabel, formatMoney } from '@/core/lib/money'
 
-/** Date du jour au format AAAA-MM-JJ, dans le fuseau de l'appareil. */
-export function isoDay(date: Date = new Date()): string {
-  const y = date.getFullYear()
-  const m = String(date.getMonth() + 1).padStart(2, '0')
-  const d = String(date.getDate()).padStart(2, '0')
-  return `${y}-${m}-${d}`
-}
-
-const DAY = 86_400_000
-const toUtc = (day: string) => Date.UTC(+day.slice(0, 4), +day.slice(5, 7) - 1, +day.slice(8, 10))
-
-/** Jours entre deux dates AAAA-MM-JJ (positif si `to` est après `from`). */
-export function daysBetween(from: string, to: string): number {
-  return Math.round((toUtc(to) - toUtc(from)) / DAY)
-}
+import { daysBetween } from '@/core/lib/day'
+export { daysBetween, isoDay } from '@/core/lib/day'
 
 /** Le statut que les dates suggèrent (M10 : stocké, l'interface propose). Null si rien à proposer. */
 export function suggestedStatus(trip: Pick<Trip, 'status' | 'start_date' | 'end_date'>, today: string): TripStatus | null {
@@ -118,7 +99,7 @@ const longDay = new Intl.DateTimeFormat('fr-CA', { weekday: 'short', day: 'numer
 const longDayMonthYear = new Intl.DateTimeFormat('fr-CA', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
 const weekday = new Intl.DateTimeFormat('fr-CA', { weekday: 'long', timeZone: 'UTC' })
 
-const asDate = (day: string) => new Date(toUtc(day))
+const asDate = (day: string) => new Date(`${day}T00:00:00Z`)
 // fr-CA écrit « 6 nov. » ; on garde le point des abréviations.
 const tidy = (text: string) => text.replace(/\s+/g, ' ').trim()
 
@@ -180,15 +161,6 @@ export function progress(items: readonly Pick<PrepItem, 'checked'>[]): { done: n
   const total = items.length
   const done = items.filter((i) => i.checked).length
   return { done, total, percent: total === 0 ? 0 : Math.round((done / total) * 100) }
-}
-
-/** Montant à la française avec sa devise : « 1 486,00 $ CA », « 1 120,00 € ». */
-export function formatMoney(amount: number, currency: string): string {
-  try {
-    return new Intl.NumberFormat('fr-CA', { style: 'currency', currency }).format(amount)
-  } catch {
-    return `${amount.toFixed(2)} ${currency}`
-  }
 }
 
 /** Taille lisible : « 212 Ko », « 1,4 Mo ». */
