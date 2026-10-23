@@ -6,7 +6,7 @@ import { Avatar } from '@/core/ui/Avatar'
 import { Button } from '@/core/ui/Button'
 import { Field, TextAreaField } from '@/core/ui/Field'
 import { Sheet } from '@/core/ui/Sheet'
-import { AddBar } from '../components/AddBar'
+import { AddBar } from '@/core/ui/AddBar'
 import { formatDateRange, type Trip, type TripIdea, type TripsData } from '../model'
 import { useTrips } from '../TripsProvider'
 

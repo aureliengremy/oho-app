@@ -4,7 +4,7 @@ import { ItemRow } from '@/core/checklist/ItemRow'
 import { Button } from '@/core/ui/Button'
 import { Field } from '@/core/ui/Field'
 import { Sheet } from '@/core/ui/Sheet'
-import { AddBar } from '../components/AddBar'
+import { AddBar } from '@/core/ui/AddBar'
 import { progress, type PrepItem, type Trip, type TripsData } from '../model'
 import { useTrips } from '../TripsProvider'
 

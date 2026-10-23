@@ -45,7 +45,15 @@ export const tools: readonly ToolDefinition[] = [
     load: () => import('./trips'),
     homeCard: () => import('./trips/HomeCard'),
   },
-  { key: 'watchlist', label: 'À regarder', path: '/a-regarder', icon: Tv, defaultOrder: 3, tables: [], load: () => import('./watchlist') },
+  {
+    key: 'watchlist',
+    label: 'À regarder',
+    path: '/a-regarder',
+    icon: Tv,
+    defaultOrder: 3,
+    tables: ['watch_item', 'watch_rating', 'watch_platform'],
+    load: () => import('./watchlist'),
+  },
   { key: 'expenses', label: 'Dépenses', path: '/depenses', icon: Wallet, defaultOrder: 4, tables: [], load: () => import('./expenses') },
 ]
 

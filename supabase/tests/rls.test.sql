@@ -34,6 +34,9 @@ begin
     execute format('select count(*) from public.%I', v_table) into v_count;
     if v_table = 'profile' then
       perform tests.assert(v_count = 1, 'intrus ne voit que son propre profil, voit ' || v_count);
+    elsif v_table = 'external_media' then
+      -- Cache TMDB public, hors foyer : lisible par tout compte connecté (exception documentée).
+      null;
     else
       perform tests.assert(v_count = 0, format('intrus voit %s ligne(s) de %s', v_count, v_table));
     end if;
@@ -140,7 +143,7 @@ begin
   perform tests.assert((select count(*) from public.profile) = 2, 'Auriane voit les 2 profils');
   perform tests.assert((select count(*) from public.tool_activation) = 4, 'Auriane voit les 4 outils');
   perform tests.assert((select array_agg(tool_key order by sort_order) from public.tool_activation where enabled)
-    = array['shopping', 'trips'], 'Courses et Voyages sont activés');
+    = array['shopping', 'trips', 'watchlist'], 'Courses, Voyages et À regarder sont activés');
   perform tests.assert((select count(*) from public.checklist where is_default and name = 'Épicerie') = 1, 'liste Épicerie par défaut');
   perform tests.assert((select count(*) from public.checklist_item where checklist_id = tests.list()) = 7, 'Auriane voit les 7 items de l''épicerie');
   perform tests.assert((select count(*) from public.trip) = 1, 'Auriane voit le voyage du seed');

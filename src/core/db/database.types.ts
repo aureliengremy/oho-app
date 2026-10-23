@@ -493,6 +493,63 @@ export type Database = {
           },
         ]
       }
+      external_media: {
+        Row: {
+          created_at: string
+          external_id: string
+          fetched_at: string
+          genres: Json | null
+          id: string
+          media_type: string
+          number_of_seasons: number | null
+          original_title: string | null
+          overview: string | null
+          poster_path: string | null
+          providers: Json | null
+          runtime_min: number | null
+          source: string
+          title: string
+          updated_at: string
+          year: number | null
+        }
+        Insert: {
+          created_at?: string
+          external_id: string
+          fetched_at?: string
+          genres?: Json | null
+          id?: string
+          media_type: string
+          number_of_seasons?: number | null
+          original_title?: string | null
+          overview?: string | null
+          poster_path?: string | null
+          providers?: Json | null
+          runtime_min?: number | null
+          source?: string
+          title: string
+          updated_at?: string
+          year?: number | null
+        }
+        Update: {
+          created_at?: string
+          external_id?: string
+          fetched_at?: string
+          genres?: Json | null
+          id?: string
+          media_type?: string
+          number_of_seasons?: number | null
+          original_title?: string | null
+          overview?: string | null
+          poster_path?: string | null
+          providers?: Json | null
+          runtime_min?: number | null
+          source?: string
+          title?: string
+          updated_at?: string
+          year?: number | null
+        }
+        Relationships: []
+      }
       household: {
         Row: {
           created_at: string
@@ -997,6 +1054,254 @@ export type Database = {
           },
         ]
       }
+      watch_item: {
+        Row: {
+          comment: string | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          episode_current: number | null
+          household_id: string
+          id: string
+          kind: Database["public"]["Enums"]["watch_kind"]
+          media_id: string | null
+          platform_id: string | null
+          runtime_min: number | null
+          season_current: number | null
+          status: Database["public"]["Enums"]["watch_status"]
+          suggested_by: string | null
+          title: string
+          updated_at: string
+          updated_by: string | null
+          watched_at: string | null
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          episode_current?: number | null
+          household_id: string
+          id?: string
+          kind: Database["public"]["Enums"]["watch_kind"]
+          media_id?: string | null
+          platform_id?: string | null
+          runtime_min?: number | null
+          season_current?: number | null
+          status?: Database["public"]["Enums"]["watch_status"]
+          suggested_by?: string | null
+          title: string
+          updated_at?: string
+          updated_by?: string | null
+          watched_at?: string | null
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          episode_current?: number | null
+          household_id?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["watch_kind"]
+          media_id?: string | null
+          platform_id?: string | null
+          runtime_min?: number | null
+          season_current?: number | null
+          status?: Database["public"]["Enums"]["watch_status"]
+          suggested_by?: string | null
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+          watched_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "watch_item_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watch_item_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watch_item_media_id_fkey"
+            columns: ["media_id"]
+            isOneToOne: false
+            referencedRelation: "external_media"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watch_item_platform_fkey"
+            columns: ["household_id", "platform_id"]
+            isOneToOne: false
+            referencedRelation: "watch_platform"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "watch_item_suggested_by_fkey"
+            columns: ["suggested_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watch_item_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      watch_platform: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          household_id: string
+          id: string
+          is_subscribed: boolean
+          name: string
+          sort_order: number
+          tmdb_provider_id: number | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          household_id: string
+          id?: string
+          is_subscribed?: boolean
+          name: string
+          sort_order: number
+          tmdb_provider_id?: number | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          household_id?: string
+          id?: string
+          is_subscribed?: boolean
+          name?: string
+          sort_order?: number
+          tmdb_provider_id?: number | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "watch_platform_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watch_platform_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watch_platform_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      watch_rating: {
+        Row: {
+          comment: string | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          household_id: string
+          id: string
+          rating: number
+          updated_at: string
+          updated_by: string | null
+          user_id: string
+          watch_item_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          household_id: string
+          id?: string
+          rating: number
+          updated_at?: string
+          updated_by?: string | null
+          user_id?: string
+          watch_item_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          household_id?: string
+          id?: string
+          rating?: number
+          updated_at?: string
+          updated_by?: string | null
+          user_id?: string
+          watch_item_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "watch_rating_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watch_rating_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watch_rating_household_id_watch_item_id_fkey"
+            columns: ["household_id", "watch_item_id"]
+            isOneToOne: false
+            referencedRelation: "watch_item"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "watch_rating_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watch_rating_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -1012,6 +1317,8 @@ export type Database = {
       expense_category: "transport" | "lodging" | "food" | "activity" | "shopping" | "other"
       membership_role: "owner" | "member"
       trip_status: "idea" | "planned" | "ongoing" | "done"
+      watch_kind: "movie" | "series"
+      watch_status: "to_watch" | "watching" | "watched" | "dropped"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1132,6 +1439,8 @@ export const Constants = {
       expense_category: ["transport", "lodging", "food", "activity", "shopping", "other"],
       membership_role: ["owner", "member"],
       trip_status: ["idea", "planned", "ongoing", "done"],
+      watch_kind: ["movie", "series"],
+      watch_status: ["to_watch", "watching", "watched", "dropped"],
     },
   },
 } as const
