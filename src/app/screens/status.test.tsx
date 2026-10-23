@@ -27,7 +27,7 @@ describe('état du système', () => {
     expect(await within(list).findByText('Joignable')).toBeInTheDocument()
     expect(within(list).getByText('En ligne')).toBeInTheDocument()
     expect(within(list).getByText('Aucune')).toBeInTheDocument()
-    expect(within(list).getByText('dev')).toBeInTheDocument()
+    expect(within(list).getByText(__APP_RELEASE__)).toBeInTheDocument()
     expect(screen.getByText('Aucune erreur signalée depuis 30 jours.')).toBeInTheDocument()
   })
 
@@ -79,7 +79,7 @@ describe('journal d’erreurs', () => {
     fireEvent(window, new ErrorEvent('error', { error: boom, message: boom.message }))
     fireEvent(window, new ErrorEvent('error', { error: boom, message: boom.message }))
     await waitFor(() => expect(client.rows.client_error).toHaveLength(1))
-    expect(client.rows.client_error[0]).toMatchObject({ household_id: 'hh-1', message: 'TypeError: x is undefined', release: 'dev' })
+    expect(client.rows.client_error[0]).toMatchObject({ household_id: 'hh-1', message: 'TypeError: x is undefined', release: __APP_RELEASE__ })
     // Le routeur de test est en mémoire : le chemin noté est celui de la fenêtre.
     expect(client.rows.client_error[0].path).toBe(window.location.pathname)
   })
