@@ -13,7 +13,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:db": "bash scripts/db-test.sh",
-    "db:types": "TYPES_OUT=src/core/db/database.types.ts bash scripts/db-test.sh"
+    "db:types": "TYPES_OUT=src/core/db/database.types.ts bash scripts/db-test.sh",
+    "screenshots": "node scripts/screenshots.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",
