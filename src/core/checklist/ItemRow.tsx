@@ -1,5 +1,5 @@
 import { Check } from 'lucide-react'
-import { useHousehold } from '@/core/household/HouseholdProvider'
+import { useHousehold } from '@/core/household/useHousehold'
 import { cn } from '@/core/lib/cn'
 import { Avatar } from '@/core/ui/Avatar'
 import type { Tables } from '@/core/db/database.types'

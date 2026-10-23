@@ -1,47 +1,14 @@
-import { createContext, useContext, useMemo, type ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@/core/client'
-import type { Json, TablesUpdate } from '@/core/db/database.types'
-import { useHousehold } from '@/core/household/HouseholdProvider'
+import type { Json } from '@/core/db/database.types'
+import { useHousehold } from '@/core/household/useHousehold'
 import { uuidv7 } from '@/core/lib/uuid'
-import { isSettled, useLiveQuery } from '@/core/sync/SyncProvider'
+import { isSettled, useLiveQuery } from '@/core/sync/useSync'
 import { useOptimisticWrites } from '@/core/sync/useOptimisticWrites'
-import { DEFAULT_TONIGHT_MAX, nextSortOrder, type Media, type Platform, type Rating, type SearchResult, type WatchData, type WatchItem, type WatchKind } from './model'
+import { DEFAULT_TONIGHT_MAX, nextSortOrder, type Media, type Platform, type Rating, type WatchData, type WatchItem } from './model'
 import { fetchWatchlist, tmdb, WATCH_TABLES, watchKey, writes } from './queries'
-
-export interface NewItem {
-  title: string
-  kind: WatchKind
-  platform_id: string | null
-  runtime_min?: number | null
-}
-
-interface WatchValue {
-  data: WatchData | undefined
-  updatedAt: number
-  isPending: boolean
-  /** Les données ont été relues depuis l'ouverture (et pas seulement restaurées du cache de l'appareil). */
-  settled: boolean
-  isError: boolean
-  refetch: () => void
-  error: string | null
-  dismissError: () => void
-  /** Durée max du filtre « ce soir » pour l'espace, en minutes. */
-  tonightMax: number
-  setTonightMax: (minutes: number) => Promise<void>
-  addItem: (fields: NewItem, media?: Media) => string
-  /** Importe la fiche TMDB (fonction serveur) puis ajoute le titre ; rejette avec un message lisible. */
-  addFromTmdb: (result: SearchResult, platformId: string | null) => Promise<string>
-  search: (query: string) => Promise<SearchResult[]>
-  updateItem: (item: WatchItem, patch: TablesUpdate<'watch_item'>) => void
-  removeItem: (item: WatchItem) => void
-  rate: (item: WatchItem, rating: number, comment: string | null) => void
-  addPlatform: (name: string) => void
-  updatePlatform: (platform: Platform, patch: TablesUpdate<'watch_platform'>) => void
-  removePlatform: (platform: Platform) => void
-}
-
-const WatchContext = createContext<WatchValue | null>(null)
+import { WatchContext, type NewItem, type WatchValue } from './useWatch'
 
 const now = () => new Date().toISOString()
 
@@ -239,10 +206,4 @@ export function WatchProvider({ children }: { children: ReactNode }) {
   }, [client, queryClient, household.id, myId, query.data, query.dataUpdatedAt, query.isPending, query.isError, query.isFetchedAfterMount, query.fetchStatus, error, dismissError, write, tonightMax, activation])
 
   return <WatchContext.Provider value={value}>{children}</WatchContext.Provider>
-}
-
-export function useWatch(): WatchValue {
-  const value = useContext(WatchContext)
-  if (!value) throw new Error('useWatch doit être appelé sous <WatchProvider>')
-  return value
 }

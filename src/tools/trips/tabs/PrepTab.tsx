@@ -6,7 +6,7 @@ import { Field } from '@/core/ui/Field'
 import { Sheet } from '@/core/ui/Sheet'
 import { AddBar } from '@/core/ui/AddBar'
 import { progress, type PrepItem, type Trip, type TripsData } from '../model'
-import { useTrips } from '../TripsProvider'
+import { useTrips } from '../useTrips'
 
 /** Onglet Checklist : la préparation du voyage, même mécanique que les courses (M8 : une par voyage). */
 export function PrepTab({ trip, data }: { trip: Trip; data: TripsData }) {

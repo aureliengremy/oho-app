@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { initials } from './Avatar'
+import { initials } from './initials'
 
 describe('initials', () => {
   it('prend les initiales choisies dans le profil', () => {

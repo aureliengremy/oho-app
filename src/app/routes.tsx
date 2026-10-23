@@ -1,4 +1,4 @@
-import { lazy } from 'react'
+import { createElement, lazy } from 'react'
 import { Navigate, type RouteObject } from 'react-router'
 import { LoginScreen } from '@/core/auth/LoginScreen'
 import { RequireAuth } from '@/core/auth/RequireAuth'
@@ -14,10 +14,10 @@ import { SettingsScreen } from './screens/SettingsScreen'
 import { StatusScreen } from './screens/StatusScreen'
 
 // Chaque outil est chargé à la demande depuis le registre.
-const toolRoutes: RouteObject[] = tools.map((tool) => {
-  const Screen = lazy(tool.load)
-  return { path: `${tool.path.slice(1)}/*`, element: <Screen /> }
-})
+const toolRoutes: RouteObject[] = tools.map((tool) => ({
+  path: `${tool.path.slice(1)}/*`,
+  element: createElement(lazy(tool.load)),
+}))
 
 export const routes: RouteObject[] = [
   { path: '/connexion', element: <LoginScreen /> },

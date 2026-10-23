@@ -5,7 +5,7 @@ import { Button } from '@/core/ui/Button'
 import { Field } from '@/core/ui/Field'
 import { Sheet } from '@/core/ui/Sheet'
 import type { ShoppingList } from '../model'
-import { useShopping } from '../ShoppingProvider'
+import { useShopping } from '../useShopping'
 
 /** Créer une liste (Pharmacie, Costco…). */
 export function NewListSheet({ open, onClose, onCreated }: { open: boolean; onClose: () => void; onCreated: (id: string) => void }) {

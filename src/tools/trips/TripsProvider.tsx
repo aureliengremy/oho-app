@@ -1,59 +1,14 @@
-import { createContext, useContext, useMemo, type ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@/core/client'
 import { parseQuickAdd } from '@/core/checklist/parse'
-import type { TablesInsert, TablesUpdate } from '@/core/db/database.types'
-import { useHousehold } from '@/core/household/HouseholdProvider'
+import { useHousehold } from '@/core/household/useHousehold'
 import { uuidv7 } from '@/core/lib/uuid'
-import { isSettled, useLiveQuery } from '@/core/sync/SyncProvider'
+import { isSettled, useLiveQuery } from '@/core/sync/useSync'
 import { useOptimisticWrites } from '@/core/sync/useOptimisticWrites'
-import { nextSortOrder, type Attachment, type Booking, type BudgetLine, type PrepItem, type Trip, type TripIdea, type TripsData } from './model'
+import { nextSortOrder, type Booking, type BudgetLine, type PrepItem, type Trip, type TripIdea, type TripsData } from './model'
 import { BUCKET, fetchTrips, TRIP_TABLES, tripsKey, writes } from './queries'
-
-export type TripFields = Pick<TablesInsert<'trip'>, 'title' | 'destination' | 'start_date' | 'end_date' | 'status' | 'cover_emoji' | 'notes'>
-export type IdeaFields = Pick<TablesInsert<'trip_activity'>, 'title' | 'note' | 'url' | 'planned_date'>
-export type BookingFields = Pick<
-  TablesInsert<'booking'>,
-  'kind' | 'title' | 'starts_at' | 'ends_at' | 'tz' | 'reference' | 'url' | 'note' | 'amount' | 'currency'
->
-export type BudgetFields = Pick<TablesInsert<'trip_budget_line'>, 'category' | 'planned_amount' | 'currency'>
-
-/** 20 Mo, la limite du bucket et de `attachment.size_bytes`. */
-export const MAX_ATTACHMENT = 20 * 1024 * 1024
-
-interface TripsValue {
-  data: TripsData | undefined
-  updatedAt: number
-  isPending: boolean
-  /** Les données ont été relues depuis l'ouverture (et pas seulement restaurées du cache de l'appareil). */
-  settled: boolean
-  isError: boolean
-  refetch: () => void
-  error: string | null
-  dismissError: () => void
-  createTrip: (fields: TripFields) => string
-  updateTrip: (trip: Trip, patch: TablesUpdate<'trip'>) => void
-  removeTrip: (trip: Trip) => void
-  addIdea: (tripId: string, title: string) => void
-  updateIdea: (idea: TripIdea, patch: TablesUpdate<'trip_activity'>) => void
-  removeIdea: (idea: TripIdea) => void
-  createPrepList: (trip: Trip) => void
-  addPrepItems: (listId: string, input: string) => number
-  togglePrepItem: (item: PrepItem) => void
-  updatePrepItem: (item: PrepItem, patch: Pick<TablesUpdate<'checklist_item'>, 'label' | 'quantity' | 'note'>) => void
-  removePrepItem: (item: PrepItem) => void
-  saveBooking: (tripId: string, fields: BookingFields, booking?: Booking) => string
-  removeBooking: (booking: Booking) => void
-  saveBudgetLine: (tripId: string, fields: BudgetFields, line?: BudgetLine) => void
-  removeBudgetLine: (line: BudgetLine) => void
-  /** Envoie un fichier au bucket privé puis l'enregistre ; rejette avec un message lisible. */
-  attach: (booking: Booking, file: File) => Promise<void>
-  removeAttachment: (attachment: Attachment) => void
-  /** URL signée de 60 s pour ouvrir une pièce jointe. */
-  signedUrl: (attachment: Attachment) => Promise<string>
-}
-
-const TripsContext = createContext<TripsValue | null>(null)
+import { MAX_ATTACHMENT, TripsContext, type TripsValue } from './useTrips'
 
 const now = () => new Date().toISOString()
 
@@ -397,10 +352,4 @@ export function TripsProvider({ children }: { children: ReactNode }) {
   }, [client, queryClient, household.id, myId, query.data, query.dataUpdatedAt, query.isPending, query.isError, query.isFetchedAfterMount, query.fetchStatus, error, dismissError, write])
 
   return <TripsContext.Provider value={value}>{children}</TripsContext.Provider>
-}
-
-export function useTrips(): TripsValue {
-  const value = useContext(TripsContext)
-  if (!value) throw new Error('useTrips doit être appelé sous <TripsProvider>')
-  return value
 }

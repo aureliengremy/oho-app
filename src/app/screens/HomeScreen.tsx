@@ -1,7 +1,7 @@
 import { lazy, Suspense, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import { ActivityFeed } from '@/core/household/ActivityFeed'
-import { useHousehold } from '@/core/household/HouseholdProvider'
+import { useHousehold } from '@/core/household/useHousehold'
 import { greeting } from '@/core/lib/time'
 import { Avatar } from '@/core/ui/Avatar'
 import { activeTools, tools } from '@/tools/registry'

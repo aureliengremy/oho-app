@@ -4,7 +4,7 @@ import { Navigate, useLocation } from 'react-router'
 import { Brand } from '../ui/Brand'
 import { Button } from '../ui/Button'
 import { Field } from '../ui/Field'
-import { useAuth } from './AuthProvider'
+import { useAuth } from './useAuth'
 
 export function LoginScreen() {
   const { status, signInWithPassword, sendMagicLink } = useAuth()

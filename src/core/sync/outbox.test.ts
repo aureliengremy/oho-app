@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import type { OhoClient } from '../client'
 import { enqueue, flush, overlay, type OutboxOp } from './outbox'
-import { pollInterval, POLL_INTERVAL } from './SyncProvider'
+import { pollInterval, POLL_INTERVAL } from './useSync'
 
 const update = (id: string, rowId: string, patch: Record<string, unknown>): OutboxOp => ({
   id, kind: 'update', table: 'checklist_item', rowId, patch, queuedAt: '2026-10-23T10:00:00Z',

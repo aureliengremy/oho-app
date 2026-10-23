@@ -8,7 +8,7 @@ import { Button } from '@/core/ui/Button'
 import { StatusPill } from './components/StatusPill'
 import { TripSheet } from './components/TripSheet'
 import { countdown, dDay, formatDateRange, groupLabel, groupTrips, isoDay, nights, nightsLabel, statusLabel, type Trip, type TripStatus } from './model'
-import { useTrips } from './TripsProvider'
+import { useTrips } from './useTrips'
 
 const filters: (TripStatus | 'all')[] = ['all', 'idea', 'planned', 'ongoing', 'done']
 

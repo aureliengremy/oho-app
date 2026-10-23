@@ -1,51 +1,16 @@
-import { createContext, useContext, useMemo, type ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@/core/client'
-import type { TablesInsert, TablesUpdate } from '@/core/db/database.types'
-import { useHousehold } from '@/core/household/HouseholdProvider'
+import type { TablesInsert } from '@/core/db/database.types'
+import { useHousehold } from '@/core/household/useHousehold'
 import { uuidv7 } from '@/core/lib/uuid'
 import { overlay, type OutboxOp } from '@/core/sync/outbox'
-import { useLiveQuery, useSync } from '@/core/sync/SyncProvider'
+import { useLiveQuery, useSync } from '@/core/sync/useSync'
 import { useOptimisticWrites } from '@/core/sync/useOptimisticWrites'
-import { nextSortOrder, movedSortOrder, type CatalogEntry, type Category, type Item, type ShoppingData, type ShoppingList } from './model'
-import { labelKey, type QuickEntry } from '@/core/checklist/parse'
+import { nextSortOrder, movedSortOrder, type Category, type Item, type ShoppingData, type ShoppingList } from './model'
+import { labelKey } from '@/core/checklist/parse'
 import { catalogKey, fetchCatalog, fetchShopping, shoppingKey, writes } from './queries'
-
-/** Ce que l'ajout rapide a fait : ajoutés, remis hors du panier, déjà présents. */
-export interface AddResult {
-  added: string[]
-  restored: string[]
-  skipped: string[]
-}
-
-interface ShoppingValue {
-  /** État du serveur, plus les écritures encore en file d'attente hors ligne. */
-  data: ShoppingData | undefined
-  /** Heure du dernier état reçu du serveur (ms), pour « dernier état connu ». */
-  updatedAt: number
-  /** Articles dont une écriture attend le réseau (« En attente »). */
-  pending: ReadonlySet<string>
-  catalog: CatalogEntry[]
-  isPending: boolean
-  isError: boolean
-  refetch: () => void
-  error: string | null
-  dismissError: () => void
-  addEntries: (listId: string, entries: QuickEntry[]) => AddResult
-  toggle: (item: Item) => void
-  updateItem: (item: Item, patch: Pick<TablesUpdate<'checklist_item'>, 'label' | 'quantity' | 'note' | 'category_id'>) => void
-  removeItem: (item: Item) => void
-  clearChecked: (listId: string) => void
-  createList: (name: string) => string
-  renameList: (list: ShoppingList, name: string) => void
-  removeList: (list: ShoppingList) => void
-  createCategory: (name: string) => void
-  renameCategory: (category: Category, name: string) => void
-  removeCategory: (category: Category) => void
-  moveCategory: (category: Category, direction: -1 | 1) => void
-}
-
-const ShoppingContext = createContext<ShoppingValue | null>(null)
+import { ShoppingContext, type AddResult, type ShoppingValue } from './useShopping'
 
 const now = () => new Date().toISOString()
 
@@ -360,10 +325,4 @@ export function ShoppingProvider({ children }: { children: ReactNode }) {
   }, [client, queryClient, household.id, myId, data, pending, outbox, query.dataUpdatedAt, query.isPending, query.isError, catalogQuery.data, error, dismissError, write])
 
   return <ShoppingContext.Provider value={value}>{children}</ShoppingContext.Provider>
-}
-
-export function useShopping(): ShoppingValue {
-  const value = useContext(ShoppingContext)
-  if (!value) throw new Error('useShopping doit être appelé sous <ShoppingProvider>')
-  return value
 }

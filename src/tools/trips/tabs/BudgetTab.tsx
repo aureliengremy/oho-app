@@ -2,15 +2,15 @@ import { useState, type FormEvent } from 'react'
 import { ChevronRight, Plus } from 'lucide-react'
 import { Link } from 'react-router'
 import { useClient } from '@/core/client'
-import { useHousehold } from '@/core/household/HouseholdProvider'
+import { useHousehold } from '@/core/household/useHousehold'
 import { formatCents } from '@/core/lib/money'
-import { useLiveQuery } from '@/core/sync/SyncProvider'
+import { useLiveQuery } from '@/core/sync/useSync'
 import { Button } from '@/core/ui/Button'
 import { Field, SelectField } from '@/core/ui/Field'
 import { Sheet } from '@/core/ui/Sheet'
 import { budgetCategoryLabel, formatMoney, type BudgetCategory, type BudgetLine, type Trip, type TripsData } from '../model'
 import { fetchTripSpent } from '../queries'
-import { useTrips } from '../TripsProvider'
+import { useTrips } from '../useTrips'
 
 const categories = Object.keys(budgetCategoryLabel) as BudgetCategory[]
 

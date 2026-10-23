@@ -3,7 +3,7 @@ import { COMMON_CURRENCIES } from '@/core/lib/money'
 import { Button } from '@/core/ui/Button'
 import { Field, SelectField } from '@/core/ui/Field'
 import { Sheet } from '@/core/ui/Sheet'
-import { useExpenses } from '../ExpensesProvider'
+import { useExpenses } from '../useExpenses'
 import type { Book } from '../model'
 
 /** Créer ou régler un carnet : nom, devise des soldes, voyage lié (au plus un carnet par voyage, M18). */
