@@ -19,3 +19,9 @@
 1. `npm install`, puis `npm run dev` et ouvrir http://localhost:5173 : l'écran « OhO, socle · lot 1 » s'affiche, avec Supabase « à configurer ».
 2. Copier `.env.example` vers `.env.local` avec l'URL et la clé anon : l'état passe à « Configuré ».
 3. `npm run build && npm run preview`, puis sur Android (Chrome, même réseau ou déploiement HTTPS) : menu → « Installer l'application ». L'icône OhO apparaît et l'app s'ouvre en plein écran, « Mode : Application installée ».
+
+## Complément : ping anti-pause Supabase
+- En palier gratuit, Supabase met en pause un projet inactif depuis 7 jours. Le workflow `.github/workflows/keepalive.yml` appelle la RPC `public.ping()` tous les 3 jours (et à la demande depuis l'onglet Actions).
+- `public.ping()` (migration `20261023000400_keepalive.sql`) ne lit aucune donnée ; elle est appelable avec la clé anon.
+- À faire une fois le projet Supabase créé : ajouter les secrets `SUPABASE_URL` et `SUPABASE_ANON_KEY` dans Settings → Secrets and variables → Actions. Sans eux, le workflow passe sans rien faire.
+- GitHub désactive les workflows planifiés d'un dépôt sans activité depuis 60 jours ; un courriel prévient avant, et un clic sur « Enable workflow » le relance.
