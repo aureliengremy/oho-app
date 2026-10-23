@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { useHousehold } from '@/core/household/HouseholdProvider'
+import { useHousehold } from '@/core/household/useHousehold'
 import { categoryLabel, formatCents } from '@/core/lib/money'
 import { Avatar } from '@/core/ui/Avatar'
 import type { Book, Expense } from '../model'

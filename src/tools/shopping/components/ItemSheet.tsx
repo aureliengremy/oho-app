@@ -1,11 +1,11 @@
 import { useState, type FormEvent } from 'react'
-import { useHousehold } from '@/core/household/HouseholdProvider'
+import { useHousehold } from '@/core/household/useHousehold'
 import { relativeTime } from '@/core/lib/time'
 import { Button } from '@/core/ui/Button'
 import { Field } from '@/core/ui/Field'
 import { Sheet } from '@/core/ui/Sheet'
 import type { Category, Item } from '../model'
-import { useShopping } from '../ShoppingProvider'
+import { useShopping } from '../useShopping'
 
 /** Modifier un article : libellé, quantité, note, rayon ; ou le supprimer. */
 export function ItemSheet({ item, categories, onClose }: { item: Item | null; categories: Category[]; onClose: () => void }) {

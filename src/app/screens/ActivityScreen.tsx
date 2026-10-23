@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router'
 import { ActivityFeed } from '@/core/household/ActivityFeed'
-import { useHousehold } from '@/core/household/HouseholdProvider'
+import { useHousehold } from '@/core/household/useHousehold'
 import { ScreenHeader } from '@/core/layout/ScreenHeader'
 import { cn } from '@/core/lib/cn'
 import { activeTools } from '@/tools/registry'

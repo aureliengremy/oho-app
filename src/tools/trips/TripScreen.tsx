@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Ellipsis } from 'lucide-react'
 import { useIsMutating } from '@tanstack/react-query'
 import { Link, Navigate, useNavigate, useParams } from 'react-router'
-import { useHousehold } from '@/core/household/HouseholdProvider'
+import { useHousehold } from '@/core/household/useHousehold'
 import { ScreenHeader } from '@/core/layout/ScreenHeader'
 import { cn } from '@/core/lib/cn'
 import { ConnectionBanner, LiveBadge } from '@/core/sync/ConnectionStatus'
@@ -15,7 +15,7 @@ import { BookingsTab } from './tabs/BookingsTab'
 import { BudgetTab } from './tabs/BudgetTab'
 import { IdeasTab } from './tabs/IdeasTab'
 import { PrepTab } from './tabs/PrepTab'
-import { useTrips } from './TripsProvider'
+import { useTrips } from './useTrips'
 
 const tabs = [
   { slug: 'idees', label: 'Idées' },

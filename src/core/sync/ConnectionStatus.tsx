@@ -1,5 +1,5 @@
 import { RefreshCw, WifiOff } from 'lucide-react'
-import { useSync } from './SyncProvider'
+import { useSync } from './useSync'
 
 const clock = new Intl.DateTimeFormat('fr-CA', { hour: 'numeric', minute: '2-digit' })
 

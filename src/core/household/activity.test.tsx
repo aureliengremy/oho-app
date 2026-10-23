@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { fakeClient, seedRows } from '@/test/fakeClient'
 import { renderApp } from '@/test/renderApp'
-import { describeActivity } from './ActivityFeed'
+import { describeActivity } from './activity'
 
 describe('describeActivity', () => {
   it('raconte un panier vidé avec l’élision', () => {

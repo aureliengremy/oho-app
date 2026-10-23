@@ -1,7 +1,7 @@
 import { Navigate, useParams, useSearchParams } from 'react-router'
 import { ScreenHeader } from '@/core/layout/ScreenHeader'
 import { Button } from '@/core/ui/Button'
-import { useExpenses } from './ExpensesProvider'
+import { useExpenses } from './useExpenses'
 
 /**
  * `/depenses/voyage/:tripId` : le lien de la fiche voyage. Ouvre le carnet du voyage, ou propose

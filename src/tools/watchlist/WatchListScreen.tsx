@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Dices, Moon, Plus, Settings2, Tv } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router'
-import { useHousehold } from '@/core/household/HouseholdProvider'
+import { useHousehold } from '@/core/household/useHousehold'
 import { ScreenHeader } from '@/core/layout/ScreenHeader'
 import { cn } from '@/core/lib/cn'
 import { ConnectionBanner, LiveBadge } from '@/core/sync/ConnectionStatus'
@@ -12,7 +12,7 @@ import { DrawSheet } from './components/DrawSheet'
 import { PlatformsSheet } from './components/PlatformsSheet'
 import { Poster } from './components/Poster'
 import { formatMax, formatRuntime, kindLabel, runtimeOf, sortItems, statusLabel, tonight, TONIGHT_CHOICES, type WatchData, type WatchItem, type WatchStatus } from './model'
-import { useWatch } from './WatchProvider'
+import { useWatch } from './useWatch'
 
 const statuses: WatchStatus[] = ['to_watch', 'watching', 'watched', 'dropped']
 

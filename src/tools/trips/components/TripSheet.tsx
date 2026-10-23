@@ -3,7 +3,7 @@ import { Button } from '@/core/ui/Button'
 import { Field, SelectField, TextAreaField } from '@/core/ui/Field'
 import { Sheet } from '@/core/ui/Sheet'
 import { statusLabel, type Trip, type TripStatus } from '../model'
-import { useTrips } from '../TripsProvider'
+import { useTrips } from '../useTrips'
 
 const statusOptions = (Object.keys(statusLabel) as TripStatus[]).map((value) => ({ value, label: statusLabel[value] }))
 

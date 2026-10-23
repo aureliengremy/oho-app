@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react'
 import { useMutation, useQueryClient, type QueryKey } from '@tanstack/react-query'
-import { useHousehold } from '../household/HouseholdProvider'
+import { useHousehold } from '../household/useHousehold'
 import { isNetworkError } from './network'
 import type { OutboxOp } from './outbox'
-import { useSync } from './SyncProvider'
+import { useSync } from './useSync'
 
 const OFFLINE = 'Hors ligne : cette action attendra le réseau. Réessaie une fois connecté.'
 

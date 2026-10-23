@@ -1,17 +1,11 @@
-import { createContext, useContext, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { useAuth } from '../auth/AuthProvider'
+import { useAuth } from '../auth/useAuth'
 import { useClient } from '../client'
 import { LoadingScreen } from '../layout/LoadingScreen'
 import { Button } from '../ui/Button'
-import { fetchHousehold, type HouseholdData, type Member } from './queries'
-
-interface HouseholdValue extends HouseholdData {
-  me: Member | undefined
-  memberById: (id: string | null | undefined) => Member | undefined
-}
-
-const HouseholdContext = createContext<HouseholdValue | null>(null)
+import { fetchHousehold } from './queries'
+import { HouseholdContext, type HouseholdValue } from './useHousehold'
 
 /** Charge l'espace du compte connecté avant d'afficher l'app. */
 export function HouseholdProvider({ children }: { children: ReactNode }) {
@@ -54,10 +48,4 @@ export function HouseholdProvider({ children }: { children: ReactNode }) {
     memberById: (id) => data.members.find((m) => m.profile.id === id),
   }
   return <HouseholdContext.Provider value={value}>{children}</HouseholdContext.Provider>
-}
-
-export function useHousehold(): HouseholdValue {
-  const value = useContext(HouseholdContext)
-  if (!value) throw new Error('useHousehold doit être appelé sous <HouseholdProvider>')
-  return value
 }

@@ -5,7 +5,7 @@ import { Button } from '@/core/ui/Button'
 import { SelectField } from '@/core/ui/Field'
 import { Sheet } from '@/core/ui/Sheet'
 import type { SearchResult, WatchKind } from '../model'
-import { useWatch } from '../WatchProvider'
+import { useWatch } from '../useWatch'
 import { Poster } from './Poster'
 
 /** Ajouter un titre : recherche TMDB par la fonction serveur, ou ajout sans fiche. */

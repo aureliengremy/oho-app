@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import { Outlet } from 'react-router'
 import { activeTools, MAX_TAB_TOOLS } from '@/tools/registry'
-import { useHousehold } from '../household/HouseholdProvider'
+import { useHousehold } from '../household/useHousehold'
 import { LoadingScreen } from './LoadingScreen'
 import { TabBar } from './TabBar'
 

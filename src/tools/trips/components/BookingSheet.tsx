@@ -1,11 +1,11 @@
 import { useMemo, useState, type FormEvent } from 'react'
-import { useHousehold } from '@/core/household/HouseholdProvider'
+import { useHousehold } from '@/core/household/useHousehold'
 import { isoToZoned, timeZones, zonedToIso } from '@/core/lib/zoned'
 import { Button } from '@/core/ui/Button'
 import { Field, SelectField, TextAreaField } from '@/core/ui/Field'
 import { Sheet } from '@/core/ui/Sheet'
 import { bookingKindLabel, type Booking, type BookingKind } from '../model'
-import { useTrips } from '../TripsProvider'
+import { useTrips } from '../useTrips'
 
 const kindOptions = (Object.keys(bookingKindLabel) as BookingKind[]).map((value) => ({ value, label: bookingKindLabel[value] }))
 

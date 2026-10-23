@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Check, ExternalLink, Lightbulb } from 'lucide-react'
-import { useHousehold } from '@/core/household/HouseholdProvider'
+import { useHousehold } from '@/core/household/useHousehold'
 import { cn } from '@/core/lib/cn'
 import { Avatar } from '@/core/ui/Avatar'
 import { Button } from '@/core/ui/Button'
@@ -8,7 +8,7 @@ import { Field, TextAreaField } from '@/core/ui/Field'
 import { Sheet } from '@/core/ui/Sheet'
 import { AddBar } from '@/core/ui/AddBar'
 import { formatDateRange, type Trip, type TripIdea, type TripsData } from '../model'
-import { useTrips } from '../TripsProvider'
+import { useTrips } from '../useTrips'
 
 function host(url: string): string {
   try {

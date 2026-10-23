@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react'
 import { useIsMutating } from '@tanstack/react-query'
 import { Navigate, useParams } from 'react-router'
-import { useHousehold } from '@/core/household/HouseholdProvider'
+import { useHousehold } from '@/core/household/useHousehold'
 import { ScreenHeader } from '@/core/layout/ScreenHeader'
 import { Button } from '@/core/ui/Button'
-import { useExpenses } from '../ExpensesProvider'
+import { useExpenses } from '../useExpenses'
 import type { Book, ExpensesData } from '../model'
 import { expensesKey } from '../queries'
 

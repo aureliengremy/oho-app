@@ -1,49 +1,15 @@
-import { createContext, useContext, useMemo, type ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@/core/client'
-import { useHousehold } from '@/core/household/HouseholdProvider'
+import { useHousehold } from '@/core/household/useHousehold'
 import { isoDay } from '@/core/lib/day'
 import { convertCents } from '@/core/lib/money'
 import { uuidv7 } from '@/core/lib/uuid'
-import { isSettled, useLiveQuery } from '@/core/sync/SyncProvider'
+import { isSettled, useLiveQuery } from '@/core/sync/useSync'
 import { useOptimisticWrites } from '@/core/sync/useOptimisticWrites'
-import { nextSortOrder, type Book, type ComputedShare, type Expense, type ExpensesData, type Settlement, type Share } from './model'
+import { nextSortOrder, type Book, type Expense, type ExpensesData, type Settlement, type Share } from './model'
 import { EXPENSE_TABLES, expensesKey, fetchExpenses, fetchRate, writes } from './queries'
-
-export interface BookFields {
-  name: string
-  currency: string
-  trip_id: string | null
-}
-
-/** Ce que le formulaire envoie : la dépense (sans les colonnes calculées) et ses parts en devise du carnet. */
-export type ExpenseFields = Pick<
-  Expense,
-  'book_id' | 'label' | 'paid_by' | 'amount_cents' | 'currency' | 'fx_rate' | 'spent_on' | 'category' | 'split_mode' | 'note' | 'booking_id'
->
-
-interface ExpensesValue {
-  data: ExpensesData | undefined
-  updatedAt: number
-  isPending: boolean
-  /** Les données ont été relues depuis l'ouverture (et pas seulement restaurées du cache de l'appareil). */
-  settled: boolean
-  isError: boolean
-  refetch: () => void
-  error: string | null
-  dismissError: () => void
-  addBook: (fields: BookFields) => string
-  updateBook: (book: Book, patch: Partial<BookFields>) => void
-  removeBook: (book: Book) => void
-  /** Crée ou remplace une dépense et ses parts, d'un bloc (M19). Rend son identifiant. */
-  saveExpense: (fields: ExpenseFields, shares: ComputedShare[], existing?: Expense) => string
-  removeExpense: (expense: Expense) => void
-  settle: (bookId: string, from: string, to: string, cents: number) => void
-  removeSettlement: (settlement: Settlement) => void
-  rate: (from: string, to: string) => Promise<{ rate: number; date: string } | null>
-}
-
-const ExpensesContext = createContext<ExpensesValue | null>(null)
+import { ExpensesContext, type ExpensesValue } from './useExpenses'
 
 const now = () => new Date().toISOString()
 
@@ -210,10 +176,4 @@ export function ExpensesProvider({ children }: { children: ReactNode }) {
   }, [client, queryClient, household.id, myId, query.data, query.dataUpdatedAt, query.isPending, query.isError, query.isFetchedAfterMount, query.fetchStatus, error, dismissError, write])
 
   return <ExpensesContext.Provider value={value}>{children}</ExpensesContext.Provider>
-}
-
-export function useExpenses(): ExpensesValue {
-  const value = useContext(ExpensesContext)
-  if (!value) throw new Error('useExpenses doit être appelé sous <ExpensesProvider>')
-  return value
 }

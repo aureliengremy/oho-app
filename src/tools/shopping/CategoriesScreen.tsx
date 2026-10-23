@@ -5,7 +5,7 @@ import { Button } from '@/core/ui/Button'
 import { Field } from '@/core/ui/Field'
 import { Sheet } from '@/core/ui/Sheet'
 import type { Category } from './model'
-import { useShopping } from './ShoppingProvider'
+import { useShopping } from './useShopping'
 
 /** Ordre des rayons, commun à l'espace (décision M6) : monter, descendre, renommer, ajouter. */
 export function CategoriesScreen() {

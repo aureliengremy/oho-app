@@ -1,7 +1,7 @@
 import { X } from 'lucide-react'
 import { cn } from '@/core/lib/cn'
 import { Sheet } from '@/core/ui/Sheet'
-import { useWatch } from '../WatchProvider'
+import { useWatch } from '../useWatch'
 import { AddBar } from '@/core/ui/AddBar'
 
 /** Nos plateformes : celles où l'on est abonnés servent au filtre « ce soir ». */

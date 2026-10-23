@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { useHousehold } from '@/core/household/HouseholdProvider'
+import { useHousehold } from '@/core/household/useHousehold'
 import { relativeTime } from '@/core/lib/time'
 import { Button } from '@/core/ui/Button'
 import { Sheet } from '@/core/ui/Sheet'
 import { describeMedia, draw, formatRuntime, runtimeOf, type WatchItem } from '../model'
-import { useWatch } from '../WatchProvider'
+import { useWatch } from '../useWatch'
 import { Poster } from './Poster'
 
 /** Deux relances, pour garder le jeu honnête. */

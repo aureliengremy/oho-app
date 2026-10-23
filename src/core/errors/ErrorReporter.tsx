@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useClient } from '../client'
-import { useHousehold } from '../household/HouseholdProvider'
+import { useHousehold } from '../household/useHousehold'
 import { createReporter, reportError, setReporter } from './report'
 
 /** Écoute les erreurs non rattrapées de la page et les envoie au journal de l'espace. */

@@ -1,5 +1,5 @@
 import { ArrowRight, X } from 'lucide-react'
-import { useHousehold } from '@/core/household/HouseholdProvider'
+import { useHousehold } from '@/core/household/useHousehold'
 import { ScreenHeader } from '@/core/layout/ScreenHeader'
 import { cn } from '@/core/lib/cn'
 import { formatCents } from '@/core/lib/money'
@@ -7,7 +7,7 @@ import { Avatar } from '@/core/ui/Avatar'
 import { Button } from '@/core/ui/Button'
 import { BookGate } from './components/BookGate'
 import { Pill } from './components/Pill'
-import { useExpenses } from './ExpensesProvider'
+import { useExpenses } from './useExpenses'
 import { balances, suggestTransfers, totals, type Book, type ExpensesData } from './model'
 
 const settledFormat = new Intl.DateTimeFormat('fr-CA', { day: 'numeric', month: 'short', timeZone: 'UTC' })

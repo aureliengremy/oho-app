@@ -1,12 +1,12 @@
 import { useRef, useState, type ChangeEvent } from 'react'
 import { BedDouble, Car, FileText, Paperclip, Pencil, Plane, Plus, Ticket, TrainFront, Tag, Wallet, X, type LucideIcon } from 'lucide-react'
 import { Link } from 'react-router'
-import { useHousehold } from '@/core/household/HouseholdProvider'
+import { useHousehold } from '@/core/household/useHousehold'
 import { formatZoned, zoneName } from '@/core/lib/zoned'
 import { Button } from '@/core/ui/Button'
 import { BookingSheet } from '../components/BookingSheet'
 import { bookingKindLabel, formatMoney, formatSize, type Attachment, type Booking, type BookingKind, type Trip, type TripsData } from '../model'
-import { useTrips } from '../TripsProvider'
+import { useTrips } from '../useTrips'
 
 const kindIcon: Record<BookingKind, LucideIcon> = {
   flight: Plane,

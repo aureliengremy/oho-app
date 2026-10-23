@@ -1,18 +1,7 @@
 import { useId, useState, type FormEvent } from 'react'
 import { ArrowUp, Plus } from 'lucide-react'
-import type { AddResult } from '../ShoppingProvider'
 import { suggest, type CatalogEntry, type Category } from '../model'
 import { currentFragment, dropFragment, parseQuickAdd, type QuickEntry } from '@/core/checklist/parse'
-
-/** Phrase courte pour la zone d'annonce : ce que l'ajout a fait. */
-export function describeAdd({ added, restored, skipped }: AddResult): string {
-  const parts: string[] = []
-  if (added.length === 1) parts.push(`${added[0]} ajouté`)
-  else if (added.length > 1) parts.push(`${added.length} articles ajoutés`)
-  if (restored.length > 0) parts.push(`${restored.join(', ')} ressorti${restored.length > 1 ? 's' : ''} du panier`)
-  if (skipped.length > 0) parts.push(`${skipped.join(', ')} déjà dans la liste`)
-  return parts.join(' · ')
-}
 
 function Highlight({ label, fragment }: { label: string; fragment: string }) {
   const at = label.toLowerCase().indexOf(fragment.toLowerCase())

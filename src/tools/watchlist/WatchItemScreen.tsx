@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Minus, Plus, Star } from 'lucide-react'
 import { Navigate, useNavigate, useParams } from 'react-router'
 import { useIsMutating } from '@tanstack/react-query'
-import { useHousehold } from '@/core/household/HouseholdProvider'
+import { useHousehold } from '@/core/household/useHousehold'
 import type { Member } from '@/core/household/queries'
 import { ScreenHeader } from '@/core/layout/ScreenHeader'
 import { cn } from '@/core/lib/cn'
@@ -15,7 +15,7 @@ import { Poster } from './components/Poster'
 import { StatusPill } from './components/StatusPill'
 import { describeMedia, formatRuntime, runtimeOf, statusLabel, type Rating, type WatchData, type WatchItem, type WatchStatus } from './model'
 import { watchKey } from './queries'
-import { useWatch } from './WatchProvider'
+import { useWatch } from './useWatch'
 
 const statuses: WatchStatus[] = ['to_watch', 'watching', 'watched', 'dropped']
 
