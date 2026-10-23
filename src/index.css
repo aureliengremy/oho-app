@@ -24,6 +24,7 @@
   --color-bad-tint: var(--bad-tint);
   --color-person-a: var(--s1);
   --color-person-b: var(--s2);
+  --color-scrim: var(--scrim);
 
   --font-display: var(--font-display);
   --font-sans: var(--font-sans);

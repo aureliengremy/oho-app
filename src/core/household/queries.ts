@@ -63,14 +63,16 @@ export async function fetchHousehold(client: OhoClient, userId: string): Promise
   return { household: household.data, members, activations: activations.data ?? [] }
 }
 
-/** Les dernières entrées du journal d'activité de l'espace. */
-export async function fetchRecentActivity(client: OhoClient, householdId: string, limit = 5): Promise<ActivityEntry[]> {
-  const { data, error } = await client
-    .from('activity_log')
-    .select('*')
-    .eq('household_id', householdId)
-    .order('created_at', { ascending: false })
-    .limit(limit)
+/** Les dernières entrées du journal d'activité de l'espace, d'un seul outil si `toolKey` est donné. */
+export async function fetchRecentActivity(
+  client: OhoClient,
+  householdId: string,
+  limit = 5,
+  toolKey?: string,
+): Promise<ActivityEntry[]> {
+  let query = client.from('activity_log').select('*').eq('household_id', householdId)
+  if (toolKey) query = query.eq('tool_key', toolKey)
+  const { data, error } = await query.order('created_at', { ascending: false }).limit(limit)
   if (error) throw error
   return data ?? []
 }
