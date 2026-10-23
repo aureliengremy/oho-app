@@ -10,6 +10,7 @@ import { useTheme, type ThemePreference } from '@/core/theme/ThemeProvider'
 import { Avatar } from '@/core/ui/Avatar'
 import { Button } from '@/core/ui/Button'
 import { tools, type ToolDefinition } from '@/tools/registry'
+import { NotificationsSection } from './NotificationsSection'
 
 const themes: { value: ThemePreference; label: string }[] = [
   { value: 'system', label: 'Système' },
@@ -63,6 +64,8 @@ export function SettingsScreen() {
             ))}
           </ul>
         </section>
+
+        <NotificationsSection />
 
         <ToolsSection />
 
