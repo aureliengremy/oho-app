@@ -64,6 +64,8 @@ begin
     insert into public.trip (household_id, title, status) values (tests.hh(), 'Japon', 'idea');
     reset role;
     perform tests.assert(not exists (select 1 from public.push_digest where tool_key = 'shopping'), 'outil coupé : rien');
+    update public.notification_pref set enabled = true, created_at = now() - interval '1 year' where tool_key = 'shopping';
+    perform tests.assert((select created_at > now() - interval '1 minute' from public.notification_pref where tool_key = 'shopping'), 'created_at figé');
     perform tests.assert((select due_at <= now() from public.push_digest where tool_key = 'trips'), 'immédiat : échu tout de suite');
 
     -- Outil désactivé pour l'espace : plus rien non plus.

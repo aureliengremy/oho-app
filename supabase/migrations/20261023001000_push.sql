@@ -73,21 +73,24 @@ create index push_digest_household_id_idx on public.push_digest (household_id);
 -- Triggers
 -- -----------------------------------------------------------------------------
 
-create or replace function private.touch_updated_at()
+-- updated_at des deux tables ; created_at reste figé. (Pas touch_updated_at, qui sert
+-- profile et vérifie une colonne id que notification_pref n'a pas.)
+create or replace function private.touch_push_row()
 returns trigger
 language plpgsql
 set search_path = ''
 as $$
 begin
+  new.created_at := old.created_at;
   new.updated_at := now();
   return new;
 end;
 $$;
 
-create trigger touch_updated_at before update on public.push_subscription
-  for each row execute function private.touch_updated_at();
-create trigger touch_updated_at before update on public.notification_pref
-  for each row execute function private.touch_updated_at();
+create trigger touch_push_row before update on public.push_subscription
+  for each row execute function private.touch_push_row();
+create trigger touch_push_row before update on public.notification_pref
+  for each row execute function private.touch_push_row();
 
 -- Anti-spam : seules les créations notifient (un ajout, pas chaque case cochée),
 -- jamais pour ses propres actions, seulement vers qui a un appareil abonné,
@@ -269,7 +272,7 @@ revoke execute on function public.register_push(text, text, text, text) from pub
 grant execute on function public.register_push(text, text, text, text) to authenticated;
 revoke execute on function public.claim_push_digests(integer), public.report_push(uuid[], uuid[], uuid[]) from public, anon, authenticated;
 grant execute on function public.claim_push_digests(integer), public.report_push(uuid[], uuid[], uuid[]) to service_role;
-revoke execute on function private.queue_push(), private.touch_updated_at() from public, anon;
+revoke execute on function private.queue_push(), private.touch_push_row() from public, anon;
 
 -- Les préférences se lisent en direct sur l'autre téléphone (réglages partagés par appareil).
 do $$
