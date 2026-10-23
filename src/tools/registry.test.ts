@@ -8,6 +8,7 @@ const tool = (key: ToolDefinition['key'], defaultOrder: number): ToolDefinition 
   label: key,
   path: `/${key}`,
   defaultOrder,
+  tables: [],
   load: async () => ({ default: Empty }),
 })
 

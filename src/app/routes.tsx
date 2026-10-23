@@ -4,6 +4,7 @@ import { LoginScreen } from '@/core/auth/LoginScreen'
 import { RequireAuth } from '@/core/auth/RequireAuth'
 import { HouseholdProvider } from '@/core/household/HouseholdProvider'
 import { AppShell } from '@/core/layout/AppShell'
+import { SyncProvider } from '@/core/sync/SyncProvider'
 import { tools } from '@/tools/registry'
 import { ActivityScreen } from './screens/ActivityScreen'
 import { HomeScreen } from './screens/HomeScreen'
@@ -22,7 +23,9 @@ export const routes: RouteObject[] = [
     element: (
       <RequireAuth>
         <HouseholdProvider>
-          <AppShell />
+          <SyncProvider>
+            <AppShell />
+          </SyncProvider>
         </HouseholdProvider>
       </RequireAuth>
     ),

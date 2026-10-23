@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
 import { useClient } from '../client'
 import { relativeTime } from '../lib/time'
+import { useLiveQuery } from '../sync/SyncProvider'
 import { Avatar } from '../ui/Avatar'
 import { useHousehold } from './HouseholdProvider'
 import { fetchRecentActivity, type ActivityEntry } from './queries'
@@ -31,7 +31,8 @@ export function describeActivity(entry: Pick<ActivityEntry, 'action' | 'entity_l
 export function ActivityFeed({ limit = 5, toolKey }: { limit?: number; toolKey?: string }) {
   const client = useClient()
   const { household, memberById } = useHousehold()
-  const query = useQuery({
+  const query = useLiveQuery({
+    tables: ['activity_log'],
     queryKey: ['activity', household.id, limit, toolKey ?? 'tout'],
     queryFn: () => fetchRecentActivity(client, household.id, limit, toolKey),
   })

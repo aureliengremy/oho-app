@@ -21,6 +21,8 @@ export function HouseholdProvider({ children }: { children: ReactNode }) {
     queryKey: ['household', userId],
     queryFn: () => fetchHousehold(client, userId!),
     enabled: userId !== null,
+    // Rechargé par le canal temps réel quand l'espace, ses membres ou ses outils changent.
+    meta: { tables: ['household', 'membership', 'tool_activation'] },
   })
 
   if (query.isPending) return <LoadingScreen label="Chargement de l’espace…" />

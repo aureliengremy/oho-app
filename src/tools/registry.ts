@@ -13,6 +13,8 @@ export interface ToolDefinition {
   icon: LucideIcon
   /** Ordre par défaut ; l'ordre réel vient de `tool_activation.sort_order`. */
   defaultOrder: number
+  /** Tables de l'outil suivies en temps réel (lot 5) : un changement recharge les écrans qui les lisent. */
+  tables: readonly string[]
   /** Écran racine de l'outil, chargé à la demande. */
   load: () => Promise<{ default: ComponentType }>
 }
@@ -22,10 +24,18 @@ export interface ToolDefinition {
  * et une entrée ici. Rien d'autre à toucher (voir CLAUDE.md).
  */
 export const tools: readonly ToolDefinition[] = [
-  { key: 'shopping', label: 'Courses', path: '/courses', icon: ShoppingCart, defaultOrder: 1, load: () => import('./shopping') },
-  { key: 'trips', label: 'Voyages', path: '/voyages', icon: BriefcaseBusiness, defaultOrder: 2, load: () => import('./trips') },
-  { key: 'watchlist', label: 'À regarder', path: '/a-regarder', icon: Tv, defaultOrder: 3, load: () => import('./watchlist') },
-  { key: 'expenses', label: 'Dépenses', path: '/depenses', icon: Wallet, defaultOrder: 4, load: () => import('./expenses') },
+  {
+    key: 'shopping',
+    label: 'Courses',
+    path: '/courses',
+    icon: ShoppingCart,
+    defaultOrder: 1,
+    tables: ['checklist', 'checklist_item', 'shopping_category', 'catalog_item'],
+    load: () => import('./shopping'),
+  },
+  { key: 'trips', label: 'Voyages', path: '/voyages', icon: BriefcaseBusiness, defaultOrder: 2, tables: [], load: () => import('./trips') },
+  { key: 'watchlist', label: 'À regarder', path: '/a-regarder', icon: Tv, defaultOrder: 3, tables: [], load: () => import('./watchlist') },
+  { key: 'expenses', label: 'Dépenses', path: '/depenses', icon: Wallet, defaultOrder: 4, tables: [], load: () => import('./expenses') },
 ]
 
 /** Nombre d'outils dans la barre du bas, à côté d'Accueil (décision D1). */
