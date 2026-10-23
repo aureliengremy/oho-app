@@ -16,18 +16,24 @@ const verbs: Record<string, string> = {
   unchecked: 'a décoché',
 }
 
+/** « de Costco », « d’Épicerie » : élision devant une voyelle ou un h. */
+function ofName(name: string): string {
+  return /^[aeiouyhàâäéèêëîïôöùûüœæ]/i.test(name) ? `d’${name}` : `de ${name}`
+}
+
 export function describeActivity(entry: Pick<ActivityEntry, 'action' | 'entity_label'>): string {
+  if (entry.action === 'cleared') return entry.entity_label ? `a vidé le panier ${ofName(entry.entity_label)}` : 'a vidé le panier'
   const verb = verbs[entry.action] ?? 'a modifié'
   return entry.entity_label ? `${verb} ${entry.entity_label}` : verb
 }
 
 /** Fil des dernières actions de l'espace (« Auriane a coché Lait 2 % · il y a 2 min »). */
-export function ActivityFeed({ limit = 5 }: { limit?: number }) {
+export function ActivityFeed({ limit = 5, toolKey }: { limit?: number; toolKey?: string }) {
   const client = useClient()
   const { household, memberById } = useHousehold()
   const query = useQuery({
-    queryKey: ['activity', household.id, limit],
-    queryFn: () => fetchRecentActivity(client, household.id, limit),
+    queryKey: ['activity', household.id, limit, toolKey ?? 'tout'],
+    queryFn: () => fetchRecentActivity(client, household.id, limit, toolKey),
   })
 
   if (query.isPending) return <p className="text-ink-3">Chargement de l’activité…</p>

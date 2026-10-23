@@ -602,6 +602,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      clear_checked: { Args: { p_checklist_id: string }; Returns: number }
       create_household: {
         Args: { p_name: string; p_timezone?: string }
         Returns: string

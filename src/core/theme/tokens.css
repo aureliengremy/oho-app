@@ -37,6 +37,8 @@
   --s2: #c9821b;
   --s3: #2a9a8a;
   --s4: #6a5acd;
+  /* Voile derrière une feuille du bas. */
+  --scrim: rgb(10 37 64 / 0.42);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -65,6 +67,7 @@
     --s2: #c98420;
     --s3: #21a07f;
     --s4: #8a7ae6;
+    --scrim: rgb(0 0 0 / 0.6);
   }
 }
 
@@ -93,4 +96,5 @@
   --s2: #c98420;
   --s3: #21a07f;
   --s4: #8a7ae6;
+  --scrim: rgb(0 0 0 / 0.6);
 }
