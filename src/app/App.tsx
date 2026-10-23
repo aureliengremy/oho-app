@@ -1,9 +1,12 @@
 import { useState, type ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { createBrowserRouter, RouterProvider } from 'react-router'
 import { AuthProvider } from '@/core/auth/AuthProvider'
 import { ClientProvider, type OhoClient } from '@/core/client'
 import { supabase } from '@/core/supabase'
+import { CACHE_KEY } from '@/core/sync/localData'
 import { ThemeProvider } from '@/core/theme/ThemeProvider'
 import { Brand } from '@/core/ui/Brand'
 import { routes } from './routes'
@@ -25,16 +28,42 @@ export function NotConfigured() {
   )
 }
 
-export function Providers({ client, children }: { client: OhoClient; children: ReactNode }) {
+/** Les lectures gardées pour l'ouverture hors ligne vivent une semaine au plus. */
+const CACHE_MAX_AGE = 7 * 24 * 3600_000
+
+export function Providers({
+  client,
+  persist = true,
+  children,
+}: {
+  client: OhoClient
+  /** Garde le cache des lectures dans localStorage pour rouvrir l'app hors ligne (désactivé en test). */
+  persist?: boolean
+  children: ReactNode
+}) {
   const [queryClient] = useState(
-    () => new QueryClient({ defaultOptions: { queries: { staleTime: 30_000, retry: 1 } } }),
+    () =>
+      new QueryClient({
+        defaultOptions: { queries: { staleTime: 30_000, retry: 1, gcTime: CACHE_MAX_AGE } },
+      }),
   )
+  const [persister] = useState(() =>
+    persist ? createSyncStoragePersister({ storage: window.localStorage, key: CACHE_KEY }) : null,
+  )
+  const inner = <AuthProvider>{children}</AuthProvider>
   return (
     <ThemeProvider>
       <ClientProvider client={client}>
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider>{children}</AuthProvider>
-        </QueryClientProvider>
+        {persister ? (
+          <PersistQueryClientProvider
+            client={queryClient}
+            persistOptions={{ persister, maxAge: CACHE_MAX_AGE, buster: 'oho-1' }}
+          >
+            {inner}
+          </PersistQueryClientProvider>
+        ) : (
+          <QueryClientProvider client={queryClient}>{inner}</QueryClientProvider>
+        )}
       </ClientProvider>
     </ThemeProvider>
   )

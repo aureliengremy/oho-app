@@ -3,6 +3,7 @@ import { ChevronDown, ChevronUp, Ellipsis, Plus, ShoppingCart } from 'lucide-rea
 import { Link, useNavigate, useParams } from 'react-router'
 import { useHousehold } from '@/core/household/HouseholdProvider'
 import { ScreenHeader } from '@/core/layout/ScreenHeader'
+import { ConnectionBanner, LiveBadge } from '@/core/sync/ConnectionStatus'
 import { cn } from '@/core/lib/cn'
 import { relativeTime } from '@/core/lib/time'
 import { Button } from '@/core/ui/Button'
@@ -88,7 +89,7 @@ export function ListScreen() {
 }
 
 function ListView({ list, data }: { list: ShoppingList; data: ShoppingData }) {
-  const { catalog, error, dismissError, addEntries, toggle, clearChecked } = useShopping()
+  const { catalog, pending, updatedAt, error, dismissError, addEntries, toggle, clearChecked } = useShopping()
   const { memberById } = useHousehold()
   const navigate = useNavigate()
   const [editing, setEditing] = useState<Item | null>(null)
@@ -115,6 +116,8 @@ function ListView({ list, data }: { list: ShoppingList; data: ShoppingData }) {
       <ScreenHeader
         title={list.name}
         actions={
+          <>
+          <LiveBadge />
           <button
             type="button"
             onClick={() => setOptions(true)}
@@ -123,8 +126,10 @@ function ListView({ list, data }: { list: ShoppingList; data: ShoppingData }) {
           >
             <Ellipsis size={22} />
           </button>
+          </>
         }
       />
+      <ConnectionBanner updatedAt={updatedAt} />
 
       <nav aria-label="Listes de courses" className="flex gap-2 overflow-x-auto px-5 pt-1 pb-2">
         {data.lists.map((l) => (
@@ -198,7 +203,7 @@ function ListView({ list, data }: { list: ShoppingList; data: ShoppingData }) {
               </h2>
               <ul>
                 {section.items.map((item) => (
-                  <ItemRow key={item.id} item={item} onToggle={() => toggle(item)} onEdit={() => setEditing(item)} />
+                  <ItemRow key={item.id} item={item} pending={pending.has(item.id)} onToggle={() => toggle(item)} onEdit={() => setEditing(item)} />
                 ))}
               </ul>
             </section>
@@ -238,7 +243,7 @@ function ListView({ list, data }: { list: ShoppingList; data: ShoppingData }) {
               <div id="panier" className="max-h-[40dvh] overflow-y-auto pb-2">
                 <ul aria-label="Dans le panier">
                   {cart.map((item) => (
-                    <ItemRow key={item.id} item={item} onToggle={() => toggle(item)} onEdit={() => setEditing(item)} />
+                    <ItemRow key={item.id} item={item} pending={pending.has(item.id)} onToggle={() => toggle(item)} onEdit={() => setEditing(item)} />
                   ))}
                 </ul>
                 {lastChecked?.checked_at ? (

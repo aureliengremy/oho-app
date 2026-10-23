@@ -1,9 +1,12 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@/core/client'
 import type { TablesInsert, TablesUpdate } from '@/core/db/database.types'
 import { useHousehold } from '@/core/household/HouseholdProvider'
 import { uuidv7 } from '@/core/lib/uuid'
+import { isNetworkError } from '@/core/sync/network'
+import { overlay, type OutboxOp } from '@/core/sync/outbox'
+import { useLiveQuery, useSync } from '@/core/sync/SyncProvider'
 import { nextSortOrder, movedSortOrder, type CatalogEntry, type Category, type Item, type ShoppingData, type ShoppingList } from './model'
 import { labelKey, type QuickEntry } from './parse'
 import { catalogKey, fetchCatalog, fetchShopping, shoppingKey, writes } from './queries'
@@ -16,7 +19,12 @@ export interface AddResult {
 }
 
 interface ShoppingValue {
+  /** État du serveur, plus les écritures encore en file d'attente hors ligne. */
   data: ShoppingData | undefined
+  /** Heure du dernier état reçu du serveur (ms), pour « dernier état connu ». */
+  updatedAt: number
+  /** Articles dont une écriture attend le réseau (« En attente »). */
+  pending: ReadonlySet<string>
   catalog: CatalogEntry[]
   isPending: boolean
   isError: boolean
@@ -43,6 +51,16 @@ type Change = (data: ShoppingData) => ShoppingData
 
 const now = () => new Date().toISOString()
 
+const ITEMS = 'checklist_item'
+
+/** Les articles vus par l'écran : ceux du serveur, avec les écritures en attente, sans les supprimés. */
+function withOutbox(data: ShoppingData, outbox: readonly OutboxOp[]): ShoppingData {
+  if (!outbox.some((op) => op.table === ITEMS)) return data
+  return { ...data, items: overlay(data.items, outbox, ITEMS).filter((i) => !i.deleted_at) }
+}
+
+const OFFLINE = 'Hors ligne : cette action attendra le réseau. Réessaie une fois connecté.'
+
 /**
  * Données et écritures de l'outil Courses. Chaque écriture s'applique tout de suite au cache
  * (optimiste), part vers Supabase, et le cache est rechargé quand plus rien n'est en vol.
@@ -55,13 +73,34 @@ export function ShoppingProvider({ children }: { children: ReactNode }) {
   const myId = me?.profile.id ?? null
   const key = shoppingKey(household.id)
   const [error, setError] = useState<string | null>(null)
+  const { outbox, queue } = useSync()
 
-  const query = useQuery({ queryKey: key, queryFn: () => fetchShopping(client, household.id) })
-  const catalogQuery = useQuery({ queryKey: catalogKey(household.id), queryFn: () => fetchCatalog(client, household.id) })
+  const query = useLiveQuery({
+    tables: ['checklist', 'checklist_item', 'shopping_category'],
+    queryKey: key,
+    queryFn: () => fetchShopping(client, household.id),
+  })
+  const catalogQuery = useLiveQuery({
+    tables: ['catalog_item'],
+    queryKey: catalogKey(household.id),
+    queryFn: () => fetchCatalog(client, household.id),
+  })
 
   const mutation = useMutation({
     mutationKey: key,
-    mutationFn: ({ run }: { run: () => Promise<unknown>; change: Change; failure: string }) => run(),
+    // Hors ligne, on ne met pas l'écriture en pause : elle part dans la file (outbox) ou échoue.
+    networkMode: 'always',
+    mutationFn: async ({ run, offline }: { run: () => Promise<unknown>; change: Change; failure: string; offline?: OutboxOp[] }) => {
+      if (offline && !navigator.onLine) return offline.forEach(queue)
+      if (!navigator.onLine) throw new Error('offline')
+      try {
+        await run()
+      } catch (cause) {
+        // Le réseau a lâché en route : l'écriture rejouable attend, l'état affiché ne bouge pas.
+        if (offline && isNetworkError(cause)) return offline.forEach(queue)
+        throw cause
+      }
+    },
     onMutate: async ({ change }) => {
       await queryClient.cancelQueries({ queryKey: key, exact: true })
       const previous = queryClient.getQueryData<ShoppingData>(key)
@@ -70,7 +109,7 @@ export function ShoppingProvider({ children }: { children: ReactNode }) {
     },
     onError: (_error, { failure }, context) => {
       if (context?.previous) queryClient.setQueryData(key, context.previous)
-      setError(failure)
+      setError(navigator.onLine ? failure : OFFLINE)
     },
     onSettled: () => {
       // Recharger seulement quand la dernière écriture est revenue, sinon on écraserait
@@ -83,13 +122,32 @@ export function ShoppingProvider({ children }: { children: ReactNode }) {
   })
   const { mutate } = mutation
 
+  /**
+   * Une écriture : `change` pour l'écran tout de suite, `run` pour le serveur, `failure` si elle
+   * échoue. Avec `offline`, elle peut attendre le réseau dans la file au lieu d'échouer.
+   */
   const write = useCallback(
-    (change: Change, run: () => Promise<unknown>, failure: string) => mutate({ change, run, failure }),
+    (change: Change, run: () => Promise<unknown>, failure: string, offline?: OutboxOp[]) =>
+      mutate({ change, run, failure, offline }),
     [mutate],
+  )
+  const data = useMemo(() => (query.data ? withOutbox(query.data, outbox) : undefined), [query.data, outbox])
+  const pending = useMemo(
+    () => new Set(outbox.filter((op) => op.table === ITEMS).map((op) => op.rowId)),
+    [outbox],
   )
 
   const value = useMemo<ShoppingValue>(() => {
-    const current = () => queryClient.getQueryData<ShoppingData>(key) ?? { lists: [], items: [], categories: [] }
+    const current = () =>
+      withOutbox(queryClient.getQueryData<ShoppingData>(key) ?? { lists: [], items: [], categories: [] }, outbox)
+    const op = (rowId: string, patch: Record<string, unknown>): OutboxOp => ({
+      id: uuidv7(),
+      kind: 'update',
+      table: ITEMS,
+      rowId,
+      patch,
+      queuedAt: now(),
+    })
     const catalog = catalogQuery.data ?? []
     const mapItems = (data: ShoppingData, ids: ReadonlySet<string>, patch: Partial<Item>): ShoppingData => ({
       ...data,
@@ -102,7 +160,9 @@ export function ShoppingProvider({ children }: { children: ReactNode }) {
     })
 
     return {
-      data: query.data,
+      data,
+      updatedAt: query.dataUpdatedAt,
+      pending,
       catalog,
       isPending: query.isPending,
       isError: query.isError,
@@ -156,6 +216,16 @@ export function ShoppingProvider({ children }: { children: ReactNode }) {
         if (rows.length === 0 && restore.length === 0) return result
 
         const restoreIds = new Set(restore.map((i) => i.id))
+        const inserts: TablesInsert<'checklist_item'>[] = rows.map((r) => ({
+          id: r.id,
+          household_id: r.household_id,
+          checklist_id: r.checklist_id,
+          label: r.label,
+          quantity: r.quantity,
+          category_id: r.category_id,
+          sort_order: r.sort_order,
+        }))
+        const uncheck = { checked: false, checked_by: null, checked_at: null }
         write(
           (d) => {
             const restored = mapItems(d, restoreIds, checkedPatch(false))
@@ -163,31 +233,36 @@ export function ShoppingProvider({ children }: { children: ReactNode }) {
           },
           async () => {
             if (rows.length > 0) {
-              const inserts: TablesInsert<'checklist_item'>[] = rows.map((r) => ({
-                id: r.id,
-                household_id: r.household_id,
-                checklist_id: r.checklist_id,
-                label: r.label,
-                quantity: r.quantity,
-                category_id: r.category_id,
-                sort_order: r.sort_order,
-              }))
               await writes.insertItems(client, inserts)
               void queryClient.invalidateQueries({ queryKey: catalogKey(household.id) })
             }
             if (restore.length > 0) await writes.updateItems(client, [...restoreIds], { checked: false })
           },
           rows.length + restore.length > 1 ? 'Les articles n’ont pas été ajoutés. Réessaie.' : 'L’article n’a pas été ajouté. Réessaie.',
+          [
+            ...inserts.map<OutboxOp>((row) => ({
+              id: uuidv7(),
+              kind: 'insert',
+              table: ITEMS,
+              rowId: row.id!,
+              row: { ...row, note: null, checked: false },
+              queuedAt: now(),
+            })),
+            ...restore.map((i) => op(i.id, uncheck)),
+          ],
         )
         return result
       },
 
       toggle(item) {
         const checked = !item.checked
+        const patch = checkedPatch(checked)
         write(
-          (d) => mapItems(d, new Set([item.id]), checkedPatch(checked)),
+          (d) => mapItems(d, new Set([item.id]), patch),
           () => writes.updateItems(client, [item.id], { checked }),
           `« ${item.label} » n’a pas été ${checked ? 'coché' : 'décoché'}. Réessaie.`,
+          // En file, on garde qui et quand pour l'affichage ; le serveur les repose de toute façon.
+          [op(item.id, patch)],
         )
       },
 
@@ -203,14 +278,17 @@ export function ShoppingProvider({ children }: { children: ReactNode }) {
             }
           },
           'La modification n’a pas été enregistrée. Réessaie.',
+          [op(item.id, patch)],
         )
       },
 
       removeItem(item) {
+        const deleted_at = now()
         write(
           (d) => ({ ...d, items: d.items.filter((i) => i.id !== item.id) }),
-          () => writes.updateItems(client, [item.id], { deleted_at: now() }),
+          () => writes.updateItems(client, [item.id], { deleted_at }),
           `« ${item.label} » n’a pas été supprimé. Réessaie.`,
+          [op(item.id, { deleted_at })],
         )
       },
 
@@ -329,7 +407,7 @@ export function ShoppingProvider({ children }: { children: ReactNode }) {
     }
     // key est dérivée de household.id ; query et catalogQuery changent quand leurs données changent.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [client, queryClient, household.id, myId, query.data, query.isPending, query.isError, catalogQuery.data, error, write])
+  }, [client, queryClient, household.id, myId, data, pending, outbox, query.dataUpdatedAt, query.isPending, query.isError, catalogQuery.data, error, write])
 
   return <ShoppingContext.Provider value={value}>{children}</ShoppingContext.Provider>
 }

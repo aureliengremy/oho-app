@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { Session } from '@supabase/supabase-js'
+import { useQueryClient } from '@tanstack/react-query'
 import { useClient } from '../client'
+import { clearLocalData } from '../sync/localData'
 
 type AuthStatus = 'loading' | 'signedOut' | 'signedIn'
 
@@ -27,6 +29,7 @@ export function authErrorMessage(message: string): string {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const client = useClient()
+  const queryClient = useQueryClient()
   const [session, setSession] = useState<Session | null>(null)
   const [status, setStatus] = useState<AuthStatus>('loading')
 
@@ -67,9 +70,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
       async signOut() {
         await client.auth.signOut()
+        // Rien du compte ne reste sur l'appareil : cache des lectures et écritures en attente.
+        queryClient.clear()
+        clearLocalData()
       },
     }),
-    [client, session, status],
+    [client, queryClient, session, status],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

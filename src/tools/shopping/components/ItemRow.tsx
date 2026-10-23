@@ -5,8 +5,19 @@ import { Avatar } from '@/core/ui/Avatar'
 import type { Item } from '../model'
 import { formatQuantity } from '../parse'
 
-/** Une ligne de 52 px : case de 48 px, libellé et note, quantité et initiales de qui l'a ajouté. */
-export function ItemRow({ item, onToggle, onEdit }: { item: Item; onToggle: () => void; onEdit: () => void }) {
+/** Une ligne de 52 px : case de 48 px, libellé et note, quantité et initiales de qui l'a ajouté (ou « En attente »). */
+export function ItemRow({
+  item,
+  pending = false,
+  onToggle,
+  onEdit,
+}: {
+  item: Item
+  /** Une écriture attend le réseau : « En attente » à la place des initiales. */
+  pending?: boolean
+  onToggle: () => void
+  onEdit: () => void
+}) {
   const { memberById } = useHousehold()
   const author = memberById(item.created_by)
   const quantity = formatQuantity(item.quantity)
@@ -47,7 +58,9 @@ export function ItemRow({ item, onToggle, onEdit }: { item: Item; onToggle: () =
       </button>
       <div className="flex items-center gap-2.5">
         {quantity ? <span className="font-mono text-[13px] text-ink-2 tabular-nums">{quantity}</span> : null}
-        {author ? (
+        {pending ? (
+          <span className="font-mono text-[12.5px] font-semibold tracking-[0.06em] text-warn uppercase">En attente</span>
+        ) : author ? (
           <Avatar name={author.profile.display_name} chosenInitials={author.profile.initials} slot={author.slot} />
         ) : null}
       </div>

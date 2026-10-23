@@ -8,7 +8,7 @@ import type { OhoClient } from '@/core/client'
 export function renderApp(client: OhoClient, path = '/') {
   const router = createMemoryRouter(routes, { initialEntries: [path] })
   render(
-    <Providers client={client}>
+    <Providers client={client} persist={false}>
       <RouterProvider router={router} />
     </Providers>,
   )

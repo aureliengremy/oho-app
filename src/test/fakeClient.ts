@@ -18,6 +18,8 @@ export function fakeClient({ userId = null as string | null, rows = {} as Rows }
   const db: Rows = structuredClone(rows)
   /** Fait échouer la prochaine écriture sur cette table (test du retour arrière). */
   const failNext = new Set<string>()
+  /** Coupe le réseau pendant la prochaine écriture sur cette table (la requête n'arrive jamais). */
+  const dropNext = new Set<string>()
 
   const auth = {
     getSession: vi.fn(async () => ({ data: { session: current }, error: null })),
@@ -48,6 +50,9 @@ export function fakeClient({ userId = null as string | null, rows = {} as Rows }
 
     const run = () => {
       const tableRows = (db[table] ??= [])
+      if (op.kind !== 'select' && dropNext.delete(table)) {
+        return { data: null, error: { message: 'TypeError: Failed to fetch', details: '', hint: '', code: '' } }
+      }
       if (op.kind !== 'select' && failNext.delete(table)) {
         return { data: null, error: { message: `échec simulé sur ${table}`, code: 'XX000' } }
       }
@@ -127,6 +132,46 @@ export function fakeClient({ userId = null as string | null, rows = {} as Rows }
     return builder
   })
 
+  // Realtime : les écrans s'abonnent, le test émet un changement sur une table avec `emit`.
+  type Handler = { table: string; callback: (payload: unknown) => void }
+  const channels = new Set<{ handlers: Handler[]; status?: (s: string) => void }>()
+  const channel = vi.fn(() => {
+    const state: { handlers: Handler[]; status?: (s: string) => void } = { handlers: [] }
+    channels.add(state)
+    const ch = {
+      on: (_type: string, filter: { table: string }, callback: (payload: unknown) => void) => {
+        state.handlers.push({ table: filter.table, callback })
+        return ch
+      },
+      subscribe: (status?: (s: string) => void) => {
+        state.status = status
+        queueMicrotask(() => status?.(realtime.status))
+        return ch
+      },
+      state,
+    }
+    return ch
+  })
+  const removeChannel = vi.fn(async (ch: { state: typeof channels extends Set<infer S> ? S : never }) => {
+    channels.delete(ch.state)
+    return 'ok'
+  })
+  const realtime = {
+    status: 'SUBSCRIBED',
+    /** Simule un changement venu de l'autre téléphone sur une table. */
+    emit(table: string) {
+      for (const c of channels) for (const h of c.handlers) if (h.table === table) h.callback({ table })
+    },
+    /** Change l'état des canaux ouverts (et des prochains). */
+    setStatus(status: string) {
+      realtime.status = status
+      for (const c of channels) c.status?.(status)
+    },
+    get open() {
+      return channels.size
+    },
+  }
+
   const rpc = vi.fn(async (name: string, args: Record<string, unknown>) => {
     if (failNext.delete(name)) return { data: null, error: { message: `échec simulé sur ${name}` } }
     if (name === 'clear_checked') {
@@ -139,12 +184,15 @@ export function fakeClient({ userId = null as string | null, rows = {} as Rows }
     return { data: null, error: { message: `rpc inconnue : ${name}` } }
   })
 
-  return { auth, from, rpc, rows: db, failNext } as unknown as OhoClient & {
+  return { auth, from, rpc, channel, removeChannel, realtime, rows: db, failNext, dropNext } as unknown as OhoClient & {
     auth: typeof auth
     from: typeof from
     rpc: typeof rpc
+    channel: typeof channel
+    realtime: typeof realtime
     rows: Rows
     failNext: Set<string>
+    dropNext: Set<string>
   }
 }
 
