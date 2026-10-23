@@ -1,8 +1,19 @@
 import { useState, type FormEvent } from 'react'
 import { Plus } from 'lucide-react'
+import { cn } from '../lib/cn'
 
 /** Champ d'ajout d'une ligne : Entrée ou le bouton « + » ajoutent, le champ se vide. */
-export function AddBar({ label, placeholder, onAdd }: { label: string; placeholder: string; onAdd: (text: string) => void }) {
+export function AddBar({
+  label,
+  placeholder,
+  onAdd,
+  className,
+}: {
+  label: string
+  placeholder: string
+  onAdd: (text: string) => void
+  className?: string
+}) {
   const [text, setText] = useState('')
   const submit = (event: FormEvent) => {
     event.preventDefault()
@@ -11,7 +22,7 @@ export function AddBar({ label, placeholder, onAdd }: { label: string; placehold
     setText('')
   }
   return (
-    <form onSubmit={submit} className="flex items-center gap-2 px-4 py-2">
+    <form onSubmit={submit} className={cn('flex items-center gap-2 px-4 py-2', className)}>
       <input
         aria-label={label}
         value={text}

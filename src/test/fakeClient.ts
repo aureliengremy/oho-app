@@ -205,13 +205,29 @@ export function fakeClient({ userId = null as string | null, rows = {} as Rows }
     files,
   }
 
-  return { auth, from, rpc, channel, removeChannel, realtime, storage, rows: db, failNext, dropNext } as unknown as OhoClient & {
+  // Edge Functions : `functions.handlers.tmdb = async (body) => ...` simule la fonction serveur ;
+  // sans gestionnaire, l'appel répond 503 (fonction non configurée).
+  const functions = {
+    handlers: {} as Record<string, (body: Record<string, unknown>) => Promise<unknown>>,
+    invoke: vi.fn(async (name: string, options: { body: Record<string, unknown> }) => {
+      const handler = functions.handlers[name]
+      if (!handler) return { data: null, error: { message: 'non configurée', context: { status: 503 } } }
+      try {
+        return { data: await handler(options.body), error: null }
+      } catch {
+        return { data: null, error: { message: 'échec', context: { status: 502 } } }
+      }
+    }),
+  }
+
+  return { auth, from, rpc, channel, removeChannel, realtime, storage, functions, rows: db, failNext, dropNext } as unknown as OhoClient & {
     auth: typeof auth
     from: typeof from
     rpc: typeof rpc
     channel: typeof channel
     realtime: typeof realtime
     storage: typeof storage
+    functions: typeof functions
     rows: Rows
     failNext: Set<string>
     dropNext: Set<string>
@@ -339,5 +355,34 @@ export const tripRows = {
   checklist_item: [
     item('p-passeports', 'Passeports valides', 1, { checklist_id: 'prep-lisbonne', checked: true, checked_by: 'user-a' }),
     item('p-adaptateur', 'Adaptateur prise européenne', 2, { checklist_id: 'prep-lisbonne', quantity: '2' }),
+  ],
+}
+
+/** Seed de l'espace + À regarder : quatre plateformes, deux fiches TMDB en cache, quatre titres et deux notes. */
+export const watchRows = {
+  ...seedRows,
+  tool_activation: [
+    ...seedRows.tool_activation,
+    { household_id: 'hh-1', tool_key: 'watchlist', enabled: true, sort_order: 3, settings: {}, deleted_at: null },
+  ],
+  watch_platform: [
+    stamped({ id: 'pf-netflix', name: 'Netflix', is_subscribed: true, tmdb_provider_id: 8, sort_order: 1 }),
+    stamped({ id: 'pf-crave', name: 'Crave', is_subscribed: true, tmdb_provider_id: 230, sort_order: 2 }),
+    stamped({ id: 'pf-prime', name: 'Prime Video', is_subscribed: true, tmdb_provider_id: 119, sort_order: 3 }),
+    stamped({ id: 'pf-apple', name: 'Apple TV+', is_subscribed: false, tmdb_provider_id: 350, sort_order: 4 }),
+  ],
+  external_media: [
+    { id: 'm-past', source: 'tmdb', media_type: 'movie', external_id: '666277', title: 'Past Lives', original_title: 'Past Lives', year: 2023, overview: 'Nora et Hae Sung se retrouvent.', poster_path: '/past.jpg', runtime_min: 106, number_of_seasons: null, genres: ['Drame'], providers: null, fetched_at: '2026-10-20T00:00:00Z', created_at: '', updated_at: '' },
+    { id: 'm-sev', source: 'tmdb', media_type: 'tv', external_id: '95396', title: 'Severance', original_title: 'Severance', year: 2022, overview: 'Mark dirige une équipe de bureau.', poster_path: null, runtime_min: 50, number_of_seasons: 2, genres: ['Drame'], providers: null, fetched_at: '2026-10-20T00:00:00Z', created_at: '', updated_at: '' },
+  ],
+  watch_item: [
+    stamped({ id: 'w-past', title: 'Past Lives', kind: 'movie', status: 'to_watch', platform_id: 'pf-prime', media_id: 'm-past', season_current: null, episode_current: null, runtime_min: null, suggested_by: 'user-b', comment: null, watched_at: null, created_at: '2026-10-01T00:00:00Z', created_by: 'user-b' }),
+    stamped({ id: 'w-sev', title: 'Severance', kind: 'series', status: 'watching', platform_id: 'pf-apple', media_id: 'm-sev', season_current: 2, episode_current: 6, runtime_min: null, suggested_by: 'user-a', comment: null, watched_at: null, created_at: '2026-10-02T00:00:00Z' }),
+    stamped({ id: 'w-regne', title: 'Le règne animal', kind: 'movie', status: 'to_watch', platform_id: 'pf-crave', media_id: null, season_current: null, episode_current: null, runtime_min: 128, suggested_by: 'user-a', comment: null, watched_at: null, created_at: '2026-10-03T00:00:00Z' }),
+    stamped({ id: 'w-bear', title: 'The Bear', kind: 'series', status: 'to_watch', platform_id: null, media_id: null, season_current: null, episode_current: null, runtime_min: 30, suggested_by: 'user-a', comment: null, watched_at: null, created_at: '2026-10-04T00:00:00Z' }),
+  ],
+  watch_rating: [
+    stamped({ id: 'r-a', watch_item_id: 'w-sev', user_id: 'user-a', rating: 5, comment: null }),
+    stamped({ id: 'r-b', watch_item_id: 'w-sev', user_id: 'user-b', rating: 4, comment: 'Lent au début, puis impossible d’arrêter.', created_by: 'user-b' }),
   ],
 }

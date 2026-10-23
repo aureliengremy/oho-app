@@ -1,9 +1,17 @@
-import { ToolPlaceholder } from '@/core/layout/ToolPlaceholder'
+import { Navigate, Route, Routes } from 'react-router'
+import { WatchItemScreen } from './WatchItemScreen'
+import { WatchListScreen } from './WatchListScreen'
+import { WatchProvider } from './WatchProvider'
 
-export default function WatchlistScreen() {
+/** Outil À regarder (lot 7) : `/a-regarder`, `/a-regarder/:itemId`. */
+export default function WatchlistTool() {
   return (
-    <ToolPlaceholder title="À regarder" lot="v1.2 · Lot 7">
-      Les films et séries, les notes croisées et le tirage au sort arrivent au lot 7.
-    </ToolPlaceholder>
+    <WatchProvider>
+      <Routes>
+        <Route index element={<WatchListScreen />} />
+        <Route path=":itemId" element={<WatchItemScreen />} />
+        <Route path="*" element={<Navigate to="/a-regarder" replace />} />
+      </Routes>
+    </WatchProvider>
   )
 }

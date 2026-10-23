@@ -68,7 +68,7 @@ insert into public.tool_activation (household_id, tool_key, enabled, sort_order,
 values
   ('0192f000-0000-7000-8000-000000000001', 'shopping',  true,  1, '0192f000-0000-7000-8000-0000000000a1'),
   ('0192f000-0000-7000-8000-000000000001', 'trips',     true,  2, '0192f000-0000-7000-8000-0000000000a1'),
-  ('0192f000-0000-7000-8000-000000000001', 'watchlist', false, 3, '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-000000000001', 'watchlist', true,  3, '0192f000-0000-7000-8000-0000000000a1'),
   ('0192f000-0000-7000-8000-000000000001', 'expenses',  false, 4, '0192f000-0000-7000-8000-0000000000a1');
 
 -- -----------------------------------------------------------------------------
@@ -131,3 +131,41 @@ values
   ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000d0002', 'Passeports valides', null, true,  1, '0192f000-0000-7000-8000-0000000000a1'),
   ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000d0002', 'Assurance voyage',   null, false, 2, '0192f000-0000-7000-8000-0000000000a2'),
   ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000d0002', 'Adaptateur prise européenne', '2', false, 3, '0192f000-0000-7000-8000-0000000000a1');
+
+-- -----------------------------------------------------------------------------
+-- À regarder (lot 7) : nos plateformes, deux fiches TMDB en cache, trois titres.
+-- Le cache est global (hors foyer) : on ne le vide pas, on le complète.
+-- -----------------------------------------------------------------------------
+insert into public.external_media (id, media_type, external_id, title, original_title, year, overview, runtime_min, number_of_seasons, genres)
+values
+  ('0192f000-0000-7000-8000-0000000f0001', 'movie', '666277', 'Past Lives', 'Past Lives', 2023,
+   'Nora et Hae Sung, amis d’enfance, se retrouvent à New York vingt ans plus tard, le temps d’une semaine.', 106, null, '["Drame", "Romance"]'),
+  ('0192f000-0000-7000-8000-0000000f0002', 'tv', '95396', 'Severance', 'Severance', 2022,
+   'Mark dirige une équipe de bureau dont les employés ont subi une procédure de « dissociation » : leurs souvenirs du travail et de la vie privée sont séparés.', 50, 2, '["Drame", "Mystère"]')
+on conflict (source, media_type, external_id) do nothing;
+
+insert into public.watch_platform (id, household_id, name, is_subscribed, tmdb_provider_id, sort_order, created_by)
+values
+  ('0192f000-0000-7000-8000-000000100001', '0192f000-0000-7000-8000-000000000001', 'Netflix',     true,  8,   1, '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-000000100002', '0192f000-0000-7000-8000-000000000001', 'Crave',       true,  230, 2, '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-000000100003', '0192f000-0000-7000-8000-000000000001', 'Prime Video', true,  119, 3, '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-000000100004', '0192f000-0000-7000-8000-000000000001', 'Apple TV+',   false, 350, 4, '0192f000-0000-7000-8000-0000000000a1');
+
+insert into public.watch_item (id, household_id, title, kind, status, platform_id, media_id, season_current, episode_current, runtime_min, suggested_by, created_by)
+values
+  ('0192f000-0000-7000-8000-000000110001', '0192f000-0000-7000-8000-000000000001', 'Past Lives', 'movie', 'to_watch',
+   '0192f000-0000-7000-8000-000000100003', '0192f000-0000-7000-8000-0000000f0001', null, null, null,
+   '0192f000-0000-7000-8000-0000000000a2', '0192f000-0000-7000-8000-0000000000a2'),
+  ('0192f000-0000-7000-8000-000000110002', '0192f000-0000-7000-8000-000000000001', 'Severance', 'series', 'watching',
+   '0192f000-0000-7000-8000-000000100004', '0192f000-0000-7000-8000-0000000f0002', 2, 6, null,
+   '0192f000-0000-7000-8000-0000000000a1', '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-000000110003', '0192f000-0000-7000-8000-000000000001', 'Le règne animal', 'movie', 'to_watch',
+   '0192f000-0000-7000-8000-000000100002', null, null, null, 128,
+   '0192f000-0000-7000-8000-0000000000a1', '0192f000-0000-7000-8000-0000000000a1');
+
+insert into public.watch_rating (household_id, watch_item_id, user_id, rating, comment, created_by)
+values
+  ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-000000110002', '0192f000-0000-7000-8000-0000000000a1', 5, null,
+   '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-000000110002', '0192f000-0000-7000-8000-0000000000a2', 4,
+   'Lent au début, puis impossible d’arrêter.', '0192f000-0000-7000-8000-0000000000a2');
