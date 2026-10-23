@@ -44,8 +44,8 @@ function ItemForm({ item, categories, onDone }: { item: Item; categories: Catego
       <div className="grid grid-cols-2 gap-3">
         <Field label="Quantité" value={quantity} onChange={(e) => setQuantity(e.target.value)} placeholder="2, 500 g…" />
         <div className="flex flex-col gap-2">
-          <label htmlFor="item-category" className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">
-            RAYON
+          <label htmlFor="item-category" className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+            Rayon
           </label>
           <select
             id="item-category"

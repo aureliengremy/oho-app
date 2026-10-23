@@ -11,8 +11,8 @@ export function Field({
   const id = useId()
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">
-        {label.toUpperCase()}
+      <label htmlFor={id} className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+        {label}
       </label>
       <div className="relative">
         <input
@@ -36,8 +36,8 @@ const control =
 
 function Label({ htmlFor, children }: { htmlFor: string; children: string }) {
   return (
-    <label htmlFor={htmlFor} className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">
-      {children.toUpperCase()}
+    <label htmlFor={htmlFor} className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+      {children}
     </label>
   )
 }

@@ -10,7 +10,7 @@ import { relativeTime } from '@/core/lib/time'
 import { useSync } from '@/core/sync/SyncProvider'
 import { Button } from '@/core/ui/Button'
 
-const heading = 'font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3'
+const heading = 'font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3'
 const tones = { ok: 'bg-ok-tint text-ok', warn: 'bg-warn-tint text-warn', bad: 'bg-bad-tint text-bad', neutral: 'bg-surface text-ink-2' } as const
 const longDate = new Intl.DateTimeFormat('fr-CA', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: '2-digit' })
 const shortDate = new Intl.DateTimeFormat('fr-CA', { weekday: 'short', day: 'numeric', month: 'long', timeZone: 'UTC' })
@@ -58,7 +58,7 @@ function Health() {
   return (
     <section className="flex flex-col gap-3" aria-labelledby="etat">
       <h2 id="etat" className={heading}>
-        ÉTAT
+        État
       </h2>
       <ul className="flex flex-col divide-y divide-rule rounded-lg bg-surface-2">
         <Row label="Réseau" tone={online ? 'ok' : 'warn'} value={online ? 'En ligne' : 'Hors ligne'} />
@@ -156,7 +156,7 @@ function Backups() {
   return (
     <section className="flex flex-col gap-3" aria-labelledby="sauvegardes">
       <h2 id="sauvegardes" className={heading}>
-        SAUVEGARDES
+        Sauvegardes
       </h2>
       <p className="text-sm text-ink-2">Un export contient tout l’espace : listes, voyages, titres, dépenses et réglages, en un fichier JSON.</p>
       <div className="flex flex-col gap-2">
@@ -196,7 +196,7 @@ function Backups() {
       ) : null}
 
       <div className="flex flex-col gap-1">
-        <h3 className={heading}>CHAQUE DIMANCHE</h3>
+        <h3 className={heading}>Chaque dimanche</h3>
         {weekly.isPending ? null : weekly.isError || weekly.data.length === 0 ? (
           <p className="text-sm text-ink-2">La sauvegarde automatique n’a pas encore tourné : elle part chaque dimanche une fois branchée sur le serveur.</p>
         ) : (
@@ -236,7 +236,7 @@ function Errors() {
   return (
     <section className="flex flex-col gap-3" aria-labelledby="erreurs">
       <h2 id="erreurs" className={heading}>
-        ERREURS RÉCENTES
+        Erreurs récentes
       </h2>
       {errors.isPending ? null : errors.isError ? (
         <p className="text-sm text-ink-2">Le journal d’erreurs ne s’est pas chargé.</p>

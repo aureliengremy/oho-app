@@ -44,8 +44,8 @@ export function ListScreen() {
     return (
       <>
         <ScreenHeader title="Courses" />
-        <p role="status" className="px-5 py-6 font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">
-          CHARGEMENT DES LISTES…
+        <p role="status" className="px-5 py-6 font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+          Chargement des listes…
         </p>
       </>
     )
@@ -198,8 +198,8 @@ function ListView({ list, data }: { list: ShoppingList; data: ShoppingData }) {
         ) : (
           sections.map((section) => (
             <section key={section.category?.id ?? 'sans-rayon'} aria-label={section.category?.name ?? 'Sans rayon'}>
-              <h2 className="px-4 pt-3.5 pb-1 font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">
-                {(section.category?.name ?? 'Sans rayon').toUpperCase()}
+              <h2 className="px-4 pt-3.5 pb-1 font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+                {section.category?.name ?? 'Sans rayon'}
               </h2>
               <ul>
                 {section.items.map((item) => (

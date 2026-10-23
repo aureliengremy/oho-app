@@ -5,7 +5,7 @@ import { parseQuickAdd } from '@/core/checklist/parse'
 import type { TablesInsert, TablesUpdate } from '@/core/db/database.types'
 import { useHousehold } from '@/core/household/HouseholdProvider'
 import { uuidv7 } from '@/core/lib/uuid'
-import { useLiveQuery } from '@/core/sync/SyncProvider'
+import { isSettled, useLiveQuery } from '@/core/sync/SyncProvider'
 import { useOptimisticWrites } from '@/core/sync/useOptimisticWrites'
 import { nextSortOrder, type Attachment, type Booking, type BudgetLine, type PrepItem, type Trip, type TripIdea, type TripsData } from './model'
 import { BUCKET, fetchTrips, TRIP_TABLES, tripsKey, writes } from './queries'
@@ -25,6 +25,8 @@ interface TripsValue {
   data: TripsData | undefined
   updatedAt: number
   isPending: boolean
+  /** Les données ont été relues depuis l'ouverture (et pas seulement restaurées du cache de l'appareil). */
+  settled: boolean
   isError: boolean
   refetch: () => void
   error: string | null
@@ -80,6 +82,7 @@ export function TripsProvider({ children }: { children: ReactNode }) {
       data: query.data,
       updatedAt: query.dataUpdatedAt,
       isPending: query.isPending,
+      settled: isSettled(query),
       isError: query.isError,
       refetch: () => void query.refetch(),
       error,
@@ -391,7 +394,7 @@ export function TripsProvider({ children }: { children: ReactNode }) {
     }
     // key est dérivée de household.id ; query change quand ses données changent.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [client, queryClient, household.id, myId, query.data, query.dataUpdatedAt, query.isPending, query.isError, error, dismissError, write])
+  }, [client, queryClient, household.id, myId, query.data, query.dataUpdatedAt, query.isPending, query.isError, query.isFetchedAfterMount, query.fetchStatus, error, dismissError, write])
 
   return <TripsContext.Provider value={value}>{children}</TripsContext.Provider>
 }

@@ -16,7 +16,7 @@ const digestChoices = [
   { value: 60, label: 'Regroupées sur 1 h' },
 ]
 
-const heading = 'font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3'
+const heading = 'font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3'
 
 /**
  * Réglages des notifications push (lot 10). La permission n'est demandée que sur un geste
@@ -151,7 +151,7 @@ export function NotificationsSection() {
   return (
     <section className="flex flex-col gap-3" aria-labelledby="notifications">
       <h2 id="notifications" className={heading}>
-        NOTIFICATIONS
+        Notifications
       </h2>
       {state}
       {hasDevice ? (
@@ -198,7 +198,7 @@ export function NotificationsSection() {
             </select>
           </label>
           <div className="flex flex-col gap-1">
-            <h3 className={heading}>MES APPAREILS</h3>
+            <h3 className={heading}>Mes appareils</h3>
             <ul className="flex flex-col divide-y divide-rule">
               {devices.data?.map((d) => (
                 <li key={d.id} className="flex min-h-12 items-center gap-2">

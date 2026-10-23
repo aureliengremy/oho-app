@@ -17,8 +17,8 @@ export function Choice<T extends string>({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <span className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3" aria-hidden="true">
-        {label.toUpperCase()}
+      <span className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3" aria-hidden="true">
+        {label}
       </span>
       <div role="radiogroup" aria-label={label} className={cn('flex gap-2', wrap ? 'flex-wrap' : 'overflow-x-auto')}>
         {options.map((o) => (

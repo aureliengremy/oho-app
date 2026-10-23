@@ -90,8 +90,8 @@ function AddForm({ onDone }: { onDone: () => void }) {
       ) : null}
 
       {trimmed.length >= 2 && state.status === 'loading' ? (
-        <p role="status" className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">
-          RECHERCHE…
+        <p role="status" className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+          Recherche…
         </p>
       ) : null}
       {trimmed.length >= 2 && state.status === 'error' ? <p className="rounded-md bg-warn-tint px-4 py-2 text-sm text-warn">{state.message}</p> : null}
@@ -103,7 +103,7 @@ function AddForm({ onDone }: { onDone: () => void }) {
 
       {results.length > 0 ? (
         <section aria-label="Résultats TMDB" className="flex flex-col gap-1">
-          <h3 className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">RÉSULTATS TMDB · {results.length}</h3>
+          <h3 className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">RÉSULTATS TMDB · {results.length}</h3>
           <ul className="flex flex-col">
             {results.map((r) => {
               const already = inList(r)
@@ -115,7 +115,7 @@ function AddForm({ onDone }: { onDone: () => void }) {
                     <span className="text-sm text-ink-3">{[r.media_type === 'movie' ? 'Film' : 'Série', r.year].filter(Boolean).join(' · ')}</span>
                   </span>
                   {already ? (
-                    <span className="font-mono text-xs text-ink-3">DANS LA LISTE</span>
+                    <span className="font-mono text-xs uppercase text-ink-3">Dans la liste</span>
                   ) : (
                     <Button
                       variant="ghost"

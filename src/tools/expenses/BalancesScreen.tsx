@@ -70,10 +70,10 @@ function BalancesView({ book, data }: { book: Book; data: ExpensesData }) {
             </div>
           )
         })}
-        <div className="flex justify-between font-mono text-[11px] tracking-[var(--ls-eyebrow)] text-ink-3" aria-hidden="true">
-          <span>DOIT</span>
+        <div className="flex justify-between font-mono text-[11px] tracking-[var(--ls-eyebrow)] uppercase text-ink-3" aria-hidden="true">
+          <span>Doit</span>
           <span>0</span>
-          <span>À RECEVOIR</span>
+          <span>À recevoir</span>
         </div>
         <ul className="flex flex-col gap-0.5 text-sm text-ink-2">
           {members.map((m) => (
@@ -90,7 +90,7 @@ function BalancesView({ book, data }: { book: Book; data: ExpensesData }) {
       ) : (
         transfers.map((t) => (
           <section key={`${t.from}-${t.to}`} aria-label="Remboursement suggéré" className="mx-5 flex flex-col gap-2 rounded-lg border border-accent-ink/30 bg-accent-tint px-4 py-4">
-            <p className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-accent-ink">REMBOURSEMENT SUGGÉRÉ</p>
+            <p className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-accent-ink">Remboursement suggéré</p>
             <p className="flex items-center gap-2 text-ink">
               {name(t.from)} <ArrowRight size={16} aria-label="rembourse" /> {name(t.to)}
             </p>
@@ -103,8 +103,8 @@ function BalancesView({ book, data }: { book: Book; data: ExpensesData }) {
 
       {data.settlements.length > 0 ? (
         <section aria-labelledby="passes" className="flex flex-col gap-2 px-5">
-          <h2 id="passes" className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">
-            REMBOURSEMENTS PASSÉS
+          <h2 id="passes" className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+            Remboursements passés
           </h2>
           <ul className="flex flex-col divide-y divide-rule">
             {data.settlements.map((s) => {

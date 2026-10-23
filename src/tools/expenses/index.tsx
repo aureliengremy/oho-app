@@ -44,8 +44,8 @@ function Start() {
     <>
       <ScreenHeader title="Dépenses" />
       {isPending ? (
-        <p role="status" className="px-5 py-6 font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">
-          CHARGEMENT DES DÉPENSES…
+        <p role="status" className="px-5 py-6 font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+          Chargement des dépenses…
         </p>
       ) : isError ? (
         <div className="flex flex-col items-start gap-3 px-5 py-6">

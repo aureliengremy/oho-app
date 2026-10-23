@@ -35,12 +35,12 @@ function StatsView({ book, data }: { book: Book; data: ExpensesData }) {
         <>
           <dl className="flex gap-8 px-5">
             <div className="flex flex-col-reverse">
-              <dt className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">TOTAL</dt>
+              <dt className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">Total</dt>
               <dd className="font-display text-3xl font-semibold text-ink tabular-nums">{formatCents(total, book.currency)}</dd>
             </div>
             {span > 0 ? (
               <div className="flex flex-col-reverse">
-                <dt className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">PAR JOUR</dt>
+                <dt className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">Par jour</dt>
                 <dd className="font-display text-3xl font-semibold text-ink tabular-nums">{round(total / span, book.currency)}</dd>
               </div>
             ) : null}

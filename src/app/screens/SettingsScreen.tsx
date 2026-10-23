@@ -31,7 +31,7 @@ export function SettingsScreen() {
       <ScreenHeader title="Réglages" back />
       <div className="flex flex-col gap-8 px-5 pb-8">
         <section className="flex flex-col gap-3">
-          <h2 className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">THÈME</h2>
+          <h2 className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">Thème</h2>
           <div role="radiogroup" aria-label="Thème" className="flex rounded-pill bg-surface-2 p-1">
             {themes.map((t) => (
               <button
@@ -52,8 +52,8 @@ export function SettingsScreen() {
         </section>
 
         <section className="flex flex-col gap-3">
-          <h2 className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">
-            {`MEMBRES · ${household.name.toUpperCase()}`}
+          <h2 className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+            {`Membres · ${household.name}`}
           </h2>
           <ul className="flex flex-col gap-2">
             {members.map((m) => (
@@ -106,7 +106,7 @@ function ToolsSection() {
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">OUTILS DE L’ESPACE</h2>
+      <h2 className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">Outils de l’espace</h2>
       <ul className="flex flex-col gap-2">
         {tools.map((tool) => {
           const on = activations.some((a) => a.tool_key === tool.key && a.enabled)

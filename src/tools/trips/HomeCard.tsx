@@ -21,8 +21,8 @@ export default function TripsHomeCard() {
 
   return (
     <section aria-labelledby="prochain-voyage" className="flex flex-col gap-2">
-      <h2 id="prochain-voyage" className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">
-        {trip.status === 'ongoing' ? 'VOYAGE EN COURS' : 'PROCHAIN VOYAGE'}
+      <h2 id="prochain-voyage" className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+        {trip.status === 'ongoing' ? 'Voyage en cours' : 'Prochain voyage'}
       </h2>
       <Link
         to={`/voyages/${trip.id}`}

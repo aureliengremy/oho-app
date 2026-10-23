@@ -10,20 +10,20 @@ import { expensesKey } from '../queries'
 
 /** Charge le carnet de l'adresse (`:bookId`) avant d'afficher l'écran ; revient à la liste s'il n'existe plus. */
 export function BookGate({ title, children }: { title: string; children: (book: Book, data: ExpensesData) => ReactNode }) {
-  const { data, isPending, isError, refetch } = useExpenses()
+  const { data, isPending, isError, refetch, settled } = useExpenses()
   const { bookId } = useParams()
   const { household } = useHousehold()
   const writing = useIsMutating({ mutationKey: expensesKey(household.id) }) > 0
   const book = data?.books.find((b) => b.id === bookId)
 
-  // Un carnet tout juste créé peut arriver une fraction de seconde après la navigation.
-  if (isPending || isError || !data || (!book && writing)) {
+  // Un carnet tout juste créé, ou absent du cache de l'appareil, arrive avec la relecture.
+  if (isPending || isError || !data || (!book && (writing || !settled))) {
     return (
       <>
         <ScreenHeader title={title} back="/depenses" />
         {!isError ? (
-          <p role="status" className="px-5 py-6 font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">
-            CHARGEMENT DES DÉPENSES…
+          <p role="status" className="px-5 py-6 font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+            Chargement des dépenses…
           </p>
         ) : (
           <div className="flex flex-col items-start gap-3 px-5 py-6">

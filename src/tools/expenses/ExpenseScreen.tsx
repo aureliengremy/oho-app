@@ -20,6 +20,7 @@ const rateDay = new Intl.DateTimeFormat('fr-CA', { day: 'numeric', month: 'short
 /** Saisir ou modifier une dépense : `/depenses/:bookId/depense/nouvelle` (option `?reservation=`) ou `/depense/:expenseId`. */
 export function ExpenseScreen() {
   const { expenseId } = useParams()
+  const { settled } = useExpenses()
   const [params] = useSearchParams()
   const client = useClient()
   const bookingId = expenseId === 'nouvelle' ? params.get('reservation') : null
@@ -34,6 +35,7 @@ export function ExpenseScreen() {
         const linked = bookingId ? data.expenses.find((e) => e.booking_id === bookingId) : undefined
         if (linked) return <Navigate to={`/depenses/${book.id}/depense/${linked.id}`} replace />
         const existing = expenseId === 'nouvelle' ? undefined : data.expenses.find((e) => e.id === expenseId && e.book_id === book.id)
+        if (expenseId !== 'nouvelle' && !existing && !settled) return <ScreenHeader title={title} back={`/depenses/${book.id}`} />
         if (expenseId !== 'nouvelle' && !existing) return <Navigate to={`/depenses/${book.id}`} replace />
         return <ExpenseForm key={existing?.id ?? 'nouvelle'} book={book} data={data} existing={existing} booking={booking.data ?? null} />
       }}

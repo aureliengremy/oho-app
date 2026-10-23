@@ -42,8 +42,8 @@ export function CategoriesScreen() {
           </div>
         ) : null}
         {!data ? (
-          <p role="status" className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">
-            CHARGEMENT DES RAYONS…
+          <p role="status" className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+            Chargement des rayons…
           </p>
         ) : null}
         <ol aria-label="Rayons" className="flex flex-col gap-1">

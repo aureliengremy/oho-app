@@ -53,7 +53,7 @@ export function Sheet({
         <div className="flex items-start gap-2">
           <div className="flex min-w-0 flex-1 flex-col">
             {eyebrow ? (
-              <p className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">{eyebrow.toUpperCase()}</p>
+              <p className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">{eyebrow}</p>
             ) : null}
             <h2 id={titleId} className="font-display text-2xl font-semibold tracking-[var(--ls-head)] text-ink">
               {title}

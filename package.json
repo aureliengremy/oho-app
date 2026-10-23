@@ -11,6 +11,7 @@
     "typecheck": "tsc -b",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
     "test:db": "bash scripts/db-test.sh",
     "db:types": "TYPES_OUT=src/core/db/database.types.ts bash scripts/db-test.sh"
   },
@@ -27,6 +28,8 @@
     "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.56.1",
     "@tailwindcss/vite": "^4.3.3",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
@@ -46,5 +49,8 @@
   },
   "engines": {
     "node": ">=22"
+  },
+  "overrides": {
+    "playwright-core": "1.56.1"
   }
 }
