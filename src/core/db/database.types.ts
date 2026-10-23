@@ -493,6 +493,57 @@ export type Database = {
           },
         ]
       }
+      client_error: {
+        Row: {
+          created_at: string
+          household_id: string
+          id: string
+          message: string
+          path: string | null
+          release: string | null
+          stack: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          household_id: string
+          id?: string
+          message: string
+          path?: string | null
+          release?: string | null
+          stack?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          household_id?: string
+          id?: string
+          message?: string
+          path?: string | null
+          release?: string | null
+          stack?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_error_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_error_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       expense: {
         Row: {
           amount_cents: number
@@ -1823,6 +1874,8 @@ export type Database = {
       claim_push_digests: { Args: { p_limit?: number }; Returns: unknown[] }
       clear_checked: { Args: { p_checklist_id: string }; Returns: number }
       create_household: { Args: { p_name: string; p_timezone?: string }; Returns: string }
+      export_household: { Args: { p_household: string }; Returns: Json }
+      import_household: { Args: { p_data: Json }; Returns: Json }
       ping: { Args: never; Returns: Json }
       register_push: { Args: { p_endpoint: string; p_p256dh: string; p_auth: string; p_user_agent?: string }; Returns: string }
       report_push: { Args: { p_ok: unknown; p_gone: unknown; p_failed: unknown }; Returns: undefined }

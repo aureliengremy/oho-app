@@ -22,6 +22,7 @@ function ofName(name: string): string {
 }
 
 export function describeActivity(entry: Pick<ActivityEntry, 'action' | 'entity_label'>): string {
+  if (entry.action === 'imported') return entry.entity_label ? `a restauré la sauvegarde du ${entry.entity_label}` : 'a restauré une sauvegarde'
   if (entry.action === 'cleared') return entry.entity_label ? `a vidé le panier ${ofName(entry.entity_label)}` : 'a vidé le panier'
   const verb = verbs[entry.action] ?? 'a modifié'
   return entry.entity_label ? `${verb} ${entry.entity_label}` : verb
