@@ -13,6 +13,7 @@ PWA mobile d'abord pour deux personnes (Aurélien et Auriane) qui partagent des 
 - `npm run test:db` : migrations, seed et tests d'accès (RLS) sur un Postgres 16 jetable, sans Docker.
 - `npx supabase start` : Supabase local (Docker requis), puis copier l'URL et la clé anon dans `.env.local` (voir `.env.example`).
 - `npm run test:e2e` : parcours Playwright sur téléphone simulé, contre ce Supabase local (voir `docs/LOT-08.md`). La CI les lance aussi.
+- `npm run screenshots` : regénère les captures du manifeste (`public/screenshots/`), sur une base fraîche (`npx supabase db reset`).
 
 ## Architecture
 - `src/core/` : le socle partagé (client Supabase, env, thème, utilitaires, plus tard auth, espace, sync, layout).
