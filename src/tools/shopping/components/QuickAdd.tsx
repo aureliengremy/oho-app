@@ -2,7 +2,7 @@ import { useId, useState, type FormEvent } from 'react'
 import { ArrowUp, Plus } from 'lucide-react'
 import type { AddResult } from '../ShoppingProvider'
 import { suggest, type CatalogEntry, type Category } from '../model'
-import { currentFragment, dropFragment, parseQuickAdd, type QuickEntry } from '../parse'
+import { currentFragment, dropFragment, parseQuickAdd, type QuickEntry } from '@/core/checklist/parse'
 
 /** Phrase courte pour la zone d'annonce : ce que l'ajout a fait. */
 export function describeAdd({ added, restored, skipped }: AddResult): string {

@@ -11,7 +11,8 @@
     "typecheck": "tsc -b",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:db": "bash scripts/db-test.sh"
+    "test:db": "bash scripts/db-test.sh",
+    "db:types": "TYPES_OUT=src/core/db/database.types.ts bash scripts/db-test.sh"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",

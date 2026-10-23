@@ -7,7 +7,8 @@
 # ouvert), charge le stub Supabase, les migrations dans l'ordre, le seed deux
 # fois (il doit être rejouable), puis les tests. S'arrête au premier échec.
 # Variables : PG_BIN (dossier des binaires Postgres), KEEP_DB=1 (garder le
-# cluster pour l'inspecter, chemin affiché à la fin).
+# cluster pour l'inspecter, chemin affiché à la fin), TYPES_OUT=chemin (régénérer
+# les types TypeScript après les migrations, voir npm run db:types).
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -76,6 +77,11 @@ run "stub Supabase" "$SUPA/tests/supabase-stub.sql"
 for f in "$SUPA"/migrations/*.sql; do
   run "migration $(basename "$f")" "$f"
 done
+if [[ -n "${TYPES_OUT:-}" ]]; then
+  echo "== types TypeScript"
+  "${PSQL[@]}" -At -f "$ROOT/scripts/gen-types.sql" >"$TMP/catalog.json"
+  node "$ROOT/scripts/gen-types.mjs" "$TMP/catalog.json" "$ROOT/$TYPES_OUT"
+fi
 run "seed" "$SUPA/seed.sql"
 run "seed (rejoué)" "$SUPA/seed.sql"
 run "outils de test" "$SUPA/tests/helpers.sql"

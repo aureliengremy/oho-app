@@ -1,10 +1,13 @@
-import type { ReactNode } from 'react'
+import { lazy, Suspense, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import { ActivityFeed } from '@/core/household/ActivityFeed'
 import { useHousehold } from '@/core/household/HouseholdProvider'
 import { greeting } from '@/core/lib/time'
 import { Avatar } from '@/core/ui/Avatar'
-import { activeTools } from '@/tools/registry'
+import { activeTools, tools } from '@/tools/registry'
+
+// Les cartes d'accueil des outils (« Prochain voyage »…), chargées à la demande une fois pour toutes.
+const homeCards = tools.flatMap((t) => (t.homeCard ? [{ key: t.key, Card: lazy(t.homeCard) }] : []))
 
 function SectionTitle({ children, action }: { children: string; action?: ReactNode }) {
   return (
@@ -39,6 +42,14 @@ export function HomeScreen() {
           <Avatar name={firstName || '?'} chosenInitials={me?.profile.initials} slot={me?.slot ?? 'other'} size="lg" />
         </Link>
       </header>
+
+      <Suspense fallback={null}>
+        {homeCards
+          .filter((c) => enabled.some((t) => t.key === c.key))
+          .map(({ key, Card }) => (
+            <Card key={key} />
+          ))}
+      </Suspense>
 
       <section className="flex flex-col gap-3" aria-labelledby="outils">
         <SectionTitle>Outils</SectionTitle>

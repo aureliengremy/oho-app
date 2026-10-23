@@ -184,12 +184,34 @@ export function fakeClient({ userId = null as string | null, rows = {} as Rows }
     return { data: null, error: { message: `rpc inconnue : ${name}` } }
   })
 
-  return { auth, from, rpc, channel, removeChannel, realtime, rows: db, failNext, dropNext } as unknown as OhoClient & {
+  // Storage : les fichiers envoyés sont gardés par chemin ; `failNext.add('storage')` fait échouer l'envoi.
+  const files = new Map<string, { bucket: string; size: number; type: string }>()
+  const storage = {
+    from: vi.fn((bucket: string) => ({
+      upload: vi.fn(async (path: string, file: File, options?: { contentType?: string }) => {
+        if (failNext.delete('storage')) return { data: null, error: { message: 'échec simulé du storage' } }
+        files.set(path, { bucket, size: file.size, type: options?.contentType ?? file.type })
+        return { data: { path }, error: null }
+      }),
+      remove: vi.fn(async (paths: string[]) => {
+        for (const p of paths) files.delete(p)
+        return { data: [], error: null }
+      }),
+      createSignedUrl: vi.fn(async (path: string, expiresIn: number) => ({
+        data: { signedUrl: `https://storage.test/${bucket}/${path}?expires=${expiresIn}` },
+        error: null,
+      })),
+    })),
+    files,
+  }
+
+  return { auth, from, rpc, channel, removeChannel, realtime, storage, rows: db, failNext, dropNext } as unknown as OhoClient & {
     auth: typeof auth
     from: typeof from
     rpc: typeof rpc
     channel: typeof channel
     realtime: typeof realtime
+    storage: typeof storage
     rows: Rows
     failNext: Set<string>
     dropNext: Set<string>
@@ -266,5 +288,56 @@ export const shoppingRows = {
     { ...base, id: 'c-fraises', label: 'Fraises', label_key: 'fraises', default_category_id: 'cat-fruits', usage_count: 18, last_used_at: null, hidden_at: null, created_by: 'user-a', updated_by: null },
     { ...base, id: 'c-fromage', label: 'Fromage cheddar', label_key: 'fromage cheddar', default_category_id: 'cat-laitiers', usage_count: 11, last_used_at: null, hidden_at: null, created_by: 'user-a', updated_by: null },
     { ...base, id: 'c-lait', label: 'Lait', label_key: 'lait', default_category_id: 'cat-laitiers', usage_count: 9, last_used_at: null, hidden_at: null, created_by: 'user-a', updated_by: null },
+  ],
+}
+
+const stamped = (row: Row): Row => ({ ...base, created_by: 'user-a', updated_by: null, ...row })
+
+/** Seed de l'espace + Voyages : un voyage en cours, Lisbonne à venir, une idée sans dates, un souvenir. */
+export const tripRows = {
+  ...seedRows,
+  tool_activation: seedRows.tool_activation.map((a) => ({ ...a, enabled: true })),
+  trip: [
+    stamped({ id: 'trip-sutton', title: 'Chalet à Sutton', destination: 'Cantons-de-l’Est', start_date: '2026-10-20', end_date: '2026-10-24', status: 'ongoing', cover_emoji: '🌲', notes: null }),
+    stamped({ id: 'trip-lisbonne', title: 'Lisbonne & Porto', destination: 'Portugal', start_date: '2026-11-06', end_date: '2026-11-16', status: 'planned', cover_emoji: '🇵🇹', notes: null }),
+    stamped({ id: 'trip-japon', title: 'Japon au printemps', destination: null, start_date: null, end_date: null, status: 'idea', cover_emoji: '🗾', notes: null }),
+    stamped({ id: 'trip-kamouraska', title: 'Kamouraska', destination: null, start_date: '2026-09-12', end_date: '2026-09-14', status: 'done', cover_emoji: '🍂', notes: null }),
+  ],
+  trip_activity: [
+    stamped({ id: 'idea-belem', trip_id: 'trip-lisbonne', title: 'Pastéis de Belém', url: null, note: 'aller tôt', done: false, planned_date: null, sort_order: 1, created_by: 'user-b' }),
+    stamped({ id: 'idea-sintra', trip_id: 'trip-lisbonne', title: 'Journée à Sintra', url: 'https://www.parquesdesintra.pt', note: null, done: false, planned_date: null, sort_order: 2 }),
+  ],
+  booking: [
+    stamped({
+      id: 'booking-vol',
+      trip_id: 'trip-lisbonne',
+      kind: 'flight',
+      title: 'Vol YUL → LIS',
+      starts_at: '2026-11-07T02:35:00Z',
+      ends_at: null,
+      tz: 'America/Toronto',
+      reference: 'QX7P2M',
+      url: null,
+      note: null,
+      amount: 1486,
+      currency: 'CAD',
+    }),
+  ],
+  trip_budget_line: [],
+  attachment: [
+    stamped({
+      id: 'att-1',
+      entity_type: 'booking',
+      entity_id: 'booking-vol',
+      storage_path: 'hh-1/booking/booking-vol/att-1',
+      file_name: 'cartes-embarquement.pdf',
+      mime_type: 'application/pdf',
+      size_bytes: 217_000,
+    }),
+  ],
+  checklist: [stamped({ id: 'prep-lisbonne', kind: 'trip_prep', name: 'Préparation', is_default: false, sort_order: 1, trip_id: 'trip-lisbonne' })],
+  checklist_item: [
+    item('p-passeports', 'Passeports valides', 1, { checklist_id: 'prep-lisbonne', checked: true, checked_by: 'user-a' }),
+    item('p-adaptateur', 'Adaptateur prise européenne', 2, { checklist_id: 'prep-lisbonne', quantity: '2' }),
   ],
 }

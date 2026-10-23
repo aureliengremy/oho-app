@@ -17,6 +17,8 @@ export interface ToolDefinition {
   tables: readonly string[]
   /** Écran racine de l'outil, chargé à la demande. */
   load: () => Promise<{ default: ComponentType }>
+  /** Carte facultative en tête de l'accueil (ex. « Prochain voyage »), chargée à la demande. */
+  homeCard?: () => Promise<{ default: ComponentType }>
 }
 
 /**
@@ -33,7 +35,16 @@ export const tools: readonly ToolDefinition[] = [
     tables: ['checklist', 'checklist_item', 'shopping_category', 'catalog_item'],
     load: () => import('./shopping'),
   },
-  { key: 'trips', label: 'Voyages', path: '/voyages', icon: BriefcaseBusiness, defaultOrder: 2, tables: [], load: () => import('./trips') },
+  {
+    key: 'trips',
+    label: 'Voyages',
+    path: '/voyages',
+    icon: BriefcaseBusiness,
+    defaultOrder: 2,
+    tables: ['trip', 'trip_activity', 'booking', 'trip_budget_line', 'attachment', 'checklist', 'checklist_item'],
+    load: () => import('./trips'),
+    homeCard: () => import('./trips/HomeCard'),
+  },
   { key: 'watchlist', label: 'À regarder', path: '/a-regarder', icon: Tv, defaultOrder: 3, tables: [], load: () => import('./watchlist') },
   { key: 'expenses', label: 'Dépenses', path: '/depenses', icon: Wallet, defaultOrder: 4, tables: [], load: () => import('./expenses') },
 ]

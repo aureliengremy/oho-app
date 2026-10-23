@@ -118,7 +118,7 @@ values
 
 insert into public.booking (household_id, trip_id, kind, title, starts_at, tz, reference, amount, currency, created_by)
 values ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000e0001', 'flight',
-        'Vol YUL → LIS', '2026-11-07 01:35+00', 'America/Toronto', 'QX7P2M', 1486.00, 'CAD',
+        'Vol YUL → LIS', '2026-11-07 02:35+00', 'America/Toronto', 'QX7P2M', 1486.00, 'CAD',
         '0192f000-0000-7000-8000-0000000000a1');
 
 insert into public.checklist (id, household_id, kind, name, is_default, sort_order, trip_id, created_by)
