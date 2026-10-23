@@ -493,6 +493,267 @@ export type Database = {
           },
         ]
       }
+      expense: {
+        Row: {
+          amount_cents: number
+          book_amount_cents: number | null
+          book_id: string
+          booking_id: string | null
+          category: Database["public"]["Enums"]["expense_category"]
+          created_at: string
+          created_by: string | null
+          currency: string
+          deleted_at: string | null
+          fx_rate: number
+          household_id: string
+          id: string
+          label: string
+          note: string | null
+          paid_by: string
+          spent_on: string
+          split_mode: Database["public"]["Enums"]["expense_split_mode"]
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          amount_cents: number
+          book_amount_cents?: never
+          book_id: string
+          booking_id?: string | null
+          category?: Database["public"]["Enums"]["expense_category"]
+          created_at?: string
+          created_by?: string | null
+          currency: string
+          deleted_at?: string | null
+          fx_rate?: number
+          household_id: string
+          id?: string
+          label: string
+          note?: string | null
+          paid_by: string
+          spent_on?: string
+          split_mode?: Database["public"]["Enums"]["expense_split_mode"]
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          book_amount_cents?: never
+          book_id?: string
+          booking_id?: string | null
+          category?: Database["public"]["Enums"]["expense_category"]
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          deleted_at?: string | null
+          fx_rate?: number
+          household_id?: string
+          id?: string
+          label?: string
+          note?: string | null
+          paid_by?: string
+          spent_on?: string
+          split_mode?: Database["public"]["Enums"]["expense_split_mode"]
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expense_booking_fkey"
+            columns: ["household_id", "booking_id"]
+            isOneToOne: false
+            referencedRelation: "booking"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "expense_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expense_household_id_book_id_fkey"
+            columns: ["household_id", "book_id"]
+            isOneToOne: false
+            referencedRelation: "expense_book"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "expense_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expense_paid_by_fkey"
+            columns: ["household_id", "paid_by"]
+            isOneToOne: false
+            referencedRelation: "membership"
+            referencedColumns: ["household_id", "user_id"]
+          },
+          {
+            foreignKeyName: "expense_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expense_book: {
+        Row: {
+          archived_at: string | null
+          created_at: string
+          created_by: string | null
+          currency: string
+          deleted_at: string | null
+          household_id: string
+          id: string
+          name: string
+          sort_order: number
+          trip_id: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          archived_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          deleted_at?: string | null
+          household_id: string
+          id?: string
+          name: string
+          sort_order: number
+          trip_id?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          archived_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          deleted_at?: string | null
+          household_id?: string
+          id?: string
+          name?: string
+          sort_order?: number
+          trip_id?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expense_book_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expense_book_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expense_book_trip_fkey"
+            columns: ["household_id", "trip_id"]
+            isOneToOne: false
+            referencedRelation: "trip"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "expense_book_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expense_share: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          expense_id: string
+          household_id: string
+          id: string
+          share_cents: number
+          updated_at: string
+          updated_by: string | null
+          user_id: string
+          weight: number | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          expense_id: string
+          household_id: string
+          id?: string
+          share_cents: number
+          updated_at?: string
+          updated_by?: string | null
+          user_id: string
+          weight?: number | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          expense_id?: string
+          household_id?: string
+          id?: string
+          share_cents?: number
+          updated_at?: string
+          updated_by?: string | null
+          user_id?: string
+          weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expense_share_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expense_share_household_id_expense_id_fkey"
+            columns: ["household_id", "expense_id"]
+            isOneToOne: false
+            referencedRelation: "expense"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "expense_share_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expense_share_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expense_share_user_fkey"
+            columns: ["household_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "membership"
+            referencedColumns: ["household_id", "user_id"]
+          },
+        ]
+      }
       external_media: {
         Row: {
           created_at: string
@@ -695,6 +956,97 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      settlement: {
+        Row: {
+          amount_cents: number
+          book_id: string
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          from_user: string
+          household_id: string
+          id: string
+          note: string | null
+          settled_on: string
+          to_user: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          amount_cents: number
+          book_id: string
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          from_user: string
+          household_id: string
+          id?: string
+          note?: string | null
+          settled_on?: string
+          to_user: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          book_id?: string
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          from_user?: string
+          household_id?: string
+          id?: string
+          note?: string | null
+          settled_on?: string
+          to_user?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "settlement_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "settlement_from_fkey"
+            columns: ["household_id", "from_user"]
+            isOneToOne: false
+            referencedRelation: "membership"
+            referencedColumns: ["household_id", "user_id"]
+          },
+          {
+            foreignKeyName: "settlement_household_id_book_id_fkey"
+            columns: ["household_id", "book_id"]
+            isOneToOne: false
+            referencedRelation: "expense_book"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "settlement_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "settlement_to_fkey"
+            columns: ["household_id", "to_user"]
+            isOneToOne: false
+            referencedRelation: "membership"
+            referencedColumns: ["household_id", "user_id"]
+          },
+          {
+            foreignKeyName: "settlement_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       shopping_category: {
         Row: {
@@ -1304,17 +1656,38 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      expense_balance: {
+        Row: {
+          balance_cents: number | null
+          book_id: string | null
+          household_id: string | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
+      trip_budget_view: {
+        Row: {
+          book_id: string | null
+          category: Database["public"]["Enums"]["expense_category"] | null
+          currency: string | null
+          household_id: string | null
+          spent_cents: number | null
+          trip_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       clear_checked: { Args: { p_checklist_id: string }; Returns: number }
       create_household: { Args: { p_name: string; p_timezone?: string }; Returns: string }
       ping: { Args: never; Returns: Json }
+      save_expense: { Args: { p_expense: Json; p_shares: Json }; Returns: string }
     }
     Enums: {
       booking_kind: "flight" | "train" | "lodging" | "car" | "activity" | "other"
       checklist_kind: "shopping" | "trip_prep" | "generic"
       expense_category: "transport" | "lodging" | "food" | "activity" | "shopping" | "other"
+      expense_split_mode: "equal" | "amounts" | "weights"
       membership_role: "owner" | "member"
       trip_status: "idea" | "planned" | "ongoing" | "done"
       watch_kind: "movie" | "series"
@@ -1437,6 +1810,7 @@ export const Constants = {
       booking_kind: ["flight", "train", "lodging", "car", "activity", "other"],
       checklist_kind: ["shopping", "trip_prep", "generic"],
       expense_category: ["transport", "lodging", "food", "activity", "shopping", "other"],
+      expense_split_mode: ["equal", "amounts", "weights"],
       membership_role: ["owner", "member"],
       trip_status: ["idea", "planned", "ongoing", "done"],
       watch_kind: ["movie", "series"],

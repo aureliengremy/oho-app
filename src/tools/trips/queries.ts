@@ -86,3 +86,24 @@ export const writes = {
   update: <T extends Writable>(client: OhoClient, table: T, id: string, patch: TablesUpdate<T>) =>
     check(client.from(table as 'trip').update(patch as never).eq('id', id)),
 }
+
+/** Le dépensé du carnet lié au voyage, par poste (vue `trip_budget_view`, lot 13). Null sans carnet. */
+export async function fetchTripSpent(
+  client: OhoClient,
+  householdId: string,
+  tripId: string,
+): Promise<{ currency: string; byCategory: Partial<Record<string, number>>; total: number } | null> {
+  const { data: book, error } = await client
+    .from('expense_book')
+    .select('id, currency')
+    .eq('household_id', householdId)
+    .eq('trip_id', tripId)
+    .is('deleted_at', null)
+    .maybeSingle()
+  if (error) throw error
+  if (!book) return null
+  const lines = await rows(client.from('trip_budget_view').select('category, spent_cents').eq('trip_id', tripId))
+  const byCategory: Partial<Record<string, number>> = {}
+  for (const l of lines) if (l.category) byCategory[l.category] = (byCategory[l.category] ?? 0) + (l.spent_cents ?? 0)
+  return { currency: book.currency, byCategory, total: lines.reduce((s, l) => s + (l.spent_cents ?? 0), 0) }
+}

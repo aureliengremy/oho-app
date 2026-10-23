@@ -1,16 +1,31 @@
 import { useState, type FormEvent } from 'react'
-import { Plus } from 'lucide-react'
+import { ChevronRight, Plus } from 'lucide-react'
+import { Link } from 'react-router'
+import { useClient } from '@/core/client'
+import { useHousehold } from '@/core/household/HouseholdProvider'
+import { formatCents } from '@/core/lib/money'
+import { useLiveQuery } from '@/core/sync/SyncProvider'
 import { Button } from '@/core/ui/Button'
 import { Field, SelectField } from '@/core/ui/Field'
 import { Sheet } from '@/core/ui/Sheet'
 import { budgetCategoryLabel, formatMoney, type BudgetCategory, type BudgetLine, type Trip, type TripsData } from '../model'
+import { fetchTripSpent } from '../queries'
 import { useTrips } from '../TripsProvider'
 
 const categories = Object.keys(budgetCategoryLabel) as BudgetCategory[]
 
-/** Onglet Budget : le prévu par poste (P3). Le dépensé viendra du carnet de dépenses lié. */
+/** Onglet Budget : le prévu par poste (P3) et le dépensé du carnet de dépenses lié (M11). */
 export function BudgetTab({ trip, data }: { trip: Trip; data: TripsData }) {
   const [editing, setEditing] = useState<BudgetLine | 'new' | null>(null)
+  const client = useClient()
+  const { household, activations } = useHousehold()
+  const expensesOn = activations.some((a) => a.tool_key === 'expenses' && a.enabled)
+  const spent = useLiveQuery({
+    tables: ['expense', 'expense_book'],
+    queryKey: ['trip-spent', household.id, trip.id],
+    queryFn: () => fetchTripSpent(client, household.id, trip.id),
+    enabled: expensesOn,
+  }).data
   const lines = data.budget.filter((b) => b.trip_id === trip.id)
   const totals = new Map<string, number>()
   for (const l of lines) if (l.planned_amount !== null) totals.set(l.currency, (totals.get(l.currency) ?? 0) + l.planned_amount)
@@ -19,7 +34,7 @@ export function BudgetTab({ trip, data }: { trip: Trip; data: TripsData }) {
   return (
     <div className="flex flex-col gap-3 px-5 pt-2">
       {lines.length === 0 ? (
-        <p className="py-4 text-center text-ink-2">Combien prévoir pour le transport, le logement, les repas… Le dépensé s’ajoutera avec l’outil Dépenses.</p>
+        <p className="py-4 text-center text-ink-2">Combien prévoir pour le transport, le logement, les repas… Le dépensé vient du carnet de dépenses du voyage.</p>
       ) : (
         <>
           <ul className="flex flex-col divide-y divide-rule rounded-lg bg-surface-2" aria-label="Budget prévu">
@@ -32,8 +47,15 @@ export function BudgetTab({ trip, data }: { trip: Trip; data: TripsData }) {
                   className="flex min-h-14 w-full items-center gap-3 px-4 text-left"
                 >
                   <span className="flex-1 text-ink">{budgetCategoryLabel[line.category]}</span>
-                  <span className="font-mono text-ink tabular-nums">
-                    {line.planned_amount === null ? '—' : formatMoney(line.planned_amount, line.currency)}
+                  <span className="flex flex-col items-end">
+                    <span className="font-mono text-ink tabular-nums">
+                      {line.planned_amount === null ? '—' : formatMoney(line.planned_amount, line.currency)}
+                    </span>
+                    {spent ? (
+                      <span className="font-mono text-sm text-ink-3 tabular-nums">
+                        dépensé {formatCents(spent.byCategory[line.category] ?? 0, spent.currency)}
+                      </span>
+                    ) : null}
                   </span>
                 </button>
               </li>
@@ -49,6 +71,16 @@ export function BudgetTab({ trip, data }: { trip: Trip; data: TripsData }) {
           </div>
         </>
       )}
+      {expensesOn ? (
+        <Link to={`/depenses/voyage/${trip.id}`} className="flex min-h-14 items-center gap-3 rounded-lg bg-surface-2 px-4">
+          <span className="flex-1 text-ink">{spent ? 'Carnet lié' : 'Suivre les dépenses du voyage'}</span>
+          {spent ? <span className="font-mono text-ink tabular-nums">{formatCents(spent.total, spent.currency)}</span> : null}
+          <span className="flex items-center gap-1 text-sm font-semibold text-accent-ink">
+            {spent ? 'Ouvrir le carnet' : 'Ouvrir un carnet'}
+            <ChevronRight size={16} aria-hidden="true" />
+          </span>
+        </Link>
+      ) : null}
       {free.length > 0 ? (
         <Button variant="secondary" onClick={() => setEditing('new')}>
           <Plus size={18} aria-hidden="true" />
