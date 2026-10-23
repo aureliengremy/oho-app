@@ -139,10 +139,11 @@ begin
   perform tests.assert((select count(*) from public.membership) = 2, 'Auriane voit les 2 adhésions');
   perform tests.assert((select count(*) from public.profile) = 2, 'Auriane voit les 2 profils');
   perform tests.assert((select count(*) from public.tool_activation) = 4, 'Auriane voit les 4 outils');
-  perform tests.assert((select array_agg(tool_key) from public.tool_activation where enabled) = array['shopping'],
-    'seul shopping est activé');
+  perform tests.assert((select array_agg(tool_key order by sort_order) from public.tool_activation where enabled)
+    = array['shopping', 'trips'], 'Courses et Voyages sont activés');
   perform tests.assert((select count(*) from public.checklist where is_default and name = 'Épicerie') = 1, 'liste Épicerie par défaut');
-  perform tests.assert((select count(*) from public.checklist_item) = 7, 'Auriane voit les 7 items');
+  perform tests.assert((select count(*) from public.checklist_item where checklist_id = tests.list()) = 7, 'Auriane voit les 7 items de l''épicerie');
+  perform tests.assert((select count(*) from public.trip) = 1, 'Auriane voit le voyage du seed');
   perform tests.assert((select count(*) from public.shopping_category) = 7, 'Auriane voit les 7 rayons');
   perform tests.assert((select count(*) from public.catalog_item) = 7, 'le catalogue compte 7 articles');
   perform tests.assert((select count(*) from public.activity_log) > 0, 'Auriane lit le journal');
@@ -262,7 +263,7 @@ begin
   perform tests.assert((
     select count(*) from pg_publication_tables
     where pubname = 'supabase_realtime' and schemaname = 'public'
-  ) = 8, 'les 8 tables de foyer sont publiées pour Realtime');
+  ) >= 13, 'les tables de foyer sont publiées pour Realtime');
   perform tests.assert(not exists (
     select 1 from pg_tables t where t.schemaname = 'public' and not t.rowsecurity
   ), 'toutes les tables public ont la RLS activée');

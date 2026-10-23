@@ -63,11 +63,11 @@ values
   ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000000a2', 'owner',
    '0192f000-0000-7000-8000-0000000000a1');
 
--- Outils : Courses en v1, les autres arrivent désactivés.
+-- Outils : activés au fil des lots livrés ; les autres arrivent désactivés.
 insert into public.tool_activation (household_id, tool_key, enabled, sort_order, created_by)
 values
   ('0192f000-0000-7000-8000-000000000001', 'shopping',  true,  1, '0192f000-0000-7000-8000-0000000000a1'),
-  ('0192f000-0000-7000-8000-000000000001', 'trips',     false, 2, '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-000000000001', 'trips',     true,  2, '0192f000-0000-7000-8000-0000000000a1'),
   ('0192f000-0000-7000-8000-000000000001', 'watchlist', false, 3, '0192f000-0000-7000-8000-0000000000a1'),
   ('0192f000-0000-7000-8000-000000000001', 'expenses',  false, 4, '0192f000-0000-7000-8000-0000000000a1');
 
@@ -101,3 +101,33 @@ values
   ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000d0001', 'Œufs',          '12',   null,             '0192f000-0000-7000-8000-0000000c0003', false, 5, '0192f000-0000-7000-8000-0000000000a2'),
   ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000d0001', 'Café',          null,   null,             '0192f000-0000-7000-8000-0000000c0005', false, 6, '0192f000-0000-7000-8000-0000000000a1'),
   ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000d0001', 'Papier toilette', null, null,             '0192f000-0000-7000-8000-0000000c0007', true,  7, '0192f000-0000-7000-8000-0000000000a2');
+
+-- -----------------------------------------------------------------------------
+-- Voyages (lot 6) : un voyage planifié, ses idées, une réservation et sa valise.
+-- -----------------------------------------------------------------------------
+insert into public.trip (id, household_id, title, destination, start_date, end_date, status, cover_emoji, created_by)
+values ('0192f000-0000-7000-8000-0000000e0001', '0192f000-0000-7000-8000-000000000001',
+        'Lisbonne & Porto', 'Portugal', '2026-11-06', '2026-11-16', 'planned', '🇵🇹',
+        '0192f000-0000-7000-8000-0000000000a1');
+
+insert into public.trip_activity (household_id, trip_id, title, note, sort_order, created_by)
+values
+  ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000e0001', 'Pastéis de Belém', 'aller tôt, file courte avant 9 h', 1, '0192f000-0000-7000-8000-0000000000a2'),
+  ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000e0001', 'Tram 28 jusqu’à Graça', 'coucher de soleil au miradouro', 2, '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000e0001', 'Journée à Sintra', 'Pena et Quinta da Regaleira', 3, '0192f000-0000-7000-8000-0000000000a2');
+
+insert into public.booking (household_id, trip_id, kind, title, starts_at, tz, reference, amount, currency, created_by)
+values ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000e0001', 'flight',
+        'Vol YUL → LIS', '2026-11-07 01:35+00', 'America/Toronto', 'QX7P2M', 1486.00, 'CAD',
+        '0192f000-0000-7000-8000-0000000000a1');
+
+insert into public.checklist (id, household_id, kind, name, is_default, sort_order, trip_id, created_by)
+values ('0192f000-0000-7000-8000-0000000d0002', '0192f000-0000-7000-8000-000000000001',
+        'trip_prep', 'Préparation', false, 2, '0192f000-0000-7000-8000-0000000e0001',
+        '0192f000-0000-7000-8000-0000000000a1');
+
+insert into public.checklist_item (household_id, checklist_id, label, quantity, checked, sort_order, created_by)
+values
+  ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000d0002', 'Passeports valides', null, true,  1, '0192f000-0000-7000-8000-0000000000a1'),
+  ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000d0002', 'Assurance voyage',   null, false, 2, '0192f000-0000-7000-8000-0000000000a2'),
+  ('0192f000-0000-7000-8000-000000000001', '0192f000-0000-7000-8000-0000000d0002', 'Adaptateur prise européenne', '2', false, 3, '0192f000-0000-7000-8000-0000000000a1');
