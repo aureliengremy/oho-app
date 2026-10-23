@@ -190,6 +190,7 @@ export function useSync(): SyncValue {
 /**
  * useQuery qui reste à jour tout seul : rechargé quand une des `tables` change (Realtime), au retour
  * au premier plan et au retour du réseau, et toutes les 30 s quand le temps réel ne répond pas.
+ * Relue aussi à chaque ouverture d'un écran qui l'utilise.
  * C'est le hook que chaque outil utilise pour ses lectures.
  */
 export function useLiveQuery<TData, TKey extends QueryKey>(
@@ -203,5 +204,17 @@ export function useLiveQuery<TData, TKey extends QueryKey>(
     refetchInterval: pollInterval(realtime, online),
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
+    // Toujours relire à l'ouverture : le cache de l'appareil peut être restauré d'avant une écriture
+    // (voir `isSettled`). Les données du cache s'affichent pendant ce temps.
+    refetchOnMount: 'always',
   })
+}
+
+/**
+ * Vrai quand la requête a été relue depuis l'ouverture de l'écran, ou ne peut pas l'être (hors
+ * ligne, erreur). Avant cela, les données viennent peut-être du cache de l'appareil : un voyage
+ * créé depuis, ou ouvert par un lien, y manque encore. Un écran ne conclut « introuvable » qu'après.
+ */
+export function isSettled(query: { isFetchedAfterMount: boolean; fetchStatus: string; isError: boolean }) {
+  return query.isFetchedAfterMount || query.fetchStatus === 'paused' || query.isError
 }

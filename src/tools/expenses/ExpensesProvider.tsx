@@ -5,7 +5,7 @@ import { useHousehold } from '@/core/household/HouseholdProvider'
 import { isoDay } from '@/core/lib/day'
 import { convertCents } from '@/core/lib/money'
 import { uuidv7 } from '@/core/lib/uuid'
-import { useLiveQuery } from '@/core/sync/SyncProvider'
+import { isSettled, useLiveQuery } from '@/core/sync/SyncProvider'
 import { useOptimisticWrites } from '@/core/sync/useOptimisticWrites'
 import { nextSortOrder, type Book, type ComputedShare, type Expense, type ExpensesData, type Settlement, type Share } from './model'
 import { EXPENSE_TABLES, expensesKey, fetchExpenses, fetchRate, writes } from './queries'
@@ -26,6 +26,8 @@ interface ExpensesValue {
   data: ExpensesData | undefined
   updatedAt: number
   isPending: boolean
+  /** Les données ont été relues depuis l'ouverture (et pas seulement restaurées du cache de l'appareil). */
+  settled: boolean
   isError: boolean
   refetch: () => void
   error: string | null
@@ -70,6 +72,7 @@ export function ExpensesProvider({ children }: { children: ReactNode }) {
       data: query.data,
       updatedAt: query.dataUpdatedAt,
       isPending: query.isPending,
+      settled: isSettled(query),
       isError: query.isError,
       refetch: () => void query.refetch(),
       error,
@@ -204,7 +207,7 @@ export function ExpensesProvider({ children }: { children: ReactNode }) {
     }
     // key est dérivée de household.id ; query change quand ses données changent.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [client, queryClient, household.id, myId, query.data, query.dataUpdatedAt, query.isPending, query.isError, error, dismissError, write])
+  }, [client, queryClient, household.id, myId, query.data, query.dataUpdatedAt, query.isPending, query.isError, query.isFetchedAfterMount, query.fetchStatus, error, dismissError, write])
 
   return <ExpensesContext.Provider value={value}>{children}</ExpensesContext.Provider>
 }

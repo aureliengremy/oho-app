@@ -29,8 +29,8 @@ export function WatchListScreen() {
       <>
         <ScreenHeader title="À regarder" />
         {isPending ? (
-          <p role="status" className="px-5 py-6 font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">
-            CHARGEMENT DES TITRES…
+          <p role="status" className="px-5 py-6 font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+            Chargement des titres…
           </p>
         ) : (
           <div className="flex flex-col items-start gap-3 px-5 py-6">
@@ -192,7 +192,7 @@ function ItemCard({ item, data }: { item: WatchItem; data: WatchData }) {
           ) : null}
         </div>
         <span className="flex flex-col">
-          <span className="font-mono text-[11.5px] tracking-[var(--ls-eyebrow)] text-ink-3">{kindLabel[item.kind].toUpperCase()}</span>
+          <span className="font-mono text-[11.5px] tracking-[var(--ls-eyebrow)] uppercase text-ink-3">{kindLabel[item.kind]}</span>
           <span className="leading-snug font-semibold text-ink">{item.title}</span>
           <span className="text-sm text-ink-3">{detail || ' '}</span>
         </span>

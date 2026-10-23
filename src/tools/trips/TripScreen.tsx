@@ -28,20 +28,20 @@ type TabSlug = (typeof tabs)[number]['slug']
 
 /** La fiche d'un voyage : en-tête, suggestion de statut et quatre onglets. */
 export function TripScreen() {
-  const { data, isPending, isError, refetch } = useTrips()
+  const { data, isPending, isError, refetch, settled } = useTrips()
   const { tripId, tab } = useParams()
   const { household } = useHousehold()
   const writing = useIsMutating({ mutationKey: tripsKey(household.id) }) > 0
   const trip = data?.trips.find((t) => t.id === tripId)
 
-  // Un voyage tout juste créé peut arriver une fraction de seconde après la navigation.
-  if (isPending || isError || !data || (!trip && writing)) {
+  // Un voyage tout juste créé, ou absent du cache de l'appareil, arrive avec la relecture.
+  if (isPending || isError || !data || (!trip && (writing || !settled))) {
     return (
       <>
         <ScreenHeader title="Voyage" back="/voyages" />
         {!isError ? (
-          <p role="status" className="px-5 py-6 font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">
-            CHARGEMENT DU VOYAGE…
+          <p role="status" className="px-5 py-6 font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+            Chargement du voyage…
           </p>
         ) : (
           <div className="flex flex-col items-start gap-3 px-5 py-6">

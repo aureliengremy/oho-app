@@ -76,7 +76,7 @@ function BookingForm({ tripId, booking, onDone }: { tripId: string; booking?: Bo
       <Field label="Référence" value={reference} onChange={(e) => setReference(e.target.value)} maxLength={60} placeholder="QX7P2M" className="font-mono" />
       <div className="grid grid-cols-[1fr_96px] gap-3">
         <Field label="Montant" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="1 486,00" />
-        <Field label="Devise" value={currency} onChange={(e) => setCurrency(e.target.value.toUpperCase())} maxLength={3} className="font-mono uppercase" />
+        <Field label="Devise" value={currency} onChange={(e) => setCurrency(e.target.value.toUpperCase())} maxLength={3} autoCapitalize="characters" spellCheck={false} className="font-mono uppercase" />
       </div>
       <Field label="Lien" type="url" inputMode="url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://…" />
       <TextAreaField label="Note" value={note} onChange={(e) => setNote(e.target.value)} maxLength={2000} placeholder="boîte à clés, siège…" />

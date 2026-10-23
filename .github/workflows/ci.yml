@@ -28,3 +28,32 @@ jobs:
       - uses: actions/checkout@v4
       # Postgres 16 est préinstallé sur l'image ubuntu-24.04 (service arrêté) ; le script crée son propre cluster.
       - run: bash scripts/db-test.sh
+
+  e2e:
+    name: Parcours sur téléphone (Playwright)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Supabase local (Docker est sur l'image) : migrations et seed comme en développement.
+      - name: Démarrer Supabase
+        run: npx supabase start -x studio,imgproxy,logflare,vector,supavisor,edge-runtime,mailpit
+      - name: Écrire .env.local
+        run: |
+          npx supabase status -o env > /tmp/sb.env
+          . /tmp/sb.env
+          printf 'VITE_SUPABASE_URL=%s\nVITE_SUPABASE_ANON_KEY=%s\n' "$API_URL" "$ANON_KEY" > .env.local
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report
+            test-results
+          retention-days: 7

@@ -30,7 +30,7 @@ export function ScreenHeader({
       ) : null}
       <div className="flex min-w-0 flex-1 flex-col">
         {eyebrow ? (
-          <p className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">{eyebrow.toUpperCase()}</p>
+          <p className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">{eyebrow}</p>
         ) : null}
         {title ? <h1 className="truncate font-display text-3xl font-semibold tracking-[var(--ls-head)] text-ink">{title}</h1> : null}
       </div>

@@ -23,7 +23,7 @@ afterEach(() => vi.restoreAllMocks())
 describe('état du système', () => {
   it('montre réseau, serveur, temps réel, file d’attente et version', async () => {
     await open()
-    const list = screen.getByRole('region', { name: 'ÉTAT' })
+    const list = screen.getByRole('region', { name: 'État' })
     expect(await within(list).findByText('Joignable')).toBeInTheDocument()
     expect(within(list).getByText('En ligne')).toBeInTheDocument()
     expect(within(list).getByText('Aucune')).toBeInTheDocument()

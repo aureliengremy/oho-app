@@ -8,7 +8,7 @@ import { useExpenses } from './ExpensesProvider'
  * d'en créer un (pas de carnet automatique, M20). Avec `?reservation=`, enchaîne sur la dépense.
  */
 export function TripBookScreen() {
-  const { data, isPending, addBook } = useExpenses()
+  const { data, isPending, settled, addBook } = useExpenses()
   const { tripId } = useParams()
   const [params] = useSearchParams()
   const booking = params.get('reservation')
@@ -19,12 +19,12 @@ export function TripBookScreen() {
     const suffix = booking ? `/depense/nouvelle?reservation=${encodeURIComponent(booking)}` : ''
     return <Navigate to={`/depenses/${book.id}${suffix}`} replace />
   }
-  if (isPending || !data) {
+  if (isPending || !data || (!trip && !settled)) {
     return (
       <>
         <ScreenHeader title="Dépenses" back="/depenses" />
-        <p role="status" className="px-5 py-6 font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">
-          CHARGEMENT DES DÉPENSES…
+        <p role="status" className="px-5 py-6 font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+          Chargement des dépenses…
         </p>
       </>
     )

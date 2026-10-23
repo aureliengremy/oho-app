@@ -21,19 +21,19 @@ const statuses: WatchStatus[] = ['to_watch', 'watching', 'watched', 'dropped']
 
 /** La fiche d'un titre : affiche, synopsis, statut, progression de série, nos deux notes. */
 export function WatchItemScreen() {
-  const { data, isPending, isError, refetch } = useWatch()
+  const { data, isPending, isError, refetch, settled } = useWatch()
   const { itemId } = useParams()
   const { household } = useHousehold()
   const writing = useIsMutating({ mutationKey: watchKey(household.id) }) > 0
   const item = data?.items.find((i) => i.id === itemId)
 
-  if (isPending || isError || !data || (!item && writing)) {
+  if (isPending || isError || !data || (!item && (writing || !settled))) {
     return (
       <>
         <ScreenHeader title="" back="/a-regarder" />
         {!isError ? (
-          <p role="status" className="px-5 py-6 font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">
-            CHARGEMENT…
+          <p role="status" className="px-5 py-6 font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+            Chargement…
           </p>
         ) : (
           <div className="flex flex-col items-start gap-3 px-5 py-6">
@@ -102,13 +102,13 @@ function ItemView({ item, data }: { item: WatchItem; data: WatchData }) {
       <div className="flex flex-col gap-6 px-5">
         {media?.overview ? (
           <section className="flex flex-col gap-1.5">
-            <h2 className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">SYNOPSIS · TMDB</h2>
+            <h2 className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">Synopsis · TMDB</h2>
             <p className="text-[15px] leading-relaxed text-ink-2">{media.overview}</p>
           </section>
         ) : null}
 
         <section className="flex flex-col gap-2">
-          <h2 className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">STATUT</h2>
+          <h2 className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">Statut</h2>
           <div role="radiogroup" aria-label="Statut" className="grid grid-cols-4 gap-1 rounded-pill bg-surface-2 p-1">
             {statuses.map((s) => (
               <button
@@ -128,7 +128,7 @@ function ItemView({ item, data }: { item: WatchItem; data: WatchData }) {
 
         {item.kind === 'series' && (item.status === 'watching' || item.season_current) ? (
           <section className="flex flex-col gap-2">
-            <h2 className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">OÙ ON EN EST</h2>
+            <h2 className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">Où on en est</h2>
             <div className="grid grid-cols-2 gap-3">
               <Stepper
                 label="Saison"
@@ -148,7 +148,7 @@ function ItemView({ item, data }: { item: WatchItem; data: WatchData }) {
         ) : null}
 
         <section className="flex flex-col gap-3">
-          <h2 className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">NOS NOTES</h2>
+          <h2 className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">Nos notes</h2>
           <ul className="flex flex-col gap-2">
             {members.map((m) => (
               <RatingRow
@@ -201,8 +201,8 @@ function ItemView({ item, data }: { item: WatchItem; data: WatchData }) {
 function Stepper({ label, value, max, onChange }: { label: string; value: number; max?: number | null; onChange: (v: number) => void }) {
   return (
     <div className="flex flex-col gap-1 rounded-lg bg-surface-2 p-2">
-      <span className="text-center font-mono text-[11.5px] tracking-[var(--ls-eyebrow)] text-ink-3">
-        {label.toUpperCase()}
+      <span className="text-center font-mono text-[11.5px] tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+        {label}
         {max ? ` · SUR ${max}` : ''}
       </span>
       <div className="flex items-center justify-between">

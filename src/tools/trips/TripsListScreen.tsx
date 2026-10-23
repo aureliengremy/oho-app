@@ -25,8 +25,8 @@ export function TripsListScreen() {
       <>
         <ScreenHeader title="Voyages" />
         {isPending ? (
-          <p role="status" className="px-5 py-6 font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">
-            CHARGEMENT DES VOYAGES…
+          <p role="status" className="px-5 py-6 font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+            Chargement des voyages…
           </p>
         ) : (
           <div className="flex flex-col items-start gap-3 px-5 py-6">
@@ -81,7 +81,7 @@ export function TripsListScreen() {
       ) : (
         groups.map(({ group, trips }) => (
           <section key={group} aria-label={groupLabel[group]} className="px-5">
-            <h2 className="pt-4 pb-2 font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">{groupLabel[group].toUpperCase()}</h2>
+            <h2 className="pt-4 pb-2 font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">{groupLabel[group]}</h2>
             <ul className="flex flex-col gap-2">
               {trips.map((trip) => (
                 <TripCard key={trip.id} trip={trip} today={today} />

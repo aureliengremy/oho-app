@@ -33,7 +33,7 @@ const open = async (platform: PushPlatform) => {
   const client = fakeClient({ userId: 'user-a', rows })
   renderApp(client, '/reglages')
   await screen.findByRole('heading', { level: 1, name: 'Réglages' })
-  return { client, section: await screen.findByRole('region', { name: 'NOTIFICATIONS' }) }
+  return { client, section: await screen.findByRole('region', { name: 'Notifications' }) }
 }
 
 beforeEach(() => localStorage.clear())

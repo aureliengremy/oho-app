@@ -4,7 +4,7 @@ import { useClient } from '@/core/client'
 import type { Json, TablesUpdate } from '@/core/db/database.types'
 import { useHousehold } from '@/core/household/HouseholdProvider'
 import { uuidv7 } from '@/core/lib/uuid'
-import { useLiveQuery } from '@/core/sync/SyncProvider'
+import { isSettled, useLiveQuery } from '@/core/sync/SyncProvider'
 import { useOptimisticWrites } from '@/core/sync/useOptimisticWrites'
 import { DEFAULT_TONIGHT_MAX, nextSortOrder, type Media, type Platform, type Rating, type SearchResult, type WatchData, type WatchItem, type WatchKind } from './model'
 import { fetchWatchlist, tmdb, WATCH_TABLES, watchKey, writes } from './queries'
@@ -20,6 +20,8 @@ interface WatchValue {
   data: WatchData | undefined
   updatedAt: number
   isPending: boolean
+  /** Les données ont été relues depuis l'ouverture (et pas seulement restaurées du cache de l'appareil). */
+  settled: boolean
   isError: boolean
   refetch: () => void
   error: string | null
@@ -109,6 +111,7 @@ export function WatchProvider({ children }: { children: ReactNode }) {
       data: query.data,
       updatedAt: query.dataUpdatedAt,
       isPending: query.isPending,
+      settled: isSettled(query),
       isError: query.isError,
       refetch: () => void query.refetch(),
       error,
@@ -233,7 +236,7 @@ export function WatchProvider({ children }: { children: ReactNode }) {
     }
     // key est dérivée de household.id ; query change quand ses données changent.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [client, queryClient, household.id, myId, query.data, query.dataUpdatedAt, query.isPending, query.isError, error, dismissError, write, tonightMax, activation])
+  }, [client, queryClient, household.id, myId, query.data, query.dataUpdatedAt, query.isPending, query.isError, query.isFetchedAfterMount, query.fetchStatus, error, dismissError, write, tonightMax, activation])
 
   return <WatchContext.Provider value={value}>{children}</WatchContext.Provider>
 }

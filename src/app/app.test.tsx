@@ -18,16 +18,16 @@ describe('parcours de connexion', () => {
 
   it('affiche une erreur lisible si le mot de passe est faux', async () => {
     renderApp(fakeClient({ rows: seedRows }), '/connexion')
-    await userEvent.type(await screen.findByLabelText('COURRIEL'), 'aurelien@example.com')
-    await userEvent.type(screen.getByLabelText('MOT DE PASSE'), 'mauvais')
+    await userEvent.type(await screen.findByLabelText('Courriel'), 'aurelien@example.com')
+    await userEvent.type(screen.getByLabelText('Mot de passe'), 'mauvais')
     await userEvent.click(screen.getByRole('button', { name: 'Se connecter' }))
     expect(await screen.findByRole('alert')).toHaveTextContent('Courriel ou mot de passe incorrect.')
   })
 
   it('ouvre l’accueil après connexion', async () => {
     const router = renderApp(fakeClient({ rows: seedRows }), '/connexion')
-    await userEvent.type(await screen.findByLabelText('COURRIEL'), 'aurelien@example.com')
-    await userEvent.type(screen.getByLabelText('MOT DE PASSE'), 'bon-mot-de-passe')
+    await userEvent.type(await screen.findByLabelText('Courriel'), 'aurelien@example.com')
+    await userEvent.type(screen.getByLabelText('Mot de passe'), 'bon-mot-de-passe')
     await userEvent.click(screen.getByRole('button', { name: 'Se connecter' }))
     expect(await screen.findByRole('heading', { level: 1, name: /Aurélien/ })).toBeInTheDocument()
     expect(router.state.location.pathname).toBe('/')
@@ -42,7 +42,7 @@ describe('parcours de connexion', () => {
   it('envoie un lien magique sans créer de compte', async () => {
     const client = fakeClient()
     renderApp(client, '/connexion')
-    await userEvent.type(await screen.findByLabelText('COURRIEL'), 'auriane@example.com')
+    await userEvent.type(await screen.findByLabelText('Courriel'), 'auriane@example.com')
     await userEvent.click(screen.getByRole('button', { name: /Recevoir un lien/ }))
     expect(await screen.findByRole('status')).toHaveTextContent('Lien envoyé à auriane@example.com')
     expect(client.auth.signInWithOtp).toHaveBeenCalledWith(

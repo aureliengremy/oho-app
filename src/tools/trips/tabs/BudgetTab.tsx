@@ -62,7 +62,7 @@ export function BudgetTab({ trip, data }: { trip: Trip; data: TripsData }) {
             ))}
           </ul>
           <div className="flex items-baseline justify-between px-1">
-            <span className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">TOTAL PRÉVU</span>
+            <span className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">Total prévu</span>
             <span className="flex flex-col items-end font-mono font-semibold text-ink tabular-nums">
               {[...totals].map(([currency, total]) => (
                 <span key={currency}>{formatMoney(total, currency)}</span>
@@ -135,7 +135,7 @@ function BudgetForm({
       <SelectField label="Poste" value={category} onChange={(e) => setCategory(e.target.value as BudgetCategory)} options={options} />
       <div className="grid grid-cols-[1fr_96px] gap-3">
         <Field label="Montant prévu" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="1 500" />
-        <Field label="Devise" value={currency} onChange={(e) => setCurrency(e.target.value.toUpperCase())} maxLength={3} className="font-mono uppercase" />
+        <Field label="Devise" value={currency} onChange={(e) => setCurrency(e.target.value.toUpperCase())} maxLength={3} autoCapitalize="characters" spellCheck={false} className="font-mono uppercase" />
       </div>
       {invalid ? (
         <p role="alert" className="rounded-md bg-bad-tint px-4 py-2 text-sm text-bad">

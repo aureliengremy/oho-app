@@ -12,7 +12,7 @@ const homeCards = tools.flatMap((t) => (t.homeCard ? [{ key: t.key, Card: lazy(t
 function SectionTitle({ children, action }: { children: string; action?: ReactNode }) {
   return (
     <div className="flex items-baseline justify-between">
-      <h2 className="font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">{children.toUpperCase()}</h2>
+      <h2 className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">{children}</h2>
       {action}
     </div>
   )
@@ -27,8 +27,8 @@ export function HomeScreen() {
     <div className="flex flex-col gap-8 px-5 pt-[max(16px,env(safe-area-inset-top))] pb-8">
       <header className="flex items-start gap-3">
         <div className="flex min-w-0 flex-1 flex-col">
-          <p className="truncate font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">
-            {household.name.toUpperCase()}
+          <p className="truncate font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+            {household.name}
           </p>
           <h1 className="font-display text-3xl font-semibold tracking-[var(--ls-head)] text-ink">
             {greeting()} {firstName}
@@ -79,7 +79,7 @@ export function HomeScreen() {
       <section className="flex flex-col gap-2">
         <SectionTitle
           action={
-            <Link to="/activite" className="text-sm font-semibold text-accent-ink">
+            <Link to="/activite" className="-mx-2 inline-flex min-h-11 items-center px-2 text-sm font-semibold text-accent-ink">
               Tout voir
             </Link>
           }

@@ -81,7 +81,7 @@ function BookView({ book, data }: { book: Book; data: ExpensesData }) {
 
       <Link to={`/depenses/${book.id}/soldes`} className="mx-5 flex flex-col gap-1 rounded-lg bg-surface-2 px-4 py-3" aria-label={`${sentence}. Voir qui doit quoi`}>
         <span className="flex items-center gap-2" aria-hidden="true">
-          <span className="flex-1 font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">SOLDE · EN {book.currency}</span>
+          <span className="flex-1 font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">Solde · en {book.currency}</span>
           {state.kind === 'even' ? <Pill tone="ok">Équilibré</Pill> : state.kind === 'owed' ? <Pill tone="ok">À recevoir</Pill> : <Pill tone="warn">À rembourser</Pill>}
         </span>
         <span className="font-display text-2xl font-semibold text-ink" aria-hidden="true">
@@ -114,7 +114,7 @@ function BookView({ book, data }: { book: Book; data: ExpensesData }) {
         byDay(expenses, trip?.start_date).map((group) => (
           <section key={group.day} className="px-5 pt-4" aria-label={dayLabel(group.day, trip?.start_date)}>
             <h2 className="flex items-baseline border-b border-rule pb-1">
-              <span className="flex-1 font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">{dayLabel(group.day, trip?.start_date).toUpperCase()}</span>
+              <span className="flex-1 font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">{dayLabel(group.day, trip?.start_date)}</span>
               <span className="font-mono text-sm text-ink-2 tabular-nums">{formatCents(group.total, book.currency)}</span>
             </h2>
             <ul className="flex flex-col divide-y divide-rule">

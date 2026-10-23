@@ -43,7 +43,7 @@ describe('le carnet', () => {
     const { client, router } = await open('/depenses/book-lisbonne', 'Dépenses')
     await userEvent.click(await screen.findByRole('button', { name: 'Nouveau carnet' }))
     const sheet = screen.getByRole('dialog', { name: 'Nouveau carnet' })
-    await userEvent.type(within(sheet).getByLabelText('NOM'), 'Chalet')
+    await userEvent.type(within(sheet).getByLabelText('Nom'), 'Chalet')
     await userEvent.click(within(sheet).getByRole('button', { name: 'Créer le carnet' }))
     await waitFor(() => expect(live(client, 'expense_book').map((b) => b.name)).toContain('Chalet'))
     const id = live(client, 'expense_book').find((b) => b.name === 'Chalet')!.id
@@ -59,11 +59,11 @@ describe('saisir une dépense', () => {
       expect(body).toEqual({ from: 'EUR', to: 'CAD' })
       return { rate: 1.5, date: '2026-11-09' }
     }
-    await userEvent.type(screen.getByLabelText('MONTANT'), '64')
-    await userEvent.selectOptions(screen.getByLabelText('DEVISE'), 'EUR')
+    await userEvent.type(screen.getByLabelText('Montant'), '64')
+    await userEvent.selectOptions(screen.getByLabelText('Devise'), 'EUR')
     expect(await screen.findByText(/taux du 9 nov\./)).toBeInTheDocument()
     expect(flat(screen.getByText(/≈/).textContent)).toContain('≈ 96,00 $')
-    await userEvent.type(screen.getByLabelText('QUOI'), 'Dîner au Time Out')
+    await userEvent.type(screen.getByLabelText('Quoi'), 'Dîner au Time Out')
     await userEvent.click(screen.getByRole('radio', { name: 'Auriane' }))
     await userEvent.click(screen.getByRole('radio', { name: 'Restos' }))
     await userEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
@@ -77,25 +77,25 @@ describe('saisir une dépense', () => {
 
   it('sans taux du jour, le dit et laisse saisir le taux', async () => {
     const { client } = await open('/depenses/book-lisbonne/depense/nouvelle', 'Nouvelle dépense')
-    await userEvent.type(screen.getByLabelText('MONTANT'), '12')
-    await userEvent.selectOptions(screen.getByLabelText('DEVISE'), 'EUR')
+    await userEvent.type(screen.getByLabelText('Montant'), '12')
+    await userEvent.selectOptions(screen.getByLabelText('Devise'), 'EUR')
     expect(await screen.findByText('Taux du jour indisponible : saisis-le.')).toBeInTheDocument()
-    await userEvent.type(screen.getByLabelText('QUOI'), 'Tram 28')
+    await userEvent.type(screen.getByLabelText('Quoi'), 'Tram 28')
     expect(screen.getByRole('button', { name: 'Enregistrer' })).toBeDisabled()
-    await userEvent.type(screen.getByLabelText(/TAUX : 1 EUR/), '1,52')
+    await userEvent.type(screen.getByLabelText(/Taux : 1 EUR/), '1,52')
     await userEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
     await waitFor(() => expect(live(client, 'expense').find((e) => e.label === 'Tram 28')?.book_amount_cents).toBe(1824))
   })
 
   it('« Montants » : il faut tout répartir avant d’enregistrer', async () => {
     const { client } = await open('/depenses/book-quotidien/depense/nouvelle', 'Nouvelle dépense')
-    await userEvent.type(screen.getByLabelText('MONTANT'), '100')
-    await userEvent.type(screen.getByLabelText('QUOI'), 'Pharmacie')
+    await userEvent.type(screen.getByLabelText('Montant'), '100')
+    await userEvent.type(screen.getByLabelText('Quoi'), 'Pharmacie')
     await userEvent.click(screen.getByRole('radio', { name: 'Montants' }))
-    await userEvent.type(screen.getByLabelText('AURÉLIEN (CAD)'), '70')
+    await userEvent.type(screen.getByLabelText('Aurélien (CAD)'), '70')
     expect(flat(screen.getByRole('alert').textContent)).toBe('Reste à répartir : 30,00 $')
     expect(screen.getByRole('button', { name: 'Enregistrer' })).toBeDisabled()
-    await userEvent.type(screen.getByLabelText('AURIANE (CAD)'), '30')
+    await userEvent.type(screen.getByLabelText('Auriane (CAD)'), '30')
     await userEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
     await waitFor(() => expect(live(client, 'expense').some((e) => e.label === 'Pharmacie')).toBe(true))
     const saved = live(client, 'expense').find((e) => e.label === 'Pharmacie')!
@@ -108,11 +108,11 @@ describe('saisir une dépense', () => {
 
   it('modifier garde le taux figé, remplace les parts, puis supprimer', async () => {
     const { client, router } = await open('/depenses/book-lisbonne/depense/exp-pasteis', 'Modifier la dépense')
-    expect(screen.getByLabelText('MONTANT')).toHaveValue('9,60')
-    expect(screen.getByLabelText(/TAUX : 1 EUR/)).toHaveValue('1,52')
+    expect(screen.getByLabelText('Montant')).toHaveValue('9,60')
+    expect(screen.getByLabelText(/Taux : 1 EUR/)).toHaveValue('1,52')
     await userEvent.click(screen.getByRole('radio', { name: 'Parts' }))
-    await userEvent.type(screen.getByLabelText('PARTS AURÉLIEN'), '2')
-    await userEvent.type(screen.getByLabelText('PARTS AURIANE'), '1')
+    await userEvent.type(screen.getByLabelText('Parts Aurélien'), '2')
+    await userEvent.type(screen.getByLabelText('Parts Auriane'), '1')
     await userEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
     await waitFor(() => expect(router.state.location.pathname).toBe('/depenses/book-lisbonne'))
     await waitFor(() =>
@@ -132,8 +132,8 @@ describe('saisir une dépense', () => {
   it('un échec du serveur rend l’état d’avant et le dit', async () => {
     const { client } = await open('/depenses/book-quotidien/depense/nouvelle', 'Nouvelle dépense')
     client.failNext.add('save_expense')
-    await userEvent.type(screen.getByLabelText('MONTANT'), '20')
-    await userEvent.type(screen.getByLabelText('QUOI'), 'Boulangerie')
+    await userEvent.type(screen.getByLabelText('Montant'), '20')
+    await userEvent.type(screen.getByLabelText('Quoi'), 'Boulangerie')
     await userEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
     expect(await screen.findByRole('alert')).toHaveTextContent('« Boulangerie » n’a pas été enregistrée. Réessaie.')
     expect(screen.queryByRole('link', { name: /Boulangerie/ })).not.toBeInTheDocument()
@@ -144,8 +144,8 @@ describe('qui doit quoi', () => {
   it('suggère le virement, le marque remboursé, et l’historique le garde', async () => {
     const { client } = await open('/depenses/book-lisbonne/soldes', 'Qui doit quoi')
     const balances = screen.getByRole('region', { name: 'Soldes' })
-    expect(within(balances).getByText('Doit')).toBeInTheDocument()
-    expect(within(balances).getByText('À recevoir')).toBeInTheDocument()
+    expect(within(balances).getByText('Doit', { ignore: '[aria-hidden="true"] *' })).toBeInTheDocument()
+    expect(within(balances).getByText('À recevoir', { ignore: '[aria-hidden="true"] *' })).toBeInTheDocument()
     const suggested = screen.getByRole('region', { name: 'Remboursement suggéré' })
     expect(flat(suggested.textContent)).toContain('115,50 $')
     await userEvent.click(within(suggested).getByRole('button', { name: 'Marquer comme remboursé' }))
@@ -158,7 +158,7 @@ describe('qui doit quoi', () => {
 
   it('les statistiques : total, par catégorie et qui a payé', async () => {
     await open('/depenses/book-lisbonne/stats', 'Statistiques')
-    expect(flat(screen.getByText('TOTAL').previousSibling?.textContent ?? screen.getByText('TOTAL').parentElement!.textContent)).toContain('3 202,99 $')
+    expect(flat(screen.getByText('Total').previousSibling?.textContent ?? screen.getByText('Total').parentElement!.textContent)).toContain('3 202,99 $')
     const bars = screen.getByRole('region', { name: 'Par catégorie, en CAD' })
     expect(within(bars).getAllByRole('listitem').map((li) => li.firstChild?.textContent)).toEqual(['Logement', 'Transport', 'Restos'])
     expect(flat(screen.getByRole('region', { name: 'Qui a payé, en CAD' }).textContent)).toContain('Auriane · 1 716,99 $')
@@ -176,10 +176,10 @@ describe('avec Voyages', () => {
   it('« Créer la dépense » d’une réservation pré-remplit la saisie et la relie', async () => {
     const { client, router } = await open('/voyages/trip-lisbonne/reservations', 'Lisbonne & Porto')
     await userEvent.click(await screen.findByRole('link', { name: 'Créer la dépense de Vol YUL → LIS' }))
-    expect(await screen.findByLabelText('MONTANT')).toBeInTheDocument()
+    expect(await screen.findByLabelText('Montant')).toBeInTheDocument()
     expect(router.state.location.search).toBe('?reservation=booking-vol')
-    expect(screen.getByLabelText('MONTANT')).toHaveValue('1486,00')
-    expect(screen.getByLabelText('QUOI')).toHaveValue('Vol YUL → LIS')
+    expect(screen.getByLabelText('Montant')).toHaveValue('1486,00')
+    expect(screen.getByLabelText('Quoi')).toHaveValue('Vol YUL → LIS')
     expect(screen.getByRole('radio', { name: 'Transport' })).toHaveAttribute('aria-checked', 'true')
     await userEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
     await waitFor(() => expect(live(client, 'expense').find((e) => e.booking_id === 'booking-vol')?.amount_cents).toBe(148600))

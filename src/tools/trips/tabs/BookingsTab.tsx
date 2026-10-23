@@ -59,7 +59,7 @@ export function BookingsTab({ trip, data }: { trip: Trip; data: TripsData }) {
 function When({ label, iso, tz }: { label: string; iso: string; tz: string }) {
   return (
     <div className="flex flex-col">
-      <dt className="font-mono text-[11.5px] tracking-[var(--ls-eyebrow)] text-ink-3">{label.toUpperCase()}</dt>
+      <dt className="font-mono text-[11.5px] tracking-[var(--ls-eyebrow)] uppercase text-ink-3">{label}</dt>
       <dd className="text-ink">
         {formatZoned(iso, tz)}
         {tz !== deviceZone ? <span className="text-ink-3"> · {zoneName(tz)}</span> : null}
@@ -136,7 +136,7 @@ function BookingCard({ booking, attachments, onEdit }: { booking: Booking; attac
           {booking.ends_at ? <When label={booking.kind === 'lodging' ? 'Départ' : 'Arrivée'} iso={booking.ends_at} tz={tz} /> : null}
           {booking.reference ? (
             <div className="flex flex-col">
-              <dt className="font-mono text-[11.5px] tracking-[var(--ls-eyebrow)] text-ink-3">RÉF.</dt>
+              <dt className="font-mono text-[11.5px] tracking-[var(--ls-eyebrow)] uppercase text-ink-3">Réf.</dt>
               <dd className="font-mono text-ink select-all">{booking.reference}</dd>
             </div>
           ) : null}

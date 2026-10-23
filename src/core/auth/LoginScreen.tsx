@@ -47,7 +47,9 @@ export function LoginScreen() {
     <main className="mx-auto flex min-h-full max-w-md flex-col px-6 pt-[max(48px,env(safe-area-inset-top))] pb-[max(24px,env(safe-area-inset-bottom))]">
       <div className="flex flex-1 flex-col justify-center gap-8">
         <header className="flex flex-col gap-2">
-          <Brand className="text-6xl" />
+          <h1>
+            <Brand className="text-6xl" />
+          </h1>
           <p className="font-display text-xl text-ink-2">Nos outils, à deux.</p>
           <p className="text-ink-3">Courses, voyages, soirées télé et dépenses, au même endroit.</p>
         </header>
@@ -96,7 +98,7 @@ export function LoginScreen() {
           <Button type="submit" disabled={pending !== null}>
             {pending === 'password' ? 'Connexion…' : 'Se connecter'}
           </Button>
-          <div className="flex items-center gap-3 text-ink-4" aria-hidden="true">
+          <div className="flex items-center gap-3 text-ink-3" aria-hidden="true">
             <span className="h-px flex-1 bg-rule" />
             <span className="font-mono text-xs">OU</span>
             <span className="h-px flex-1 bg-rule" />

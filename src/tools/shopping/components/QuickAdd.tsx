@@ -61,8 +61,8 @@ export function QuickAdd({
     <div className="flex flex-col bg-surface">
       {fragment && suggestions.length > 0 ? (
         <div className="border-t border-rule px-2 pt-2">
-          <p className="flex justify-between px-3 pb-1 font-mono text-xs tracking-[var(--ls-eyebrow)] text-ink-3">
-            <span>DÉJÀ ACHETÉS</span>
+          <p className="flex justify-between px-3 pb-1 font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+            <span>Déjà achetés</span>
           </p>
           <ul id={listId} aria-label="Suggestions du catalogue">
             {suggestions.map((s) => (

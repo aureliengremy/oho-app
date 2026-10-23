@@ -130,8 +130,8 @@ describe('fiche article', () => {
     const { client } = await open()
     await userEvent.click(screen.getByRole('button', { name: 'Modifier Lait' }))
     const sheet = screen.getByRole('dialog', { name: 'Lait' })
-    await userEvent.type(within(sheet).getByLabelText('QUANTITÉ'), '2 L')
-    await userEvent.selectOptions(within(sheet).getByLabelText('RAYON'), 'Boulangerie')
+    await userEvent.type(within(sheet).getByLabelText('Quantité'), '2 L')
+    await userEvent.selectOptions(within(sheet).getByLabelText('Rayon'), 'Boulangerie')
     await userEvent.click(within(sheet).getByRole('button', { name: 'Enregistrer' }))
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
@@ -154,7 +154,7 @@ describe('listes et rayons', () => {
   it('crée une liste et l’ouvre', async () => {
     const { client, router } = await open()
     await userEvent.click(screen.getByRole('button', { name: 'Nouvelle liste' }))
-    await userEvent.type(within(screen.getByRole('dialog')).getByLabelText('NOM'), 'Costco')
+    await userEvent.type(within(screen.getByRole('dialog')).getByLabelText('Nom'), 'Costco')
     await userEvent.click(screen.getByRole('button', { name: 'Créer la liste' }))
     expect(await screen.findByRole('heading', { level: 1, name: 'Costco' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Rien à acheter' })).toBeInTheDocument()
