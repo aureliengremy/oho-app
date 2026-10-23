@@ -5,7 +5,11 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
+// Version affichée sur « État du système » et jointe aux erreurs : le commit en CI, sinon « dev ».
+const release = process.env.GITHUB_SHA?.slice(0, 7) ?? 'dev'
+
 export default defineConfig({
+  define: { __APP_RELEASE__: JSON.stringify(release), __APP_BUILT_AT__: JSON.stringify(new Date().toISOString()) },
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   plugins: [
     react(),

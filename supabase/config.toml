@@ -419,3 +419,7 @@ enabled = true
 # l'en-tête x-push-secret (voir docs/LOT-10.md).
 [functions.push-send]
 verify_jwt = false
+
+# Appelée le dimanche par pg_cron (pg_net), sans JWT : elle vérifie l'en-tête x-cron-secret.
+[functions.backup]
+verify_jwt = false

@@ -189,6 +189,28 @@ export function fakeClient({ userId = null as string | null, rows = {} as Rows }
       for (const r of cleared) r.deleted_at = new Date().toISOString()
       return { data: cleared.length, error: null }
     }
+    if (name === 'ping') return { data: { ok: true }, error: null }
+    if (name === 'export_household') {
+      // Comme la RPC, en plus simple : les lignes de l'espace, table par table.
+      const tables = Object.fromEntries(
+        ['trip', 'checklist', 'checklist_item', 'expense'].map((t) => [t, structuredClone((db[t] ?? []).filter((r) => r.household_id === args.p_household))]),
+      )
+      return { data: { format: 'oho-export', version: 1, exported_at: '2026-10-20T12:00:00Z', household_id: args.p_household, household: { name: 'Aurélien & Auriane' }, tables }, error: null }
+    }
+    if (name === 'import_household') {
+      const dump = args.p_data as { tables: Record<string, Row[]> }
+      const counts: Record<string, number> = {}
+      for (const [table, rows] of Object.entries(dump.tables)) {
+        const list = (db[table] ??= [])
+        for (const row of rows) {
+          const existing = list.find((r) => r.id === row.id)
+          if (existing) Object.assign(existing, row)
+          else list.push(structuredClone(row))
+        }
+        counts[table] = rows.length
+      }
+      return { data: counts, error: null }
+    }
     if (name === 'register_push') {
       const list = (db.push_subscription ??= [])
       const existing = list.find((r) => r.endpoint === args.p_endpoint)
@@ -230,6 +252,10 @@ export function fakeClient({ userId = null as string | null, rows = {} as Rows }
         files.set(path, { bucket, size: file.size, type: options?.contentType ?? file.type })
         return { data: { path }, error: null }
       }),
+      list: vi.fn(async (prefix: string) => ({
+        data: [...files.keys()].filter((p) => files.get(p)?.bucket === bucket && p.startsWith(`${prefix}/`)).map((p) => ({ name: p.slice(prefix.length + 1) })),
+        error: null,
+      })),
       remove: vi.fn(async (paths: string[]) => {
         for (const p of paths) files.delete(p)
         return { data: [], error: null }

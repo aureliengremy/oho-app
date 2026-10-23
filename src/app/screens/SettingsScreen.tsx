@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { LogOut } from 'lucide-react'
+import { Activity, ChevronRight, LogOut } from 'lucide-react'
+import { Link } from 'react-router'
 import { useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@/core/client'
 import { useAuth } from '@/core/auth/AuthProvider'
@@ -68,6 +69,12 @@ export function SettingsScreen() {
         <NotificationsSection />
 
         <ToolsSection />
+
+        <Link to="/etat" className="flex min-h-14 items-center gap-3 rounded-lg bg-surface-2 px-4">
+          <Activity size={20} aria-hidden="true" className="text-accent-ink" />
+          <span className="flex-1 font-semibold text-ink">État du système et sauvegardes</span>
+          <ChevronRight size={18} aria-hidden="true" className="text-ink-3" />
+        </Link>
 
         <Button variant="secondary" onClick={() => signOut()}>
           <LogOut size={18} aria-hidden="true" /> Se déconnecter

@@ -10,6 +10,7 @@ describe('describeActivity', () => {
     expect(describeActivity({ action: 'cleared', entity_label: 'Épicerie' })).toBe('a vidé le panier d’Épicerie')
     expect(describeActivity({ action: 'cleared', entity_label: 'Costco' })).toBe('a vidé le panier de Costco')
     expect(describeActivity({ action: 'checked', entity_label: 'Lait' })).toBe('a coché Lait')
+    expect(describeActivity({ action: 'imported', entity_label: '2026-10-20' })).toBe('a restauré la sauvegarde du 2026-10-20')
   })
 })
 
