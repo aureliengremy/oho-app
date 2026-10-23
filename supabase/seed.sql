@@ -45,6 +45,10 @@ select u.id::text, u.id,
 from auth.users u
 where u.id in ('0192f000-0000-7000-8000-0000000000a1', '0192f000-0000-7000-8000-0000000000a2');
 
+-- Initiales d'avatar : les deux prénoms commencent par A.
+update public.profile set initials = 'AL' where id = '0192f000-0000-7000-8000-0000000000a1';
+update public.profile set initials = 'AN' where id = '0192f000-0000-7000-8000-0000000000a2';
+
 -- -----------------------------------------------------------------------------
 -- L'espace commun et ses deux propriétaires
 -- -----------------------------------------------------------------------------

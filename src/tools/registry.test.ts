@@ -3,6 +3,7 @@ import { activeTools, type ToolDefinition } from './registry'
 
 const Empty = () => null
 const tool = (key: ToolDefinition['key'], defaultOrder: number): ToolDefinition => ({
+  icon: (() => null) as unknown as ToolDefinition['icon'],
   key,
   label: key,
   path: `/${key}`,

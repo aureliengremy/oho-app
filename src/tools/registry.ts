@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import { BriefcaseBusiness, ShoppingCart, Tv, Wallet, type LucideIcon } from 'lucide-react'
 
 /** Clé d'un outil, identique à `tool_activation.tool_key` en base. */
 export type ToolKey = 'shopping' | 'trips' | 'watchlist' | 'expenses'
@@ -9,6 +10,7 @@ export interface ToolDefinition {
   label: string
   /** Chemin de la route racine de l'outil, ex. « /courses ». */
   path: string
+  icon: LucideIcon
   /** Ordre par défaut ; l'ordre réel vient de `tool_activation.sort_order`. */
   defaultOrder: number
   /** Écran racine de l'outil, chargé à la demande. */
@@ -18,9 +20,16 @@ export interface ToolDefinition {
 /**
  * Registre des outils. Ajouter un outil = ses migrations, un dossier `src/tools/<clé>/`
  * et une entrée ici. Rien d'autre à toucher (voir CLAUDE.md).
- * Vide au lot 1 : Courses arrive au lot 4.
  */
-export const tools: readonly ToolDefinition[] = []
+export const tools: readonly ToolDefinition[] = [
+  { key: 'shopping', label: 'Courses', path: '/courses', icon: ShoppingCart, defaultOrder: 1, load: () => import('./shopping') },
+  { key: 'trips', label: 'Voyages', path: '/voyages', icon: BriefcaseBusiness, defaultOrder: 2, load: () => import('./trips') },
+  { key: 'watchlist', label: 'À regarder', path: '/a-regarder', icon: Tv, defaultOrder: 3, load: () => import('./watchlist') },
+  { key: 'expenses', label: 'Dépenses', path: '/depenses', icon: Wallet, defaultOrder: 4, load: () => import('./expenses') },
+]
+
+/** Nombre d'outils dans la barre du bas, à côté d'Accueil (décision D1). */
+export const MAX_TAB_TOOLS = 4
 
 export function findTool(key: string): ToolDefinition | undefined {
   return tools.find((tool) => tool.key === key)

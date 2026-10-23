@@ -235,3 +235,14 @@ begin
   perform tests.throws('insert into public.household (name, timezone) values (''X'', ''Mars/Olympus'')', '23514', 'fuseau inconnu');
   perform tests.ok('household.timezone exige un fuseau IANA');
 end $$;
+
+do $$
+begin
+  perform tests.assert((select initials from public.profile where id = tests.user_id('aurelien@example.com')) = 'AL',
+    'initiales du seed : AL');
+  perform tests.assert((select initials from public.profile where id = tests.user_id('auriane@example.com')) = 'AN',
+    'initiales du seed : AN');
+  perform tests.throws(format('update public.profile set initials = %L where id = %L', 'al', tests.user_id('auriane@example.com')),
+    '23514', 'initiales en minuscules refusées');
+  perform tests.ok('profile.initials : AL et AN au seed, majuscules imposées');
+end $$;
