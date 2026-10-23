@@ -17,8 +17,11 @@ export const seed = {
   lodging: id('000000130001'),
 }
 
-/** Un suffixe court pour que chaque passage écrive ses propres lignes sans remettre la base à zéro. */
-export const unique = () => Date.now().toString(36).slice(-5)
+/**
+ * Un suffixe court pour que chaque passage écrive ses propres lignes sans remettre la base à zéro.
+ * Lettres seules : « Citrons jajx2 » se lirait « Citrons jaj » ×2 dans l'ajout rapide.
+ */
+export const unique = () => Date.now().toString(36).slice(-5).replace(/\d/g, (d) => 'abcdefghij'[Number(d)])
 
 export async function login(page: Page, who: keyof typeof accounts = 'aurelien') {
   await page.goto('/connexion')
