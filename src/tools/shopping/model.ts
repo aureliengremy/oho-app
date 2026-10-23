@@ -1,5 +1,5 @@
 import type { Tables } from '@/core/db/database.types'
-import { labelKey } from './parse'
+import { labelKey } from '@/core/checklist/parse'
 
 export type ShoppingList = Tables<'checklist'>
 export type Item = Tables<'checklist_item'>

@@ -1,8 +1,6 @@
 // Types de la base OhO, au format de `supabase gen types typescript`.
-// Produits au lot 2 sans la CLI, en lisant le catalogue Postgres du cluster de
-// test (scripts/db-test.sh) après application des migrations. Les
-// régénérer avec `supabase gen types typescript --local > src/core/db/database.types.ts`
-// dès que la CLI Supabase est disponible, et ne pas modifier à la main ensuite.
+// Générés par `npm run db:types` (scripts/gen-types.mjs) depuis le catalogue du
+// Postgres de test après application des migrations : ne pas modifier à la main.
 
 export type Json =
   | string
@@ -65,6 +63,168 @@ export type Database = {
             columns: ["household_id"]
             isOneToOne: false
             referencedRelation: "household"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      attachment: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          entity_id: string
+          entity_type: string
+          file_name: string
+          household_id: string
+          id: string
+          mime_type: string
+          size_bytes: number
+          storage_path: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          entity_id: string
+          entity_type: string
+          file_name: string
+          household_id: string
+          id?: string
+          mime_type: string
+          size_bytes: number
+          storage_path: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          entity_id?: string
+          entity_type?: string
+          file_name?: string
+          household_id?: string
+          id?: string
+          mime_type?: string
+          size_bytes?: number
+          storage_path?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attachment_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attachment_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attachment_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      booking: {
+        Row: {
+          amount: number | null
+          created_at: string
+          created_by: string | null
+          currency: string | null
+          deleted_at: string | null
+          ends_at: string | null
+          household_id: string
+          id: string
+          kind: Database["public"]["Enums"]["booking_kind"]
+          note: string | null
+          reference: string | null
+          starts_at: string | null
+          title: string
+          trip_id: string
+          tz: string | null
+          updated_at: string
+          updated_by: string | null
+          url: string | null
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          created_by?: string | null
+          currency?: string | null
+          deleted_at?: string | null
+          ends_at?: string | null
+          household_id: string
+          id?: string
+          kind: Database["public"]["Enums"]["booking_kind"]
+          note?: string | null
+          reference?: string | null
+          starts_at?: string | null
+          title: string
+          trip_id: string
+          tz?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          url?: string | null
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          created_by?: string | null
+          currency?: string | null
+          deleted_at?: string | null
+          ends_at?: string | null
+          household_id?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["booking_kind"]
+          note?: string | null
+          reference?: string | null
+          starts_at?: string | null
+          title?: string
+          trip_id?: string
+          tz?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_household_id_trip_id_fkey"
+            columns: ["household_id", "trip_id"]
+            isOneToOne: false
+            referencedRelation: "trip"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "booking_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
             referencedColumns: ["id"]
           },
         ]
@@ -158,6 +318,7 @@ export type Database = {
           kind: Database["public"]["Enums"]["checklist_kind"]
           name: string
           sort_order: number
+          trip_id: string | null
           updated_at: string
           updated_by: string | null
         }
@@ -172,6 +333,7 @@ export type Database = {
           kind: Database["public"]["Enums"]["checklist_kind"]
           name: string
           sort_order: number
+          trip_id?: string | null
           updated_at?: string
           updated_by?: string | null
         }
@@ -186,6 +348,7 @@ export type Database = {
           kind?: Database["public"]["Enums"]["checklist_kind"]
           name?: string
           sort_order?: number
+          trip_id?: string | null
           updated_at?: string
           updated_by?: string | null
         }
@@ -203,6 +366,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "household"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checklist_trip_fkey"
+            columns: ["household_id", "trip_id"]
+            isOneToOne: false
+            referencedRelation: "trip"
+            referencedColumns: ["household_id", "id"]
           },
           {
             foreignKeyName: "checklist_updated_by_fkey"
@@ -597,21 +767,251 @@ export type Database = {
           },
         ]
       }
+      trip: {
+        Row: {
+          archived_at: string | null
+          cover_emoji: string | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          destination: string | null
+          end_date: string | null
+          household_id: string
+          id: string
+          notes: string | null
+          start_date: string | null
+          status: Database["public"]["Enums"]["trip_status"]
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          archived_at?: string | null
+          cover_emoji?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          destination?: string | null
+          end_date?: string | null
+          household_id: string
+          id?: string
+          notes?: string | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["trip_status"]
+          title: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          archived_at?: string | null
+          cover_emoji?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          destination?: string | null
+          end_date?: string | null
+          household_id?: string
+          id?: string
+          notes?: string | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["trip_status"]
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trip_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trip_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trip_activity: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          done: boolean
+          household_id: string
+          id: string
+          note: string | null
+          planned_date: string | null
+          sort_order: number
+          title: string
+          trip_id: string
+          updated_at: string
+          updated_by: string | null
+          url: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          done?: boolean
+          household_id: string
+          id?: string
+          note?: string | null
+          planned_date?: string | null
+          sort_order: number
+          title: string
+          trip_id: string
+          updated_at?: string
+          updated_by?: string | null
+          url?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          done?: boolean
+          household_id?: string
+          id?: string
+          note?: string | null
+          planned_date?: string | null
+          sort_order?: number
+          title?: string
+          trip_id?: string
+          updated_at?: string
+          updated_by?: string | null
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_activity_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trip_activity_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trip_activity_household_id_trip_id_fkey"
+            columns: ["household_id", "trip_id"]
+            isOneToOne: false
+            referencedRelation: "trip"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "trip_activity_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trip_budget_line: {
+        Row: {
+          category: Database["public"]["Enums"]["expense_category"]
+          created_at: string
+          created_by: string | null
+          currency: string
+          deleted_at: string | null
+          household_id: string
+          id: string
+          planned_amount: number | null
+          sort_order: number
+          trip_id: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["expense_category"]
+          created_at?: string
+          created_by?: string | null
+          currency: string
+          deleted_at?: string | null
+          household_id: string
+          id?: string
+          planned_amount?: number | null
+          sort_order: number
+          trip_id: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["expense_category"]
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          deleted_at?: string | null
+          household_id?: string
+          id?: string
+          planned_amount?: number | null
+          sort_order?: number
+          trip_id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_budget_line_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trip_budget_line_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trip_budget_line_household_id_trip_id_fkey"
+            columns: ["household_id", "trip_id"]
+            isOneToOne: false
+            referencedRelation: "trip"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "trip_budget_line_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       clear_checked: { Args: { p_checklist_id: string }; Returns: number }
-      create_household: {
-        Args: { p_name: string; p_timezone?: string }
-        Returns: string
-      }
+      create_household: { Args: { p_name: string; p_timezone?: string }; Returns: string }
       ping: { Args: never; Returns: Json }
     }
     Enums: {
+      booking_kind: "flight" | "train" | "lodging" | "car" | "activity" | "other"
       checklist_kind: "shopping" | "trip_prep" | "generic"
+      expense_category: "transport" | "lodging" | "food" | "activity" | "shopping" | "other"
       membership_role: "owner" | "member"
+      trip_status: "idea" | "planned" | "ongoing" | "done"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -727,9 +1127,11 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      booking_kind: ["flight", "train", "lodging", "car", "activity", "other"],
       checklist_kind: ["shopping", "trip_prep", "generic"],
+      expense_category: ["transport", "lodging", "food", "activity", "shopping", "other"],
       membership_role: ["owner", "member"],
+      trip_status: ["idea", "planned", "ongoing", "done"],
     },
   },
 } as const
-

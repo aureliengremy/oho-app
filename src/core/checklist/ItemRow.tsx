@@ -2,17 +2,17 @@ import { Check } from 'lucide-react'
 import { useHousehold } from '@/core/household/HouseholdProvider'
 import { cn } from '@/core/lib/cn'
 import { Avatar } from '@/core/ui/Avatar'
-import type { Item } from '../model'
-import { formatQuantity } from '../parse'
+import type { Tables } from '@/core/db/database.types'
+import { formatQuantity } from './parse'
 
-/** Une ligne de 52 px : case de 48 px, libellé et note, quantité et initiales de qui l'a ajouté (ou « En attente »). */
+/** Une ligne de checklist (Courses, préparation de voyage) de 52 px : case de 48 px, libellé et note, quantité et initiales de qui l'a ajouté (ou « En attente »). */
 export function ItemRow({
   item,
   pending = false,
   onToggle,
   onEdit,
 }: {
-  item: Item
+  item: Tables<'checklist_item'>
   /** Une écriture attend le réseau : « En attente » à la place des initiales. */
   pending?: boolean
   onToggle: () => void

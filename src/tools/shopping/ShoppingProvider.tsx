@@ -1,14 +1,14 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { createContext, useContext, useMemo, type ReactNode } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@/core/client'
 import type { TablesInsert, TablesUpdate } from '@/core/db/database.types'
 import { useHousehold } from '@/core/household/HouseholdProvider'
 import { uuidv7 } from '@/core/lib/uuid'
-import { isNetworkError } from '@/core/sync/network'
 import { overlay, type OutboxOp } from '@/core/sync/outbox'
 import { useLiveQuery, useSync } from '@/core/sync/SyncProvider'
+import { useOptimisticWrites } from '@/core/sync/useOptimisticWrites'
 import { nextSortOrder, movedSortOrder, type CatalogEntry, type Category, type Item, type ShoppingData, type ShoppingList } from './model'
-import { labelKey, type QuickEntry } from './parse'
+import { labelKey, type QuickEntry } from '@/core/checklist/parse'
 import { catalogKey, fetchCatalog, fetchShopping, shoppingKey, writes } from './queries'
 
 /** Ce que l'ajout rapide a fait : ajoutés, remis hors du panier, déjà présents. */
@@ -47,8 +47,6 @@ interface ShoppingValue {
 
 const ShoppingContext = createContext<ShoppingValue | null>(null)
 
-type Change = (data: ShoppingData) => ShoppingData
-
 const now = () => new Date().toISOString()
 
 const ITEMS = 'checklist_item'
@@ -59,12 +57,8 @@ function withOutbox(data: ShoppingData, outbox: readonly OutboxOp[]): ShoppingDa
   return { ...data, items: overlay(data.items, outbox, ITEMS).filter((i) => !i.deleted_at) }
 }
 
-const OFFLINE = 'Hors ligne : cette action attendra le réseau. Réessaie une fois connecté.'
-
 /**
- * Données et écritures de l'outil Courses. Chaque écriture s'applique tout de suite au cache
- * (optimiste), part vers Supabase, et le cache est rechargé quand plus rien n'est en vol.
- * En cas d'échec, l'état d'avant revient et un message s'affiche.
+ * Données et écritures de l'outil Courses, optimistes (voir `useOptimisticWrites`).
  */
 export function ShoppingProvider({ children }: { children: ReactNode }) {
   const client = useClient()
@@ -72,8 +66,7 @@ export function ShoppingProvider({ children }: { children: ReactNode }) {
   const { household, me } = useHousehold()
   const myId = me?.profile.id ?? null
   const key = shoppingKey(household.id)
-  const [error, setError] = useState<string | null>(null)
-  const { outbox, queue } = useSync()
+  const { outbox } = useSync()
 
   const query = useLiveQuery({
     tables: ['checklist', 'checklist_item', 'shopping_category'],
@@ -86,51 +79,7 @@ export function ShoppingProvider({ children }: { children: ReactNode }) {
     queryFn: () => fetchCatalog(client, household.id),
   })
 
-  const mutation = useMutation({
-    mutationKey: key,
-    // Hors ligne, on ne met pas l'écriture en pause : elle part dans la file (outbox) ou échoue.
-    networkMode: 'always',
-    mutationFn: async ({ run, offline }: { run: () => Promise<unknown>; change: Change; failure: string; offline?: OutboxOp[] }) => {
-      if (offline && !navigator.onLine) return offline.forEach(queue)
-      if (!navigator.onLine) throw new Error('offline')
-      try {
-        await run()
-      } catch (cause) {
-        // Le réseau a lâché en route : l'écriture rejouable attend, l'état affiché ne bouge pas.
-        if (offline && isNetworkError(cause)) return offline.forEach(queue)
-        throw cause
-      }
-    },
-    onMutate: async ({ change }) => {
-      await queryClient.cancelQueries({ queryKey: key, exact: true })
-      const previous = queryClient.getQueryData<ShoppingData>(key)
-      if (previous) queryClient.setQueryData<ShoppingData>(key, change(previous))
-      return { previous }
-    },
-    onError: (_error, { failure }, context) => {
-      if (context?.previous) queryClient.setQueryData(key, context.previous)
-      setError(navigator.onLine ? failure : OFFLINE)
-    },
-    onSettled: () => {
-      // Recharger seulement quand la dernière écriture est revenue, sinon on écraserait
-      // l'état optimiste des écritures encore en vol.
-      if (queryClient.isMutating({ mutationKey: key }) <= 1) {
-        void queryClient.invalidateQueries({ queryKey: key })
-        void queryClient.invalidateQueries({ queryKey: ['activity', household.id] })
-      }
-    },
-  })
-  const { mutate } = mutation
-
-  /**
-   * Une écriture : `change` pour l'écran tout de suite, `run` pour le serveur, `failure` si elle
-   * échoue. Avec `offline`, elle peut attendre le réseau dans la file au lieu d'échouer.
-   */
-  const write = useCallback(
-    (change: Change, run: () => Promise<unknown>, failure: string, offline?: OutboxOp[]) =>
-      mutate({ change, run, failure, offline }),
-    [mutate],
-  )
+  const { write, error, dismissError } = useOptimisticWrites<ShoppingData>(key)
   const data = useMemo(() => (query.data ? withOutbox(query.data, outbox) : undefined), [query.data, outbox])
   const pending = useMemo(
     () => new Set(outbox.filter((op) => op.table === ITEMS).map((op) => op.rowId)),
@@ -168,7 +117,7 @@ export function ShoppingProvider({ children }: { children: ReactNode }) {
       isError: query.isError,
       refetch: () => void query.refetch(),
       error,
-      dismissError: () => setError(null),
+      dismissError,
 
       addEntries(listId, entries) {
         const data = current()
@@ -309,6 +258,7 @@ export function ShoppingProvider({ children }: { children: ReactNode }) {
           kind: 'shopping',
           name,
           is_default: data.lists.length === 0,
+          trip_id: null,
           sort_order: nextSortOrder(data.lists),
           archived_at: null,
           created_at: stamp,
@@ -407,7 +357,7 @@ export function ShoppingProvider({ children }: { children: ReactNode }) {
     }
     // key est dérivée de household.id ; query et catalogQuery changent quand leurs données changent.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [client, queryClient, household.id, myId, data, pending, outbox, query.dataUpdatedAt, query.isPending, query.isError, catalogQuery.data, error, write])
+  }, [client, queryClient, household.id, myId, data, pending, outbox, query.dataUpdatedAt, query.isPending, query.isError, catalogQuery.data, error, dismissError, write])
 
   return <ShoppingContext.Provider value={value}>{children}</ShoppingContext.Provider>
 }
