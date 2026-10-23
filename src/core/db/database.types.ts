@@ -606,6 +606,7 @@ export type Database = {
         Args: { p_name: string; p_timezone?: string }
         Returns: string
       }
+      ping: { Args: never; Returns: Json }
     }
     Enums: {
       checklist_kind: "shopping" | "trip_prep" | "generic"
