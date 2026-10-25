@@ -3,13 +3,14 @@ import type { Session } from '@supabase/supabase-js'
 import { useQueryClient } from '@tanstack/react-query'
 import { useClient } from '../client'
 import { clearLocalData } from '../sync/localData'
-import { AuthContext, authErrorMessage, type AuthStatus, type AuthValue } from './useAuth'
+import { AuthContext, authErrorMessage, passwordErrorMessage, passwordPath, type AuthStatus, type AuthValue } from './useAuth'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const client = useClient()
   const queryClient = useQueryClient()
   const [session, setSession] = useState<Session | null>(null)
   const [status, setStatus] = useState<AuthStatus>('loading')
+  const [recovering, setRecovering] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -19,7 +20,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(data.session)
       setStatus(data.session ? 'signedIn' : 'signedOut')
     })
-    const { data } = client.auth.onAuthStateChange((_event, next) => {
+    const { data } = client.auth.onAuthStateChange((event, next) => {
+      // Ouverture du lien « nouveau mot de passe » : vrai même si Supabase a redirigé vers l'accueil.
+      if (event === 'PASSWORD_RECOVERY') setRecovering(true)
+      if (event === 'SIGNED_OUT') setRecovering(false)
       setSession(next)
       setStatus(next ? 'signedIn' : 'signedOut')
     })
@@ -46,6 +50,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         })
         return { error: error ? authErrorMessage(error.message) : null }
       },
+      recovering,
+      async sendPasswordLink() {
+        const email = session?.user.email
+        if (!email) return { error: 'Aucun courriel n’est associé à ce compte.' }
+        const { error } = await client.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}${passwordPath}`,
+        })
+        return { error: error ? passwordErrorMessage(error.message) : null }
+      },
+      async updatePassword(password) {
+        const { error } = await client.auth.updateUser({ password })
+        if (error) return { error: passwordErrorMessage(error.message) }
+        setRecovering(false)
+        return { error: null }
+      },
       async signOut() {
         await client.auth.signOut()
         // Rien du compte ne reste sur l'appareil : cache des lectures et écritures en attente.
@@ -53,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         clearLocalData()
       },
     }),
-    [client, queryClient, session, status],
+    [client, queryClient, recovering, session, status],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

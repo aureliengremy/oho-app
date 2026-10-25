@@ -9,6 +9,11 @@ export interface AuthValue {
   userId: string | null
   signInWithPassword: (email: string, password: string) => Promise<{ error: string | null }>
   sendMagicLink: (email: string) => Promise<{ error: string | null }>
+  /** Le compte vient d'ouvrir un lien « nouveau mot de passe » : l'app mène à l'écran de saisie. */
+  recovering: boolean
+  /** Envoie au courriel du compte connecté un lien qui ouvre l'écran « nouveau mot de passe ». */
+  sendPasswordLink: () => Promise<{ error: string | null }>
+  updatePassword: (password: string) => Promise<{ error: string | null }>
   signOut: () => Promise<void>
 }
 
@@ -22,6 +27,23 @@ export function authErrorMessage(message: string): string {
   if (/rate limit|too many/i.test(message)) return 'Trop de tentatives. Réessaie dans quelques minutes.'
   if (/fetch|network/i.test(message)) return 'Pas de connexion. Vérifie le réseau et réessaie.'
   return 'La connexion a échoué. Réessaie.'
+}
+
+/** Chemin de l'écran « nouveau mot de passe », cible du lien envoyé par courriel. */
+export const passwordPath = '/mot-de-passe'
+
+/** Longueur minimale imposée par Supabase Auth (`minimum_password_length`). */
+export const minPasswordLength = 10
+
+/** Traduit les refus de Supabase Auth à l'envoi du lien et au changement de mot de passe. */
+export function passwordErrorMessage(message: string): string {
+  if (/different from the old/i.test(message)) return 'Choisis un mot de passe différent de l’ancien.'
+  if (/at least|too short|weak/i.test(message)) return `Le mot de passe doit faire au moins ${minPasswordLength} caractères.`
+  if (/reauthenticat|session|jwt/i.test(message)) return 'Le lien a expiré. Demande-en un nouveau depuis les réglages.'
+  if (/security purposes|only request this after/i.test(message)) return 'Un lien vient de partir. Attends une minute avant d’en redemander un.'
+  if (/rate limit|too many/i.test(message)) return 'Trop de tentatives. Réessaie dans quelques minutes.'
+  if (/fetch|network/i.test(message)) return 'Pas de connexion. Vérifie le réseau et réessaie.'
+  return 'Le mot de passe n’a pas changé. Réessaie.'
 }
 
 export function useAuth(): AuthValue {

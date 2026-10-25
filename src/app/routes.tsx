@@ -1,6 +1,7 @@
 import { createElement, lazy } from 'react'
 import { Navigate, type RouteObject } from 'react-router'
 import { LoginScreen } from '@/core/auth/LoginScreen'
+import { PasswordScreen } from '@/core/auth/PasswordScreen'
 import { RequireAuth } from '@/core/auth/RequireAuth'
 import { HouseholdProvider } from '@/core/household/HouseholdProvider'
 import { ErrorReporter } from '@/core/errors/ErrorReporter'
@@ -43,6 +44,7 @@ export const routes: RouteObject[] = [
           { path: 'activite', element: <ActivityScreen /> },
           { path: 'reglages', element: <SettingsScreen /> },
           { path: 'etat', element: <StatusScreen /> },
+          { path: 'mot-de-passe', element: <PasswordScreen /> },
           ...toolRoutes,
           { path: '*', element: <Navigate to="/" replace /> },
         ],

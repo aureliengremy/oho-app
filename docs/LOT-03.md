@@ -40,3 +40,13 @@
 3. L'accueil dit « Bonjour Aurélien » (ou « Bonsoir ») et montre la tuile Courses et l'onglet Courses.
 4. Fermer l'onglet puis le rouvrir : l'accueil revient sans reconnexion.
 5. Avatar → Réglages : passer en Sombre, voir Auriane (AN, sable), puis Se déconnecter.
+
+## Ajout : changer de mot de passe (2026-10-25)
+
+- **Réglages → Mot de passe** : « Recevoir le lien par courriel » appelle `resetPasswordForEmail` pour le courriel du compte connecté, avec `redirectTo` = `<origine>/mot-de-passe`.
+- **Le lien connecte**, puis l'écran `/mot-de-passe` (`src/core/auth/PasswordScreen.tsx`) demande le nouveau mot de passe deux fois (10 caractères au moins, comme `minimum_password_length`) et l'enregistre avec `updateUser`. Le lien marche aussi ouvert dans un autre navigateur que celui de la demande (flux implicite de supabase-js).
+- **Filet** : si Supabase refuse l'adresse de retour et renvoie à l'accueil, l'événement `PASSWORD_RECOVERY` suffit : `RequireAuth` mène quand même à `/mot-de-passe`.
+- **Réglage Supabase** : l'adresse de retour doit figurer dans Auth → URL Configuration → Redirect URLs. En local, `supabase/config.toml` autorise `http://localhost:5173/**` et `http://localhost:4173/**` ; en production, ajouter `https://oho-app.vercel.app/**`.
+- Tests : `src/app/screens/password.test.tsx` et `e2e/mot-de-passe.spec.ts` (lit le courriel dans Mailpit, ouvre le lien dans un second navigateur, change le mot de passe, vérifie la connexion, remet celui du seed). La CI garde donc Mailpit au démarrage de Supabase.
+
+Démo : se connecter, Réglages → « Recevoir le lien par courriel », ouvrir le courriel (en local : http://127.0.0.1:54324), toucher le lien, choisir un nouveau mot de passe, se déconnecter puis se reconnecter avec.
