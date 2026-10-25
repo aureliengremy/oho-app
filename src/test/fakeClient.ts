@@ -13,7 +13,7 @@ type Filter = (row: Row) => boolean
  */
 export function fakeClient({ userId = null as string | null, rows = {} as Rows } = {}) {
   let listener: ((event: string, session: unknown) => void) | null = null
-  const session = (id: string | null) => (id ? { user: { id }, access_token: 't' } : null)
+  const session = (id: string | null) => (id ? { user: { id, email: `${id}@example.com` }, access_token: 't' } : null)
   let current = session(userId)
   const db: Rows = structuredClone(rows)
   /** Fait échouer la prochaine écriture sur cette table (test du retour arrière). */
@@ -34,6 +34,17 @@ export function fakeClient({ userId = null as string | null, rows = {} as Rows }
       return { data: {}, error: null }
     }),
     signInWithOtp: vi.fn(async () => ({ data: {}, error: null })),
+    resetPasswordForEmail: vi.fn(async () => ({ data: {}, error: null })),
+    updateUser: vi.fn(async ({ password }: { password?: string }) =>
+      password === 'ancien-mot-de-passe'
+        ? { data: { user: null }, error: { message: 'New password should be different from the old password.' } }
+        : { data: { user: current?.user ?? null }, error: null },
+    ),
+    /** Simule l'ouverture du lien « nouveau mot de passe » reçu par courriel. */
+    openRecoveryLink: (id: string) => {
+      current = session(id)
+      listener?.('PASSWORD_RECOVERY', current)
+    },
     signOut: vi.fn(async () => {
       current = null
       listener?.('SIGNED_OUT', null)

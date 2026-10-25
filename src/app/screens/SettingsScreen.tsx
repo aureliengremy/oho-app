@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Activity, ChevronRight, LogOut } from 'lucide-react'
+import { Activity, ChevronRight, KeyRound, LogOut } from 'lucide-react'
 import { Link } from 'react-router'
 import { useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@/core/client'
@@ -68,6 +68,8 @@ export function SettingsScreen() {
 
         <NotificationsSection />
 
+        <PasswordSection />
+
         <ToolsSection />
 
         <Link to="/etat" className="flex min-h-14 items-center gap-3 rounded-lg bg-surface-2 px-4">
@@ -81,6 +83,48 @@ export function SettingsScreen() {
         </Button>
       </div>
     </>
+  )
+}
+
+/** Changer de mot de passe : un lien part par courriel et ouvre l'écran de saisie, connecté. */
+function PasswordSection() {
+  const { session, sendPasswordLink } = useAuth()
+  const [pending, setPending] = useState(false)
+  const [sent, setSent] = useState(false)
+  const [problem, setProblem] = useState<string | null>(null)
+
+  const send = async () => {
+    setPending(true)
+    setProblem(null)
+    const result = await sendPasswordLink()
+    setPending(false)
+    if (result.error) setProblem(result.error)
+    else setSent(true)
+  }
+
+  return (
+    <section aria-labelledby="password-title" className="flex flex-col gap-3">
+      <h2 id="password-title" className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+        Mot de passe
+      </h2>
+      <p className="text-sm text-ink-3">
+        On t’envoie un lien par courriel. Il te connecte et ouvre l’écran pour choisir le nouveau mot de passe.
+      </p>
+      <Button variant="secondary" onClick={send} disabled={pending}>
+        <KeyRound size={18} aria-hidden="true" />
+        {pending ? 'Envoi…' : sent ? 'Renvoyer le lien' : 'Recevoir le lien par courriel'}
+      </Button>
+      {sent ? (
+        <p role="status" className="rounded-md bg-ok-tint px-4 py-3 text-sm font-semibold text-ok">
+          {`Lien envoyé à ${session?.user.email ?? 'ton courriel'}. Il reste valable une heure.`}
+        </p>
+      ) : null}
+      {problem ? (
+        <p role="alert" className="rounded-md bg-bad-tint px-4 py-2 text-sm text-bad">
+          {problem}
+        </p>
+      ) : null}
+    </section>
   )
 }
 

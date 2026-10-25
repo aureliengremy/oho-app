@@ -40,8 +40,9 @@ jobs:
           cache: npm
       - run: npm ci
       # Supabase local (Docker est sur l'image) : migrations et seed comme en développement.
+      # Mailpit reste : le parcours « nouveau mot de passe » lit le courriel envoyé.
       - name: Démarrer Supabase
-        run: npx supabase start -x studio,imgproxy,logflare,vector,supavisor,edge-runtime,mailpit
+        run: npx supabase start -x studio,imgproxy,logflare,vector,supavisor,edge-runtime
       - name: Écrire .env.local
         run: |
           npx supabase status -o env > /tmp/sb.env
