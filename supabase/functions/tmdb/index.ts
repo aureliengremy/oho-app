@@ -32,10 +32,12 @@ Deno.serve(async (request) => {
   if (!key) return reply(503, { error: 'tmdb_non_configure' })
 
   // Un compte connecté seulement : la clé anon seule ne suffit pas.
-  const auth = request.headers.get('authorization') ?? ''
+  // Le jeton est passé à getUser : sans argument, supabase-js cherche une session
+  // locale (vide côté serveur) et ne lit pas l'en-tête.
+  const jwt = (request.headers.get('authorization') ?? '').replace(/^Bearer\s+/i, '')
   const url = Deno.env.get('SUPABASE_URL')!
-  const asUser = createClient(url, Deno.env.get('SUPABASE_ANON_KEY')!, { global: { headers: { authorization: auth } } })
-  const { data: user } = await asUser.auth.getUser()
+  const asUser = createClient(url, Deno.env.get('SUPABASE_ANON_KEY')!)
+  const { data: user } = jwt ? await asUser.auth.getUser(jwt) : { data: null }
   if (!user?.user) return reply(401, { error: 'non_connecte' })
 
   let body: Record<string, unknown>
