@@ -18,10 +18,10 @@ Deno.serve(async (request) => {
   if (request.method === 'OPTIONS') return new Response('ok', { headers: cors })
   if (request.method !== 'POST') return reply(405, { error: 'méthode non permise' })
 
-  const asUser = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!, {
-    global: { headers: { authorization: request.headers.get('authorization') ?? '' } },
-  })
-  const { data: user } = await asUser.auth.getUser()
+  // Jeton passé à getUser : sans argument, supabase-js ne lit pas l'en-tête (voir tmdb).
+  const jwt = (request.headers.get('authorization') ?? '').replace(/^Bearer\s+/i, '')
+  const asUser = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!)
+  const { data: user } = jwt ? await asUser.auth.getUser(jwt) : { data: null }
   if (!user?.user) return reply(401, { error: 'non_connecte' })
 
   const body = (await request.json().catch(() => null)) as { from?: string; to?: string } | null
