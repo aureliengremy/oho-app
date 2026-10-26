@@ -1,8 +1,8 @@
 import type { ComponentType } from 'react'
-import { BriefcaseBusiness, ShoppingCart, Tv, Wallet, type LucideIcon } from 'lucide-react'
+import { BriefcaseBusiness, CalendarDays, ShoppingCart, Tv, Wallet, type LucideIcon } from 'lucide-react'
 
 /** Clé d'un outil, identique à `tool_activation.tool_key` en base. */
-export type ToolKey = 'shopping' | 'trips' | 'watchlist' | 'expenses'
+export type ToolKey = 'shopping' | 'agenda' | 'trips' | 'watchlist' | 'expenses'
 
 export interface ToolDefinition {
   key: ToolKey
@@ -36,11 +36,23 @@ export const tools: readonly ToolDefinition[] = [
     load: () => import('./shopping'),
   },
   {
+    key: 'agenda',
+    label: 'Agenda',
+    path: '/agenda',
+    icon: CalendarDays,
+    defaultOrder: 2,
+    // Lu dans Google Agenda par la fonction « agenda » : aucune table, pas de temps réel.
+    tables: [],
+    load: () => import('./agenda'),
+    homeCard: () => import('./agenda/HomeCard'),
+  },
+  {
     key: 'trips',
     label: 'Voyages',
     path: '/voyages',
     icon: BriefcaseBusiness,
-    defaultOrder: 2,
+    // Après les quatre onglets : Voyages vit dans la grille de l'accueil (lot 15).
+    defaultOrder: 5,
     tables: ['trip', 'trip_activity', 'booking', 'trip_budget_line', 'attachment', 'checklist', 'checklist_item'],
     load: () => import('./trips'),
     homeCard: () => import('./trips/HomeCard'),

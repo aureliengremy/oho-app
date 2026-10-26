@@ -47,6 +47,7 @@ export default defineConfig({
         // Appui long sur l'icône : un outil directement.
         shortcuts: [
           { name: 'Courses', url: '/courses', icons: [{ src: 'pwa-192.png', sizes: '192x192', type: 'image/png' }] },
+          { name: 'Agenda', url: '/agenda', icons: [{ src: 'pwa-192.png', sizes: '192x192', type: 'image/png' }] },
           { name: 'Voyages', url: '/voyages', icons: [{ src: 'pwa-192.png', sizes: '192x192', type: 'image/png' }] },
           { name: 'À regarder', url: '/a-regarder', icons: [{ src: 'pwa-192.png', sizes: '192x192', type: 'image/png' }] },
           { name: 'Dépenses', url: '/depenses', icons: [{ src: 'pwa-192.png', sizes: '192x192', type: 'image/png' }] },

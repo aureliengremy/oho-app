@@ -75,6 +75,12 @@
 | D5 | Partage par défaut | Égal ; « Montants » et « Parts » au cas par cas. Une répartition par défaut réglable par carnet viendra plus tard. |
 | D6 | Serif dans l'app | Seulement pour les titres d'écran et de fiche ; tout ce qui se touche reste en sans. |
 
+## 6. Ajouts après la v1
+
+| # | Question | Décision |
+|---|---|---|
+| A1 | Agenda Google commun (lot 15, 26 octobre 2026) | Lecture seule par l'adresse secrète iCal, gardée côté serveur (Edge Function `agenda`, secret `AGENDA_ICAL_URL`). On saisit dans Google Agenda ; OAuth écarté (reconnexion tous les 7 jours tant que l'app n'est pas vérifiée par Google). Pas de table d'événements : lecture à la demande, cache serveur d'une minute, relecture toutes les 2 minutes à l'écran. Un seul agenda commun. Vue liste et vue mois, carte « Cette semaine » sur l'accueil. Agenda prend l'onglet de Voyages (D1) ; Voyages passe dans la grille de l'accueil. Voyages et agenda restent séparés. |
+
 ## Prochaine étape
 
 Lot 1 (squelette du dépôt et socle technique), puis lot 2 (migrations du socle d'après `modele-donnees.html`). Il faut d'abord un dépôt GitHub pour OhO, connecté à ce projet.
