@@ -6,6 +6,8 @@ const screens = [
   ['Accueil', '/'],
   ['Courses', `/courses/liste/${seed.groceries}`],
   ['Rayons', '/courses/rayons'],
+  ['Agenda', '/agenda'],
+  ['Agenda, mois', '/agenda?vue=mois'],
   ['Voyages', '/voyages'],
   ['À regarder', '/a-regarder'],
   ['À regarder, liste vide', '/a-regarder?statut=dropped'],
