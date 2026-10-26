@@ -25,11 +25,19 @@ let cache: { text: string; at: number } | null = null
 async function readFeed(url: string, fresh: boolean): Promise<{ text: string; at: number }> {
   if (!fresh && cache && Date.now() - cache.at < CACHE_MS) return cache
   const response = await fetch(url, { signal: AbortSignal.timeout(10_000), headers: { accept: 'text/calendar' } })
+  // Google répond 404 à une adresse publique d'agenda privé, ou à une adresse secrète réinitialisée.
+  if (response.status === 404 || response.status === 403) throw new FeedRefused(response.status)
   if (!response.ok) throw new Error(`ical ${response.status}`)
   const text = await response.text()
   if (text.length > MAX_BYTES || !text.includes('BEGIN:VCALENDAR')) throw new Error('ical illisible')
   cache = { text, at: Date.now() }
   return cache
+}
+
+class FeedRefused extends Error {
+  constructor(status: number) {
+    super(`ical ${status}`)
+  }
 }
 
 const DAY = /^(\d{4})-(\d{2})-(\d{2})$/
@@ -81,6 +89,6 @@ Deno.serve(async (request) => {
   } catch (cause) {
     // L'adresse secrète ne doit jamais finir dans les journaux.
     console.error('agenda', cause instanceof Error ? cause.message : 'erreur')
-    return reply(502, { error: 'agenda_indisponible' })
+    return reply(502, { error: cause instanceof FeedRefused ? 'agenda_refuse' : 'agenda_indisponible' })
   }
 })

@@ -105,6 +105,54 @@ END:VEVENT
     ])
   })
 
+  it('montre une occurrence déplacée depuis une date hors de la période', () => {
+    const feed = ics(`
+BEGIN:VEVENT
+DTSTART;TZID=America/Toronto:20261001T190000
+DTEND;TZID=America/Toronto:20261001T200000
+RRULE:FREQ=MONTHLY;COUNT=3
+UID:club@google.com
+SUMMARY:Club de lecture
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;TZID=America/Toronto:20261028T190000
+DTEND;TZID=America/Toronto:20261028T200000
+RECURRENCE-ID;TZID=America/Toronto:20261201T190000
+UID:club@google.com
+SUMMARY:Club de lecture (avancé)
+END:VEVENT
+`)
+    const events = expandCalendar(feed, ...between('2026-10-26T04:00:00Z', '2026-11-02T05:00:00Z'))
+    expect(events.map((e) => [e.title, e.start])).toEqual([
+      ['Club de lecture (avancé)', '2026-10-28T23:00:00.000Z'],
+      ['Club de lecture', '2026-11-02T00:00:00.000Z'],
+    ])
+  })
+
+  it('lit vite un gros agenda : des années de récurrences quotidiennes', () => {
+    const daily = Array.from({ length: 30 }, (_, i) =>
+      ['BEGIN:VEVENT', `UID:r${i}@google.com`, 'DTSTART;TZID=America/Toronto:20150105T080000', 'DTEND;TZID=America/Toronto:20150105T090000', 'RRULE:FREQ=DAILY', 'SUMMARY:Routine', 'END:VEVENT'].join('\r\n'),
+    ).join('\r\n')
+    const started = performance.now()
+    const events = expandCalendar(ics(daily), ...between('2026-10-26T04:00:00Z', '2026-12-25T05:00:00Z'))
+    expect(events).toHaveLength(30 * 60)
+    expect(performance.now() - started).toBeLessThan(5_000)
+  })
+
+  it('garde le rythme d’une récurrence ancienne toutes les deux semaines', () => {
+    const feed = ics(`
+BEGIN:VEVENT
+DTSTART;TZID=America/Toronto:20200106T180000
+DTEND;TZID=America/Toronto:20200106T190000
+RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO
+UID:poubelles@google.com
+SUMMARY:Recyclage
+END:VEVENT
+`)
+    const events = expandCalendar(feed, ...between('2026-10-20T04:00:00Z', '2026-11-20T05:00:00Z'))
+    expect(events.map((e) => e.start)).toEqual(['2026-11-02T23:00:00.000Z', '2026-11-16T23:00:00.000Z'])
+  })
+
   it('ignore les événements annulés et ceux hors période', () => {
     const feed = ics(`
 BEGIN:VEVENT

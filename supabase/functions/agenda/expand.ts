@@ -18,18 +18,35 @@ export interface AgendaEvent {
 const MAX_OCCURRENCES = 20_000
 const MAX_TEXT = 500
 
+/** Une marge plus large que tout écart de fuseau (±14 h) : on compare des heures murales à des instants. */
+const MARGIN_MS = 2 * 86_400_000
+
+// Créer un Intl.DateTimeFormat coûte cher : un par fuseau suffit.
+const formatters = new Map<string, Intl.DateTimeFormat>()
+function formatter(timeZone: string): Intl.DateTimeFormat {
+  let f = formatters.get(timeZone)
+  if (!f) {
+    f = new Intl.DateTimeFormat('en-CA', {
+      timeZone,
+      hourCycle: 'h23',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    })
+    formatters.set(timeZone, f)
+  }
+  return f
+}
+
+/** Heure murale lue comme si elle était en UTC : assez pour comparer à une période avec MARGIN_MS. */
+const wallMs = (t: ICAL.Time) => Date.UTC(t.year, t.month - 1, t.day, t.hour, t.minute, t.second)
+
 /** Écart d'un fuseau avec UTC à un instant, en minutes. */
 function offsetMinutes(instant: number, timeZone: string): number {
-  const values = new Intl.DateTimeFormat('en-CA', {
-    timeZone,
-    hourCycle: 'h23',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  }).formatToParts(new Date(instant))
+  const values = formatter(timeZone).formatToParts(new Date(instant))
   const get = (type: string) => Number(values.find((p) => p.type === type)?.value)
   const asUtc = Date.UTC(get('year'), get('month') - 1, get('day'), get('hour'), get('minute'), get('second'))
   return Math.round((asUtc - Math.floor(instant / 1000) * 1000) / 60_000)
@@ -97,7 +114,10 @@ export function expandCalendar(ics: string, from: Date, to: Date, fallbackZone =
   // Les exceptions (RECURRENCE-ID) s'accrochent à leur événement maître, même UID.
   const masters = new Map<string, ICAL.Component>()
   const exceptions = new Map<string, ICAL.Component[]>()
-  for (const component of root.getAllSubcomponents('vevent')) {
+  // Chaque VEVENT est détaché du calendrier : sinon ical.js parcourt tout le fichier à chaque TZID
+  // pour y chercher un VTIMEZONE (quadratique sur un agenda de plusieurs années). Les fuseaux sont
+  // de toute façon convertis par Intl, d'après le TZID.
+  for (const component of root.getAllSubcomponents('vevent').map((c) => new ICAL.Component(c.jCal))) {
     const uid = String(component.getFirstPropertyValue('uid') ?? '')
     if (component.hasProperty('recurrence-id')) exceptions.set(uid, [...(exceptions.get(uid) ?? []), component])
     else masters.set(uid || `sans-uid-${masters.size}`, component)
@@ -108,6 +128,8 @@ export function expandCalendar(ics: string, from: Date, to: Date, fallbackZone =
   const out: AgendaEvent[] = []
 
   const push = (uid: string, item: ICAL.Component, start: ICAL.Time, end: ICAL.Time) => {
+    // Tri grossier sans Intl : la plupart des événements d'un vieil agenda sont loin de la période.
+    if (wallMs(start) >= toMs + MARGIN_MS || Math.max(wallMs(start), wallMs(end)) < fromMs - MARGIN_MS) return
     if (cancelled(item)) return
     const startZone = zoneOf(item.getFirstProperty('dtstart'), calendarZone)
     const endZone = item.hasProperty('dtend') ? zoneOf(item.getFirstProperty('dtend'), startZone) : startZone
@@ -142,22 +164,48 @@ export function expandCalendar(ics: string, from: Date, to: Date, fallbackZone =
       continue
     }
 
-    // L'itérateur avance en heure murale ; une marge de deux jours couvre les écarts de fuseau.
-    const zone = iterationZone(component, calendarZone)
-    const iterator = event.iterator()
+    // L'itérateur avance en heure murale. On ne calcule le détail (exception, fuseau) que pour les
+    // occurrences proches de la période : une récurrence quotidienne depuis 2015 reste rapide.
+    const durationMs = Math.max(0, (event.duration?.toSeconds() ?? 0) * 1000)
+    const low = fromMs - MARGIN_MS - durationMs
+    const high = toMs + MARGIN_MS
+    const iterator = event.iterator(skipAhead(component, event.startDate, low))
     for (let i = 0, next = iterator.next(); next && i < MAX_OCCURRENCES; i++, next = iterator.next()) {
-      if (wallToInstant(next, zone) >= toMs + 2 * 86_400_000) break
+      const wall = wallMs(next)
+      if (wall >= high) break
+      if (wall < low) continue
       const details = event.getOccurrenceDetails(next)
       push(uid, details.item.component, details.startDate, details.endDate)
+    }
+    // Une occurrence déplacée depuis une date hors de la période vers la période.
+    for (const exception of exceptions.get(uid) ?? []) {
+      const original = exception.getFirstPropertyValue('recurrence-id') as ICAL.Time | null
+      if (original && wallMs(original) >= low && wallMs(original) < high) continue
+      const moved = new ICAL.Event(exception)
+      if (moved.startDate) push(uid, exception, moved.startDate, moved.endDate)
     }
   }
 
   return out.sort((a, b) => sortKey(a, calendarZone) - sortKey(b, calendarZone) || a.title.localeCompare(b.title, 'fr'))
 }
 
-function iterationZone(component: ICAL.Component, calendarZone: string): string {
-  const start = component.getFirstProperty('dtstart')
-  return (start?.getFirstValue() as ICAL.Time | undefined)?.isDate ? calendarZone : zoneOf(start, calendarZone)
+/**
+ * Point de départ de l'itération pour une récurrence quotidienne ou hebdomadaire sans COUNT : la date
+ * de début avancée d'un nombre entier de périodes, juste avant la période lue. Le motif ne change
+ * pas (même jour de semaine, même heure) et l'on évite de dérouler des années d'occurrences.
+ */
+function skipAhead(component: ICAL.Component, start: ICAL.Time, low: number): ICAL.Time | undefined {
+  const rules = component.getAllProperties('rrule')
+  if (rules.length !== 1) return undefined
+  const rule = rules[0].getFirstValue() as ICAL.Recur
+  if (rule.count) return undefined
+  const step = rule.freq === 'DAILY' ? rule.interval : rule.freq === 'WEEKLY' ? 7 * rule.interval : 0
+  if (!step) return undefined
+  const periods = Math.floor((low - wallMs(start)) / 86_400_000 / step) - 1
+  if (periods <= 0) return undefined
+  const anchored = start.clone()
+  anchored.adjust(periods * step, 0, 0, 0)
+  return anchored
 }
 
 function sortKey(event: AgendaEvent, zone: string): number {
