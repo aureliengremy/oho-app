@@ -3,16 +3,21 @@ import { initials } from './initials'
 
 const slotColor = { a: 'border-person-a', b: 'border-person-b', other: 'border-ink-4' } as const
 
-/** Avatar cerclé de la couleur de la personne, toujours avec ses initiales (décision D2). */
+/**
+ * Avatar cerclé de la couleur de la personne (décision D2) : son emoji s'il en a choisi un
+ * dans les Réglages, sinon ses initiales.
+ */
 export function Avatar({
   name,
   chosenInitials,
+  emoji,
   slot,
   size = 'sm',
   className,
 }: {
   name: string
   chosenInitials?: string | null
+  emoji?: string | null
   slot: 'a' | 'b' | 'other'
   size?: 'sm' | 'lg'
   className?: string
@@ -27,7 +32,13 @@ export function Avatar({
         className,
       )}
     >
-      {initials(name, chosenInitials)}
+      {emoji ? (
+        <span role="img" aria-label={name} className="text-[1.4em] leading-none">
+          {emoji}
+        </span>
+      ) : (
+        initials(name, chosenInitials)
+      )}
     </span>
   )
 }

@@ -69,7 +69,7 @@
 | # | Question | Décision |
 |---|---|---|
 | D1 | Navigation | Barre du bas : Accueil + quatre outils (Courses, Voyages, À regarder, Dépenses). Activité est sur l'accueil, Réglages derrière l'avatar. À partir d'un cinquième outil, les quatre plus utilisés restent en onglets (ordre réglable) et les suivants passent dans la grille de l'accueil. |
-| D2 | Couleur par personne | Océan pour Aurélien, sable pour Auriane : en contour d'avatar et dans les graphiques, toujours avec les initiales (AL, AN) ou le prénom. |
+| D2 | Couleur par personne | Océan pour Aurélien, sable pour Auriane : en contour d'avatar et dans les graphiques, toujours avec les initiales (AL, AN), l'emoji d'avatar choisi ou le prénom. Mis à jour le 2026-10-26 : chacun peut remplacer ses initiales par un animal dans Réglages, le contour de couleur reste. |
 | D3 | Densité | Lignes de 52 px. Un réglage « compact » à 44 px pour Courses seulement, si l'usage le demande. |
 | D4 | Devise des dépenses | Soldes en $ CA. Taux du jour figé à la saisie, modifiable sur la dépense. |
 | D5 | Partage par défaut | Égal ; « Montants » et « Parts » au cas par cas. Une répartition par défaut réglable par carnet viendra plus tard. |

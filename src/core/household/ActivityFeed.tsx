@@ -28,7 +28,7 @@ export function ActivityFeed({ limit = 5, toolKey }: { limit?: number; toolKey?:
         const name = actor?.profile.display_name ?? 'Quelqu’un'
         return (
           <li key={entry.id} className="flex min-h-12 items-start gap-3 py-2">
-            <Avatar name={name} chosenInitials={actor?.profile.initials} slot={actor?.slot ?? 'other'} />
+            <Avatar name={name} chosenInitials={actor?.profile.initials} emoji={actor?.profile.avatar_emoji} slot={actor?.slot ?? 'other'} />
             <p className="flex-1 text-ink-2">
               <b className="font-semibold text-ink">{name}</b> {describeActivity(entry)}
             </p>

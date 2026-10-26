@@ -61,7 +61,7 @@ export function ItemRow({
         {pending ? (
           <span className="font-mono text-[12.5px] font-semibold tracking-[0.06em] text-warn uppercase">En attente</span>
         ) : author ? (
-          <Avatar name={author.profile.display_name} chosenInitials={author.profile.initials} slot={author.slot} />
+          <Avatar name={author.profile.display_name} chosenInitials={author.profile.initials} emoji={author.profile.avatar_emoji} slot={author.slot} />
         ) : null}
       </div>
     </li>

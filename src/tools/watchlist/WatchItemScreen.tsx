@@ -83,7 +83,7 @@ function ItemView({ item, data }: { item: WatchItem; data: WatchData }) {
           {meta ? <p className="text-sm text-ink-3">{meta}</p> : null}
           {suggester ? (
             <p className="flex items-center gap-2 text-sm text-ink-3">
-              <Avatar name={suggester.profile.display_name} chosenInitials={suggester.profile.initials} slot={suggester.slot} />
+              <Avatar name={suggester.profile.display_name} chosenInitials={suggester.profile.initials} emoji={suggester.profile.avatar_emoji} slot={suggester.slot} />
               Proposé par {suggester.profile.display_name}
             </p>
           ) : null}
@@ -240,7 +240,7 @@ function RatingRow({ item, member, rating, editable }: { item: WatchItem; member
   return (
     <li className="flex flex-col rounded-lg bg-surface-2 px-3 py-1">
       <div className="flex min-h-12 items-center gap-3">
-        <Avatar name={name} chosenInitials={member.profile.initials} slot={member.slot} />
+        <Avatar name={name} chosenInitials={member.profile.initials} emoji={member.profile.avatar_emoji} slot={member.slot} />
         <span className="flex-1 font-semibold text-ink">{name}</span>
         {editable ? null : (
           <span className="flex text-accent-ink" aria-hidden="true">

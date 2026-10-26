@@ -50,7 +50,7 @@ function BalancesView({ book, data }: { book: Book; data: ExpensesData }) {
           return (
             <div key={m.profile.id} className="flex flex-col gap-1.5">
               <div className="flex items-center gap-2">
-                <Avatar name={m.profile.display_name} chosenInitials={m.profile.initials} slot={m.slot} />
+                <Avatar name={m.profile.display_name} chosenInitials={m.profile.initials} emoji={m.profile.avatar_emoji} slot={m.slot} />
                 <span className="flex-1 font-semibold text-ink">{m.profile.display_name}</span>
                 {cents > 0 ? <Pill tone="ok">À recevoir</Pill> : cents < 0 ? <Pill tone="warn">Doit</Pill> : <Pill tone="neutral">Quitte</Pill>}
                 <span className="w-24 text-right font-mono font-semibold text-ink tabular-nums">
@@ -113,7 +113,7 @@ function BalancesView({ book, data }: { book: Book; data: ExpensesData }) {
               const currency = data.books.find((b) => b.id === s.book_id)?.currency ?? book.currency
               return (
                 <li key={s.id} className="flex min-h-14 items-center gap-3 py-1">
-                  <Avatar name={name(s.from_user)} chosenInitials={from?.profile.initials} slot={from?.slot ?? 'other'} />
+                  <Avatar name={name(s.from_user)} chosenInitials={from?.profile.initials} emoji={from?.profile.avatar_emoji} slot={from?.slot ?? 'other'} />
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="text-sm text-ink">
                       {name(s.from_user)} → {name(s.to_user)} · <b className="font-mono tabular-nums">{formatCents(s.amount_cents, currency)}</b>
