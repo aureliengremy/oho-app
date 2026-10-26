@@ -9,6 +9,8 @@ import { ScreenHeader } from '@/core/layout/ScreenHeader'
 import { cn } from '@/core/lib/cn'
 import { useTheme, type ThemePreference } from '@/core/theme/theme'
 import { Avatar } from '@/core/ui/Avatar'
+import { avatarEmojis } from '@/core/ui/avatarEmojis'
+import { initials } from '@/core/ui/initials'
 import { Button } from '@/core/ui/Button'
 import { tools, type ToolDefinition } from '@/tools/registry'
 import { NotificationsSection } from './NotificationsSection'
@@ -58,13 +60,15 @@ export function SettingsScreen() {
           <ul className="flex flex-col gap-2">
             {members.map((m) => (
               <li key={m.profile.id} className="flex min-h-14 items-center gap-3 rounded-lg bg-surface-2 px-4">
-                <Avatar name={m.profile.display_name} chosenInitials={m.profile.initials} slot={m.slot} />
+                <Avatar name={m.profile.display_name} chosenInitials={m.profile.initials} emoji={m.profile.avatar_emoji} slot={m.slot} />
                 <span className="flex-1 font-semibold text-ink">{m.profile.display_name}</span>
                 <span className="text-sm text-ink-3">{slotLabel[m.slot]}</span>
               </li>
             ))}
           </ul>
         </section>
+
+        <AvatarSection />
 
         <NotificationsSection />
 
@@ -83,6 +87,79 @@ export function SettingsScreen() {
         </Button>
       </div>
     </>
+  )
+}
+
+/** Mon avatar : ses initiales ou un animal, toujours dans le cercle de sa couleur. */
+function AvatarSection() {
+  const client = useClient()
+  const queryClient = useQueryClient()
+  const { session } = useAuth()
+  const { members } = useHousehold()
+  const me = members.find((m) => m.profile.id === session?.user.id)
+  const [busy, setBusy] = useState(false)
+  const [problem, setProblem] = useState<string | null>(null)
+  if (!me) return null
+  const current = me.profile.avatar_emoji
+
+  const choose = async (emoji: string | null) => {
+    if (emoji === current) return
+    setBusy(true)
+    setProblem(null)
+    const { error } = await client.from('profile').update({ avatar_emoji: emoji }).eq('id', me.profile.id)
+    if (error) setProblem('L’avatar n’a pas changé. Vérifie la connexion puis réessaie.')
+    await queryClient.invalidateQueries({ queryKey: ['household'] })
+    setBusy(false)
+  }
+
+  const optionClass = (on: boolean) =>
+    cn(
+      'flex size-12 items-center justify-center rounded-full text-2xl disabled:opacity-60',
+      on ? 'bg-accent-tint ring-2 ring-accent-ink' : 'bg-surface-2',
+    )
+
+  return (
+    <section aria-labelledby="avatar-title" className="flex flex-col gap-3">
+      <h2 id="avatar-title" className="font-mono text-xs tracking-[var(--ls-eyebrow)] uppercase text-ink-3">
+        Mon avatar
+      </h2>
+      <div className="flex items-center gap-3 rounded-lg bg-surface-2 px-4 py-3">
+        <Avatar name={me.profile.display_name} chosenInitials={me.profile.initials} emoji={current} slot={me.slot} size="lg" />
+        <span className="text-sm text-ink-2">Le contour garde ta couleur, pour qu’on sache toujours qui est qui.</span>
+      </div>
+      <div role="radiogroup" aria-label="Mon avatar" className="grid grid-cols-[repeat(auto-fill,minmax(3rem,1fr))] justify-items-center gap-2">
+        <button
+          type="button"
+          role="radio"
+          aria-checked={!current}
+          aria-label="Initiales"
+          disabled={busy}
+          onClick={() => choose(null)}
+          className={cn(optionClass(!current), 'font-sans text-sm font-bold text-ink')}
+        >
+          {initials(me.profile.display_name, me.profile.initials)}
+        </button>
+        {avatarEmojis.map((a) => (
+          <button
+            key={a.emoji}
+            type="button"
+            role="radio"
+            aria-checked={current === a.emoji}
+            aria-label={a.label}
+            disabled={busy}
+            onClick={() => choose(a.emoji)}
+            className={optionClass(current === a.emoji)}
+          >
+            {a.emoji}
+          </button>
+        ))}
+      </div>
+      {problem ? (
+        <p role="alert" className="rounded-md bg-bad-tint px-4 py-2 text-sm text-bad">
+          {problem}
+        </p>
+      ) : null}
+    </section>
   )
 }
 

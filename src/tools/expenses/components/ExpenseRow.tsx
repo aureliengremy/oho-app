@@ -23,7 +23,7 @@ export function ExpenseRow({ expense, book }: { expense: Expense; book: Book }) 
         <span className="flex min-w-0 flex-1 flex-col">
           <span className="truncate font-semibold text-ink">{expense.label}</span>
           <span className="flex items-center gap-1.5 text-sm text-ink-2" aria-hidden="true">
-            <Avatar name={name} chosenInitials={payer?.profile.initials} slot={payer?.slot ?? 'other'} className="size-5 border text-[8px]" />
+            <Avatar name={name} chosenInitials={payer?.profile.initials} emoji={payer?.profile.avatar_emoji} slot={payer?.slot ?? 'other'} className="size-5 border text-[8px]" />
             {name} · {categoryLabel[expense.category]}
           </span>
         </span>

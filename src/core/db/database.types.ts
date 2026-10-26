@@ -1019,6 +1019,7 @@ export type Database = {
       profile: {
         Row: {
           avatar_color: string | null
+          avatar_emoji: string | null
           created_at: string
           display_name: string
           id: string
@@ -1028,6 +1029,7 @@ export type Database = {
         }
         Insert: {
           avatar_color?: string | null
+          avatar_emoji?: string | null
           created_at?: string
           display_name: string
           id: string
@@ -1037,6 +1039,7 @@ export type Database = {
         }
         Update: {
           avatar_color?: string | null
+          avatar_emoji?: string | null
           created_at?: string
           display_name?: string
           id?: string

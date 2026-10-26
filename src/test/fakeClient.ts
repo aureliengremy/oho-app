@@ -308,10 +308,12 @@ export function fakeClient({ userId = null as string | null, rows = {} as Rows }
   }
 }
 
-const profileA = { id: 'user-a', display_name: 'Aurélien', initials: 'AL', avatar_color: null, locale: 'fr', created_at: '', updated_at: '' }
-const profileB = { id: 'user-b', display_name: 'Auriane', initials: 'AN', avatar_color: null, locale: 'fr', created_at: '', updated_at: '' }
+const profileA = { id: 'user-a', display_name: 'Aurélien', initials: 'AL', avatar_emoji: null, avatar_color: null, locale: 'fr', created_at: '', updated_at: '' }
+const profileB = { id: 'user-b', display_name: 'Auriane', initials: 'AN', avatar_emoji: null, avatar_color: null, locale: 'fr', created_at: '', updated_at: '' }
 
 export const seedRows = {
+  // Même objets que dans membership : une mise à jour du profil se voit dans la liste des membres.
+  profile: [profileA, profileB],
   membership: [
     { household_id: 'hh-1', user_id: 'user-a', role: 'owner', joined_at: '2026-10-01T00:00:00Z', deleted_at: null, profile: profileA },
     { household_id: 'hh-1', user_id: 'user-b', role: 'owner', joined_at: '2026-10-02T00:00:00Z', deleted_at: null, profile: profileB },

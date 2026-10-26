@@ -187,7 +187,7 @@ function ItemCard({ item, data }: { item: WatchItem; data: WatchData }) {
           <Poster path={media?.poster_path} title={item.title} />
           {suggester ? (
             <span aria-hidden="true" className="absolute right-2 bottom-2">
-              <Avatar name={suggester.profile.display_name} chosenInitials={suggester.profile.initials} slot={suggester.slot} />
+              <Avatar name={suggester.profile.display_name} chosenInitials={suggester.profile.initials} emoji={suggester.profile.avatar_emoji} slot={suggester.slot} />
             </span>
           ) : null}
         </div>
