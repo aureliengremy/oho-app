@@ -1,5 +1,5 @@
 // Edge Function « agenda » : la seule à connaître l'adresse secrète iCal de l'agenda Google commun
-// (secret AGENDA_ICAL_URL). Lecture seule.
+// (secret AGENDA_ICAL_URL, https://calendar.google.com/calendar/ical/…/basic.ics). Lecture seule.
 //
 //   POST { from: 'AAAA-MM-JJ', to: 'AAAA-MM-JJ', fresh?: boolean } → { events: AgendaEvent[], zone, fetched_at }
 //
@@ -39,7 +39,8 @@ Deno.serve(async (request) => {
   if (request.method !== 'POST') return reply(405, { error: 'méthode non permise' })
 
   const feedUrl = Deno.env.get('AGENDA_ICAL_URL')
-  if (!feedUrl || !/^https?:\/\//.test(feedUrl)) return reply(503, { error: 'agenda_non_configure' })
+  // Toujours un agenda Google : on refuse toute autre adresse (la fonction ne lit rien d'autre).
+  if (!feedUrl?.startsWith('https://calendar.google.com/calendar/ical/')) return reply(503, { error: 'agenda_non_configure' })
 
   // Un membre d'un espace seulement. Le jeton est passé à getUser (voir la fonction tmdb).
   const jwt = (request.headers.get('authorization') ?? '').replace(/^Bearer\s+/i, '')
