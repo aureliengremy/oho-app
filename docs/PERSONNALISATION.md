@@ -2,7 +2,7 @@
 
 ## Ce qui a été fait
 - **Icône de l'app** : un œil de nazar dessiné en plein cadre (verre bleu, iris blanc et turquoise, pupille bleu nuit), proposition B validée par Aurélien. Les dessins sources sont dans `design/icone/` ; `npm run icons` regénère `public/pwa-*.png` et `public/apple-touch-icon.png`. Le favicon reprend le même dessin avec des coins arrondis.
-- **Avatars** : dans Réglages, section « Mon avatar », chacun choisit un animal parmi 32 emojis (`src/core/ui/avatarEmojis.ts`) ou revient à ses initiales. L'emoji s'affiche partout où l'avatar apparaît.
+- **Avatars** : dans Réglages, section « Mon avatar », chacun choisit un animal parmi 33 emojis (`src/core/ui/avatarEmojis.ts`) ou revient à ses initiales. L'emoji s'affiche partout où l'avatar apparaît.
 
 ## Décisions
 - L'œil tient dans la zone sûre de 40 % : la même image sert d'icône normale et « maskable » (rond, goutte, carré arrondi selon le téléphone). L'icône monochrome (Android 13+) est une silhouette en anneaux.

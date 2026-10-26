@@ -4,6 +4,7 @@
  */
 export const avatarEmojis = [
   { emoji: '🦊', label: 'Renard' },
+  { emoji: '🐺', label: 'Loup' },
   { emoji: '🐼', label: 'Panda' },
   { emoji: '🐨', label: 'Koala' },
   { emoji: '🦦', label: 'Loutre' },
