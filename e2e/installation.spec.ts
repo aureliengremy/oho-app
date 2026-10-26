@@ -10,7 +10,7 @@ test('le manifeste est complet et Chrome juge l’app installable', async ({ pag
   expect(manifest).toMatchObject({ id: '/', name: 'OhO', short_name: 'OhO', start_url: '/', scope: '/', display: 'standalone', lang: 'fr' })
   const purposes = manifest.icons.map((i: { purpose?: string }) => i.purpose ?? 'any')
   expect(purposes).toEqual(expect.arrayContaining(['any', 'maskable', 'monochrome']))
-  expect(manifest.shortcuts.map((s: { url: string }) => s.url)).toEqual(['/courses', '/voyages', '/a-regarder', '/depenses'])
+  expect(manifest.shortcuts.map((s: { url: string }) => s.url)).toEqual(['/courses', '/agenda', '/voyages', '/a-regarder', '/depenses'])
   expect(manifest.screenshots.length).toBeGreaterThanOrEqual(3)
 
   // Chaque image annoncée existe, avec la taille annoncée.
