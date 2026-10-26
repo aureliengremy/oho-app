@@ -13,7 +13,7 @@
 | `src/tools/agenda/` | **Liste** des 60 prochains jours, groupée par jour (« Aujourd'hui », « Demain », « Vendredi 30 octobre »), journées entières d'abord. **Mois** : grille du lundi au dimanche, points sous les jours chargés, les événements du jour choisi en dessous, mois précédent et suivant. **Fiche** d'un événement en lecture : quand, lieu (ouvre Google Maps), description. |
 | Mise à jour | Relecture à l'ouverture de l'écran, au retour de l'app au premier plan, au retour du réseau et toutes les 2 minutes tant que l'écran est ouvert. Le bouton « Actualiser » et le geste « tirer vers le bas » demandent au serveur de relire le flux tout de suite. Hors ligne, le dernier état reste affiché (cache de l'appareil). |
 | Accueil | Carte « Cette semaine » : les sept prochains jours, six événements au plus, « Voir l'agenda (+n) ». Elle ne s'affiche pas si l'agenda n'est pas relié. |
-| Barre du bas | Migration `20261026000100_agenda.sql` : active Agenda (ordre 2) pour chaque espace et passe Voyages en 5. La barre devient Accueil, Courses, Agenda, À regarder, Dépenses ; Voyages reste dans la grille de l'accueil (D1). Le seed suit. |
+| Barre du bas | Migration `20261026000200_agenda.sql` : active Agenda (ordre 2) pour chaque espace et passe Voyages en 5. La barre devient Accueil, Courses, Agenda, À regarder, Dépenses ; Voyages reste dans la grille de l'accueil (D1). Le seed suit. |
 | PWA | Raccourci « Agenda » sur l'icône (appui long). |
 
 ## Décisions prises dans ce lot
