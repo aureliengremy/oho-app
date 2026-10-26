@@ -90,4 +90,14 @@ describe('agenda', () => {
     renderApp(fakeClient({ userId: 'user-a', rows }), '/agenda')
     expect(await screen.findByText(/pas encore relié/)).toBeInTheDocument()
   })
+
+  it('dit quand Google refuse l’adresse (adresse publique d’un agenda privé)', async () => {
+    const client = fakeClient({ userId: 'user-a', rows })
+    client.functions.invoke.mockImplementation(async () => ({
+      data: null,
+      error: { message: 'échec', context: { status: 502, json: async () => ({ error: 'agenda_refuse' }) } },
+    }))
+    renderApp(client, '/agenda')
+    expect(await screen.findByText(/adresse secrète au format iCal/)).toBeInTheDocument()
+  })
 })

@@ -31,6 +31,11 @@
 3. `npx supabase start`, puis `npx supabase db reset` (applique la migration et le seed), puis `npx supabase functions serve --env-file supabase/functions/.env`.
 4. `npm run dev` avec `.env.local` sur le Supabase local, puis se connecter.
 
+## Correctifs après la mise en ligne
+
+- **Adresse publique ou secrète** : sur un agenda privé, l'« adresse publique au format iCal » répond 404. Il faut l'**adresse secrète** (`…/private-…/basic.ics`) : l'agenda reste privé. La fonction distingue maintenant ce cas (`agenda_refuse`) et l'écran le dit.
+- **Gros agendas** : ical.js cherchait un VTIMEZONE dans tout le fichier à chaque heure (temps quadratique), et les récurrences anciennes étaient déroulées depuis leur début. Chaque événement est maintenant lu à part, une récurrence quotidienne ou hebdomadaire sans COUNT repart juste avant la période, et les événements lointains sont écartés sans Intl. Sur un agenda de test (4 000 événements, 40 récurrences depuis 2015) : de 87 s à moins de 0,6 s.
+
 ## Démo manuelle
 
 1. La barre du bas montre Agenda à la place de Voyages ; Voyages est dans la grille de l'accueil.
