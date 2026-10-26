@@ -48,6 +48,9 @@ describe('agenda', () => {
   it('montre « Cette semaine » sur l’accueil', async () => {
     renderApp(withAgenda(), '/')
     const card = await screen.findByRole('region', { name: 'Cette semaine' })
+    // Les outils restent en tête de l'accueil, la carte vient après.
+    const tools = document.getElementById('outils')
+    expect(tools?.compareDocumentPosition(card)).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
     expect(within(card).getByText('Demain')).toBeInTheDocument()
     expect(within(card).getByRole('button', { name: /18 h 30.*Souper chez Paul/ })).toBeInTheDocument()
     expect(within(card).getByRole('button', { name: /Journée.*Halloween/ })).toBeInTheDocument()

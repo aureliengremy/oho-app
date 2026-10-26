@@ -43,14 +43,6 @@ export function HomeScreen() {
         </Link>
       </header>
 
-      <Suspense fallback={null}>
-        {homeCards
-          .filter((c) => enabled.some((t) => t.key === c.key))
-          .map(({ key, Card }) => (
-            <Card key={key} />
-          ))}
-      </Suspense>
-
       <section className="flex flex-col gap-3" aria-labelledby="outils">
         <SectionTitle>Outils</SectionTitle>
         {enabled.length === 0 ? (
@@ -75,6 +67,15 @@ export function HomeScreen() {
           </ul>
         )}
       </section>
+
+      {/* Les outils d'abord, puis les cartes des outils (« Cette semaine », « Prochain voyage »). */}
+      <Suspense fallback={null}>
+        {homeCards
+          .filter((c) => enabled.some((t) => t.key === c.key))
+          .map(({ key, Card }) => (
+            <Card key={key} />
+          ))}
+      </Suspense>
 
       <section className="flex flex-col gap-2">
         <SectionTitle
