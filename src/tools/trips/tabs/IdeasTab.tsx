@@ -81,7 +81,7 @@ export function IdeasTab({ trip, data }: { trip: Trip; data: TripsData }) {
                       <ExternalLink size={18} aria-hidden="true" />
                     </a>
                   ) : null}
-                  {author ? <Avatar name={author.profile.display_name} chosenInitials={author.profile.initials} slot={author.slot} /> : null}
+                  {author ? <Avatar name={author.profile.display_name} chosenInitials={author.profile.initials} emoji={author.profile.avatar_emoji} slot={author.slot} /> : null}
                 </div>
               </li>
             )

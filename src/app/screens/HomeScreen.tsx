@@ -39,7 +39,7 @@ export function HomeScreen() {
           className="flex size-11 items-center justify-center rounded-pill"
           aria-label="Réglages"
         >
-          <Avatar name={firstName || '?'} chosenInitials={me?.profile.initials} slot={me?.slot ?? 'other'} size="lg" />
+          <Avatar name={firstName || '?'} chosenInitials={me?.profile.initials} emoji={me?.profile.avatar_emoji} slot={me?.slot ?? 'other'} size="lg" />
         </Link>
       </header>
 

@@ -174,6 +174,12 @@ begin
     'Auriane active Voyages');
   perform tests.assert(tests.affected(format('update public.profile set avatar_color = ''#aabbcc'' where id = %L', v_me)) = 1,
     'Auriane modifie son profil');
+  perform tests.assert(tests.affected(format('update public.profile set avatar_emoji = ''🦦'' where id = %L', v_me)) = 1,
+    'Auriane choisit un emoji d''avatar');
+  perform tests.throws(format('update public.profile set avatar_emoji = ''AB'' where id = %L', v_me),
+    '23514', 'un avatar emoji refuse des lettres');
+  perform tests.assert(tests.affected(format('update public.profile set avatar_emoji = null where id = %L', v_me)) = 1,
+    'Auriane revient aux initiales');
   perform tests.assert(tests.affected(format('update public.profile set display_name = ''X'' where id = %L',
       tests.user_id('aurelien@example.com'))) = 0, 'Auriane ne modifie pas le profil d''Aurélien');
   insert into public.shopping_category (household_id, name, sort_order) values (tests.hh(), 'Boissons', 8);
